@@ -8,17 +8,17 @@
 <title>Патриархи и древности</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:wght@500;700&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: one wide chart strip (pan + zoom) over a reading column; stone-grey ground, inked rules, data colours only on the marks. */
+/* Layout: sticky toolbar, then a Gantt-style timeline — fixed name column on the left, horizontally scrolling time field on the right with its own sticky axis; reading column below. Stone-grey ground, colour only on the data. */
 :root{
   --bg:#e8ebea; --surface:#f5f6f5; --surface-2:#dfe3e2; --fg:#16201f; --muted:#5c6866; --line:#c3cbc9; --line-soft:#d8dedc;
   --accent:#1f5f8b;
   --pre:#2a78d6; --sons:#eb6834; --post:#1baf7a;
   --mesop:#4a3aa7; --egypt:#eda100; --anat:#e87ba4; --other:#008300;
   --cold:#5d7d99; --flood:#e34948; --model:#8a6d3b; --crim:#0f7a8f;
-  --band-a:#d4d9d8; --band-b:#c6cdcb;
   --display:"Literata",Georgia,"Times New Roman",serif;
   --body:"Golos Text","Segoe UI",Arial,sans-serif;
   --mono:"JetBrains Mono",Consolas,monospace;
+  --namesW:250px; --toolbarH:0px;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -27,7 +27,6 @@
     --pre:#3987e5; --sons:#d95926; --post:#199e70;
     --mesop:#9085e9; --egypt:#c98500; --anat:#d55181; --other:#2e9a2e;
     --cold:#7f9fbb; --flood:#e66767; --model:#b8955a; --crim:#4fb5c9;
-    --band-a:#2a3233; --band-b:#333c3d;
     color-scheme:dark;
   }
 }
@@ -37,59 +36,95 @@
   --pre:#3987e5; --sons:#d95926; --post:#199e70;
   --mesop:#9085e9; --egypt:#c98500; --anat:#d55181; --other:#2e9a2e;
   --cold:#7f9fbb; --flood:#e66767; --model:#b8955a; --crim:#4fb5c9;
-  --band-a:#2a3233; --band-b:#333c3d;
   color-scheme:dark;
 }
+@media (max-width:700px){ :root{--namesW:150px} }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5}
-.wrap{padding-inline:clamp(16px,2vw,32px);padding-block:24px 48px;width:100%;margin:0}
-header h1{font-family:var(--display);font-weight:700;font-size:clamp(26px,3.4vw,40px);line-height:1.1;margin:0 0 8px;text-wrap:balance}
-header p.lead{max-width:68ch;margin:0;color:var(--muted)}
-.controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:20px 0 10px}
-.ctl-group{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.ctl-group .lbl{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-right:4px}
-button.chip{font:inherit;font-size:13px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.wrap{padding-inline:clamp(12px,1.6vw,28px);padding-block:20px 48px;width:100%;margin:0}
+header h1{font-family:var(--display);font-weight:700;font-size:clamp(24px,3vw,38px);line-height:1.1;margin:0 0 8px;text-wrap:balance}
+header p.lead{max-width:80ch;margin:0 0 14px;color:var(--muted)}
+/* toolbar */
+.toolbar{position:sticky;top:0;z-index:30;background:var(--bg);padding:8px 0 8px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}
+.ctl{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ctl .lbl{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-right:2px}
+button.chip{font:inherit;font-size:13px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer;line-height:1.2}
 button.chip:hover{border-color:var(--accent)}
 button.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
-button.chip:focus-visible,button.icon:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-button.icon{font:inherit;width:30px;height:30px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
-.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted);margin:6px 0 10px}
+button.chip:focus-visible,button.icon:focus-visible,.nm:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.icon{font:inherit;font-size:16px;width:30px;height:30px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+input[type=range]{width:150px;accent-color:var(--accent)}
+.zinfo{font-family:var(--mono);font-size:12px;color:var(--muted);min-width:14ch}
+input.search{font:inherit;font-size:13px;padding:5px 10px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--fg);width:200px}
+.hint{font-size:12px;color:var(--muted);margin:8px 2px 10px;max-width:none}
+.hint kbd{font-family:var(--mono);font-size:11px;padding:1px 5px;border:1px solid var(--line);border-radius:4px;background:var(--surface)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--muted);margin:0 0 10px}
 .legend span{display:inline-flex;align-items:center;gap:6px}
-.legend i{display:inline-block;width:14px;height:9px;border-radius:2px}
-.legend i.dot{width:9px;height:9px;border-radius:50%}
-.chart{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}
-.chart svg{display:block;width:100%;touch-action:none;cursor:grab;user-select:none}
-.chart svg.dragging{cursor:grabbing}
-.hint{font-size:12px;color:var(--muted);margin:6px 2px 0}
-.tip{position:absolute;z-index:5;pointer-events:none;max-width:300px;background:var(--fg);color:var(--bg);padding:8px 10px;border-radius:6px;font-size:12.5px;line-height:1.4;box-shadow:0 4px 18px rgba(0,0,0,.25)}
-.tip b{display:block;font-size:13.5px;margin-bottom:2px}
-.tip .m{font-family:var(--mono);font-size:12px}
-.tip[hidden]{display:none}
+.legend i{display:inline-block;width:18px;height:9px;border-radius:2px;background:var(--muted)}
+/* timeline frame */
+.tl{border:1px solid var(--line);border-radius:10px;overflow:clip;background:var(--surface)}
+@media (max-width:700px){ .toolbar{position:static} .tl-head{top:0} }
+.tl-head{position:sticky;top:var(--toolbarH);z-index:20;display:grid;grid-template-columns:var(--namesW) minmax(0,1fr);background:var(--surface);border-bottom:1px solid var(--line);box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.corner{padding:8px 10px;font-size:11px;line-height:1.35;color:var(--muted);border-right:1px solid var(--line)}
+.corner b{display:block;color:var(--fg);font-size:12px}
+#axiswrap{overflow:hidden;min-width:0}
+#axiswrap svg{display:block}
+.tl-body{display:grid;grid-template-columns:var(--namesW) minmax(0,1fr)}
+#names{border-right:1px solid var(--line);min-width:0}
+#scroller{overflow-x:auto;overflow-y:hidden;min-width:0;overscroll-behavior-x:contain}
+#scroller svg{display:block;cursor:grab;user-select:none;touch-action:pan-y}
+#scroller svg.dragging{cursor:grabbing}
+/* name rows */
+.nm{display:flex;align-items:center;gap:6px;padding:0 8px;font-size:13px;white-space:nowrap;overflow:hidden;cursor:pointer;border-bottom:1px solid var(--line-soft)}
+.nm .ind{flex:none}
+.nm .sw{width:9px;height:9px;border-radius:2px;background:var(--c);flex:none}
+.nm .sw.hol{background:transparent;border:1.5px dashed var(--c);width:8px;height:8px}
+.nm .lb{overflow:hidden;text-overflow:ellipsis}
+.nm .lb.christ{font-weight:700}
+.nm .sb{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--muted);padding-left:6px;flex:none}
+.nm:hover,.nm.hov{background:color-mix(in srgb,var(--c) 16%,transparent)}
+.nm.sel{background:color-mix(in srgb,var(--c) 28%,transparent);font-weight:600}
+.nm.grp{background:color-mix(in srgb,var(--c) 18%,transparent);border-left:4px solid var(--c);font-weight:600;font-size:12.5px;padding-left:6px;border-bottom:1px solid var(--line)}
+.nm.grp .tri{width:12px;flex:none;color:var(--muted)} .nm.grp .tri::before{content:'▾'} .nm.grp.col .tri::before{content:'▸'}
+.nm.grp .gl{overflow:hidden;text-overflow:ellipsis}
+.nm.grp .cnt{margin-left:auto;font-weight:400;font-size:11px;color:var(--muted);font-family:var(--mono)}
+@keyframes flash{0%{box-shadow:inset 0 0 0 2px var(--accent)}100%{box-shadow:none}}
+.nm.flash{animation:flash 1.6s ease-out}
+/* svg */
 svg text{font-family:var(--body);fill:var(--fg)}
 svg text.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
 svg text.muted{fill:var(--muted)}
-svg text.cap{font-size:10px;letter-spacing:.08em;text-transform:uppercase;fill:var(--muted)}
 svg .grid{stroke:var(--line-soft);stroke-width:1}
-svg .axis{stroke:var(--line);stroke-width:1}
-svg .evline{stroke:var(--fg);stroke-width:1;stroke-dasharray:3 3;opacity:.55}
-svg .evline.flood{stroke:var(--flood);stroke-width:2;stroke-dasharray:none;opacity:.9}
-svg .evline.christ{stroke:var(--fg);stroke-width:2;stroke-dasharray:none;opacity:.9}
-svg .bar.per{fill:var(--fg);opacity:.32}
-svg .bar{rx:2;ry:2}
-svg .bar.pre{fill:var(--pre)} svg .bar.sons{fill:var(--sons)} svg .bar.post{fill:var(--post)}
-svg .bar.mesop{fill:var(--mesop)} svg .bar.egypt{fill:var(--egypt)} svg .bar.anat{fill:var(--anat)} svg .bar.other{fill:var(--other)}
-svg .mk.mesop{fill:var(--mesop)} svg .mk.egypt{fill:var(--egypt)} svg .mk.anat{fill:var(--anat)} svg .mk.other{fill:var(--other)}
-svg .bar.crim{fill:var(--crim)} svg .mk.crim{fill:var(--crim)}
-svg .mk.cold,svg .rng.cold{fill:var(--cold)} svg .mk.flood,svg .rng.flood{fill:var(--flood)} svg .rng.model{fill:var(--model)}
-svg .conn{stroke:var(--muted);stroke-width:1;fill:none;opacity:.7}
+svg .axt{stroke:var(--line);stroke-width:1} svg .axl{stroke:var(--line);stroke-width:1}
+svg .evl{stroke:var(--fg);stroke-width:1;stroke-dasharray:3 3;opacity:.45}
+svg .evl.flood{stroke:var(--flood);stroke-width:2;stroke-dasharray:none;opacity:.9}
+svg .evl.christ{stroke:var(--fg);stroke-width:2;stroke-dasharray:none;opacity:.9}
+svg .evt.flood{fill:var(--flood)}
+svg .conn{stroke:var(--fg);stroke-width:1;fill:none;opacity:.35}
+svg .conn.hl{stroke:var(--accent);stroke-width:2;opacity:1}
+svg .bar.hl{stroke:var(--accent);stroke-width:2}
+svg .bar.sel{stroke:var(--fg);stroke-width:2}
 svg .hit{fill:transparent}
+/* tooltip, detail */
+.tip{position:fixed;z-index:50;pointer-events:none;max-width:320px;background:var(--fg);color:var(--bg);padding:8px 10px;border-radius:6px;font-size:12.5px;line-height:1.4;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+.tip b{display:block;font-size:13.5px;margin-bottom:2px}
+.tip .m,.detail .m{font-family:var(--mono);font-size:12px}
+.tip[hidden],.detail[hidden]{display:none}
+.detail{position:fixed;right:14px;bottom:14px;z-index:40;width:min(400px,92vw);max-height:60vh;overflow:auto;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;box-shadow:0 8px 28px rgba(0,0,0,.22);font-size:13.5px;line-height:1.45}
+.detail h4{margin:0 24px 6px 0;font-family:var(--display);font-size:18px}
+.detail .m{display:block;color:var(--muted)}
+.detail .line{margin-top:8px;padding-top:8px;border-top:1px solid var(--line-soft);font-size:12.5px;color:var(--muted)} .detail .line b{color:var(--fg)}
+.detail .line .k{text-transform:uppercase;letter-spacing:.06em;font-size:10.5px}
+.detail .x{position:absolute;right:8px;top:8px;width:26px;height:26px;border:0;background:transparent;color:var(--muted);font-size:18px;cursor:pointer;border-radius:6px}
+.detail .x:hover{background:var(--surface-2)}
+/* reading column */
 section{margin-top:40px}
 h2{font-family:var(--display);font-weight:600;font-size:clamp(20px,2.4vw,27px);margin:0 0 10px;text-wrap:balance}
 h3{font-family:var(--display);font-weight:600;font-size:17px;margin:22px 0 6px}
 p,li{max-width:72ch}
 .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px 32px}
 .cols>div{min-width:0}
-.note{border-left:3px solid var(--accent);padding:4px 14px;color:var(--muted);font-size:14px;max-width:72ch}
+.note{border-left:3px solid var(--accent);padding:4px 14px;color:var(--muted);font-size:14px;max-width:80ch}
 .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
 table{border-collapse:collapse;width:100%;min-width:860px;font-size:14px}
 th,td{text-align:left;vertical-align:top;padding:10px 12px;border-top:1px solid var(--line-soft)}
@@ -97,13 +132,13 @@ th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute
 td.m{font-family:var(--mono);font-size:13px;white-space:nowrap}
 td b{font-weight:600}
 ul.src{font-size:13.5px;color:var(--muted);padding-left:18px}
+ul.src li{margin-bottom:4px;max-width:90ch}
 ul.tree{padding-left:18px;font-size:14px;max-width:none} ul.tree li{margin-bottom:6px;max-width:none} ul.tree ul{padding-left:18px;margin-top:4px;color:var(--muted);font-size:13px}
 p.chain{font-size:15px;line-height:1.7;max-width:none;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
-ul.src li{margin-bottom:4px;max-width:90ch}
 .kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:14px;align-items:baseline}
 .kv .k{font-family:var(--mono);font-size:13px;color:var(--muted);white-space:nowrap}
 footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
-@media (prefers-reduced-motion:no-preference){ .tip{transition:opacity .08s} }
+@media (prefers-reduced-motion:reduce){ .nm.flash{animation:none} }
 </style>
 
 </head>
@@ -111,53 +146,65 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
 <div class="wrap">
 <header>
   <h1>От Адама до Иисуса Христа: патриархи и древности Ближнего Востока</h1>
-  <p class="lead">Отрезки жизни допотопных патриархов, сыновей и внуков Ноя, линии Сима до Авраама и далее библейская история до Иисуса Христа по традиционной хронологии. На той же оси — археологические эпохи, памятники и климатические события в их общепринятых датах, чтобы было видно, где две системы счёта расходятся и где сходятся.</p>
+  <p class="lead">Отрезки жизни патриархов от Адама, ветвь Каина, сыновья и внуки Ноя, двенадцать колен, родословие Христа и история Израиля по традиционной библейской хронологии. На той же оси — археологические эпохи, памятники Ближнего Востока и Крыма, климатические события и народы от Иафета до Руси в их общепринятых датах.</p>
 </header>
 
-<div class="controls">
-  <div class="ctl-group" role="group" aria-label="Хронология">
+<div class="toolbar" id="toolbar">
+  <div class="ctl" role="group" aria-label="Хронология">
     <span class="lbl">Хронология</span>
-    <button class="chip" id="ch-mt" aria-pressed="true">Масоретский текст · Ашшер, 4004 до н.э.</button>
-    <button class="chip" id="ch-lxx" aria-pressed="false">Септуагинта · византийская эра, 5509 до н.э.</button>
+    <button class="chip" id="ch-mt" aria-pressed="true">Масоретский текст · 4004</button>
+    <button class="chip" id="ch-lxx" aria-pressed="false">Септуагинта · 5509</button>
   </div>
-  <div class="ctl-group" role="group" aria-label="Диапазон">
+  <div class="ctl" role="group" aria-label="Диапазон">
     <span class="lbl">Диапазон</span>
-    <button class="chip" data-view="10000,1500">Обзор 10 000–1500</button>
-    <button class="chip" data-view="12000,-1000">Весь 12 000 — 1000 н.э.</button>
+    <button class="chip" data-view="12000,-1000">Весь</button>
     <button class="chip" data-view="pre">Допотопный мир</button>
-    <button class="chip" data-view="post">От потопа до Авраама</button>
-    <button class="chip" data-view="4500,1500">Шумер, Египет, Авраам</button>
-    <button class="chip" data-view="2100,-100">От Авраама до Христа</button>
-    <button class="chip" data-view="1200,-1000">От Иафета до Руси</button>
-    <button class="icon" id="zin" title="Приблизить">+</button>
+    <button class="chip" data-view="post">Потоп → Авраам</button>
+    <button class="chip" data-view="4500,1500">Шумер, Египет</button>
+    <button class="chip" data-view="2100,-100">Авраам → Христос</button>
+    <button class="chip" data-view="1200,-1000">Иафет → Русь</button>
+  </div>
+  <div class="ctl" role="group" aria-label="Масштаб">
+    <span class="lbl">Масштаб</span>
     <button class="icon" id="zout" title="Отдалить">−</button>
+    <input type="range" id="zslider" min="0" max="100" value="0" aria-label="Масштаб времени">
+    <button class="icon" id="zin" title="Приблизить">+</button>
+    <span class="zinfo" id="zinfo"></span>
+  </div>
+  <div class="ctl">
+    <input class="search" id="search" list="names-list" placeholder="Найти имя или памятник…" aria-label="Поиск по именам">
+    <datalist id="names-list"></datalist>
+    <button class="chip" id="expandAll">Развернуть всё</button>
+    <button class="chip" id="collapseAll">Свернуть всё</button>
   </div>
 </div>
-
+<p class="hint">Колесо мыши листает страницу. Масштаб времени: слайдер, кнопки «−» «+» или <kbd>Ctrl</kbd> + колесо над схемой. Сдвиг по времени: перетаскивание схемы, <kbd>Shift</kbd> + колесо или полоса прокрутки внизу. Клик по имени или отрезку — карточка и подсветка родословной до Адама; клик по заголовку группы — свернуть или развернуть.</p>
 <div class="legend">
-  <span><i style="background:var(--pre)"></i>Быт. 5: Адам → Ной</span>
-  <span><i style="border:1px dashed var(--pre);background:transparent"></i>Быт. 4: ветвь Каина, без дат</span>
-  <span><i style="background:var(--sons)"></i>Сыновья Ноя</span>
-  <span><i style="border:1px dashed var(--sons);background:transparent"></i>Быт. 10: внуки Ноя, без дат</span>
-  <span><i style="background:var(--post)"></i>Быт. 11: Сим → Авраам → Иисус Христос</span>
-  <span><i style="border:1px dashed var(--post);background:transparent"></i>родословие Христа: положение условное</span>
-  <span><i style="background:var(--fg);opacity:.35"></i>периоды истории Израиля</span>
-  <span><i style="background:var(--crim)"></i>Крым: памятники потомков Иафета</span>
-  <span><i style="background:var(--sons)"></i>народы от Иафета до русских</span>
-  <span><i style="background:var(--mesop)"></i>Месопотамия</span>
-  <span><i style="background:var(--egypt)"></i>Египет</span>
-  <span><i style="background:var(--anat)"></i>Анатолия и Левант</span>
-  <span><i style="background:var(--other)"></i>Другие регионы</span>
-  <span><i class="dot" style="background:var(--cold)"></i>холод, ледник</span>
-  <span><i class="dot" style="background:var(--flood)"></i>наводнение, подъём моря</span>
-  <span><i style="background:var(--model);opacity:.6"></i>креационистская модель ледника</span>
+  <span><i style="background:var(--pre)"></i>сплошной отрезок — даты из текста</span>
+  <span><i style="background:transparent;border:1.5px dashed var(--sons)"></i>пунктир — положение условное, дат нет</span>
+  <span><i style="background:linear-gradient(90deg,var(--sons),transparent)"></i>выцветание — смерть не указана</span>
+  <span><i style="background:repeating-linear-gradient(45deg,var(--model) 0 2px,transparent 2px 5px)"></i>штриховка — модель, не данные</span>
+  <span><i style="width:9px;height:9px;transform:rotate(45deg);background:var(--flood)"></i>ромб — событие или находка</span>
+  <span><i style="background:var(--mesop)"></i>Месопотамия</span><span><i style="background:var(--egypt)"></i>Египет</span><span><i style="background:var(--anat)"></i>Анатолия, Левант</span><span><i style="background:var(--other)"></i>другие регионы</span><span><i style="background:var(--crim)"></i>Крым</span>
 </div>
 
-<div class="chart" id="chart">
-  <svg id="tl" role="img" aria-label="Таймлайн патриархов и археологии"></svg>
-  <div class="tip" id="tip" hidden></div>
+<div class="tl" id="tl">
+  <div class="tl-head">
+    <div class="corner"><b>годы до н.э. / н.э.</b>вторая строка — от сотворения мира</div>
+    <div id="axiswrap"><svg id="tlaxis" role="img" aria-label="Ось времени"></svg></div>
+  </div>
+  <div class="tl-body">
+    <div id="names" aria-label="Имена и памятники"></div>
+    <div id="scroller"><svg id="tlbody" role="img" aria-label="Таймлайн патриархов и археологии"></svg></div>
+  </div>
 </div>
-<div class="hint">Колесо мыши над схемой — масштаб, перетаскивание — сдвиг, наведение — подробности. Внизу шкала лет от сотворения мира, вверху — до н.э.</div>
+<div class="tip" id="tip" hidden></div>
+<div class="detail" id="detail" hidden>
+  <button class="x" id="dclose" aria-label="Закрыть">×</button>
+  <h4 id="dtitle"></h4>
+  <div id="dbody"></div>
+  <div class="line" id="dline"></div>
+</div>
 
 <section>
   <h2>Что видно на таймлайне</h2>
@@ -670,340 +717,321 @@ const SITES=[
 
 /* ---------- State ---------- */
 const FULL={t0:-12000,t1:1000};
-let view={t0:-10000,t1:-1500};
+const ZMIN=1, ZMAX=120;
 let chKey='mt', D=build(CHRONO.mt);
-const svg=document.getElementById('tl'), tipEl=document.getElementById('tip'), chart=document.getElementById('chart');
-let tips=[];
+let zoom=1;
+const collapsed=new Set(['climate','sites','crimea']);
+let rows=[], rowById={}, tips=[], selectedId=null;
+const el=id=>document.getElementById(id);
+const scroller=el('scroller'), bodySvg=el('tlbody'), axisSvg=el('tlaxis'), axisWrap=el('axiswrap'), namesCol=el('names'), tipEl=el('tip'), detail=el('detail'), tlEl=el('tl');
 const amT=am=>am-D.epoch;
 const fmtBC=t=>t<=0?(-t).toLocaleString('ru-RU')+' до н.э.':(t).toLocaleString('ru-RU')+' н.э.';
 const fmtAM=am=>am.toLocaleString('ru-RU')+' от С.М.';
-const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const INK={'--egypt':'#1b1b1b','--sons':'#fff','--pre':'#fff','--post':'#fff','--mesop':'#fff','--anat':'#1b1b1b','--other':'#fff','--crim':'#fff','--cold':'#fff','--flood':'#fff','--model':'#fff','--fg':'var(--bg)'};
+const ROW_H=22, GROUP_H=28, BAND_H=30, BAR_H=13;
 
-function tickStep(span){ if(span>6000)return 1000; if(span>2500)return 500; if(span>1200)return 250; if(span>500)return 100; return 50; }
+/* ---------- Rows model ---------- */
+function buildRows(){
+  rows=[]; rowById={}; tips=[];
+  const tip=h=>{tips.push(h);return tips.length-1;};
+  const add=r=>{ if(!r.id) r.id='r'+rows.length; rows.push(r); rowById[r.id]=r; return r; };
+  const group=(gid,label,color,sub)=>add({kind:'group',id:'g:'+gid,gid,label,color,sub});
+  const lifeTxt=p=>p.nolife?'земная жизнь: от Рождества до Воскресения':(p.hollow?'годы жизни в тексте не указаны; положение условное':(p.reign?'показаны годы правления':(p.life==null?'продолжительность жизни не указана':`прожил ${p.life} лет`)));
+  const personTip=(p,a,b,extra)=>tip(`<b>${esc(p.name)}</b><span class="m">${p.approx||p.hollow?'≈ ':''}${p.born!=null?fmtAM(p.born):''}${p.born!=null?' → ':''}${p.died==null?'?':fmtAM(p.died)}</span><br><span class="m">${fmtBC(a)} → ${b==null?'?':fmtBC(b)}</span><br>${lifeTxt(p)}${p.sonAge?'; сын родился, когда ему было '+p.sonAge:''}${p.note?'<br>'+esc(p.note):''}${p.taken?'<br>Взят Богом, не умер (Быт. 5:24)':''}${extra||''}<br><i>${esc(p.ref||'')}</i>`);
+  const person=(p,gid,color,depth,parentId,opts)=>{
+    opts=opts||{};
+    const a=p.t0!=null?p.t0:amT(p.born);
+    let b=null, kind='bar';
+    if(p.hollow){ kind='hollow'; b=a+(opts.hollowLen||70); }
+    else if(p.died==null){ kind='fade'; b=a+600; }
+    else b=p.t1!=null?p.t1:amT(p.died);
+    const id=gid+':'+p.name+(opts.suffix||'');
+    const sub=p.nolife?'4 до н.э. – 33 н.э.':(p.hollow?'≈ '+fmtBC(a).replace(' до н.э.','')+(a<=0?' до н.э.':''):(p.reign?'правл. '+(-p.t0)+'–'+(-p.t1):(p.life!=null?p.life+' лет':'† ?')));
+    return add({kind,id,gid,label:(p.king?'♛ ':'')+(p.christ?'✝ ':'')+p.name,depth:depth||0,parentId,t0:a,t1:b,color,tip:personTip(p,a,p.died==null?null:b,opts.extra),sub,taken:p.taken,christ:p.christ,reign:p.reign,abel:p.abel,inbar:p.life!=null&&!p.hollow?String(p.life):''});
+  };
+
+  /* epochs */
+  group('epochs','Археологические эпохи','--fg','общепринятая периодизация Ближнего Востока');
+  const EP_COL=['--muted','--cold','--other','--post','--sons','--flood','--mesop','--pre','--anat','--egypt','--muted'];
+  add({kind:'band',gid:'epochs',label:'эпохи',sub:'',blocks:EPOCHS.map((e,i)=>({t0:-e[1],t1:-e[2],label:e[0],color:EP_COL[i%EP_COL.length],tip:tip(`<b>${esc(e[0])}</b><span class="m">${fmtBC(-e[1])} – ${fmtBC(-e[2])}</span><br>Общепринятая периодизация Ближнего Востока.`)}))});
+
+  /* climate */
+  group('climate','Климат: ледники, наводнения, засухи','--cold','общепринятые даты; штриховка — модель Орда');
+  CLIMATE.filter(c=>c.t==='r').forEach(c=>add({kind:'range',gid:'climate',label:c.label,sub:`${c.a.toLocaleString('ru-RU')}–${c.b.toLocaleString('ru-RU')}`,t0:-c.a,t1:-c.b,color:c.cls==='cold'?'--cold':'--flood',tip:tip(`<b>${esc(c.label)}</b><span class="m">${fmtBC(-c.a)} – ${fmtBC(-c.b)}</span><br>${esc(c.note)}`)}));
+  add({kind:'hatch',gid:'climate',label:'Послепотопный ледник (модель Орда)',sub:'потоп + 700 лет',t0:amT(D.flood),t1:amT(D.flood+700),color:'--model',tip:tip(`<b>Послепотопный ледниковый период (модель Орда)</b><span class="m">${fmtAM(D.flood)} – ${fmtAM(D.flood+700)}</span><br>Креационистская модель: один ледниковый период, вызванный потопом; максимум через ~500 лет, таяние ~200 лет.`)});
+  CLIMATE.filter(c=>c.t==='m').forEach(c=>add({kind:'marker',gid:'climate',label:c.label,sub:'≈ '+c.a.toLocaleString('ru-RU'),t:-c.a,color:c.cls==='cold'?'--cold':'--flood',hollow:!!c.hollow,tip:tip(`<b>${esc(c.label)}</b><span class="m">≈ ${fmtBC(-c.a)}</span><br>${esc(c.note)}`)}));
+  add({kind:'marker',gid:'climate',label:'Черноморский потоп (в этой схеме)',sub:'потоп + 600',t:amT(D.flood+600),color:'--flood',tip:tip(`<b>Черноморский потоп (в этой схеме)</b><span class="m">≈ ${fmtAM(D.flood+600)} · ${fmtBC(amT(D.flood+600))}</span><br>Следствие всемирного потопа, произошедшее явно позже схода его вод: прорыв Босфора при подъёме Мирового океана во время таяния послепотопного ледника. Положение условное — конец таяния ледника по модели Орда.`)});
+
+  /* Genesis 4–5 */
+  group('gen5','Быт. 4–5: Адам → Ной, ветвь Каина','--pre',`сотворение ${D.epoch} до н.э.; потоп ${D.epoch-D.flood} до н.э.`);
+  let prevId=null;
+  D.P.forEach((p,i)=>{
+    const r=person(p,'gen5','--pre',0,prevId); prevId=r.id;
+    if(i===0){
+      const cainLen=Math.round(D.flood*0.3); const cmap={};
+      CAIN.filter(c=>!c.abel).concat(CAIN.filter(c=>c.abel)).forEach(c=>{
+        const bAM=Math.round(D.flood*c.frac); const eAM=c.abel?D.P[1].born-5:bAM+cainLen;
+        const par=c.parent==='Адам'?r.id:cmap[c.parent];
+        const depth=c.parent==='Адам'?1:(c.parent==='Каин'?2:(['Иавал','Иувал','Тувалкаин','Ноема'].includes(c.name)?3:2));
+        const rr=add({kind:c.abel?'cut':'hollow',id:'cain:'+c.name,gid:'gen5',label:c.name,depth,parentId:par,t0:amT(bAM),t1:amT(eAM),color:'--pre',sub:c.abel?'† убит':'≈ '+fmtAM(bAM).replace(' от С.М.',''),tip:tip(`<b>${esc(c.name)}</b><span class="m">≈ ${fmtAM(bAM)} · ${fmtBC(amT(bAM))}${c.abel?' → убит до '+fmtAM(eAM):''}</span><br>${c.note?esc(c.note)+'<br>':''}Дат в тексте нет; положение отрезка условное${c.abel?'':', длина '+cainLen+' лет'}.<br><i>${esc(c.ref)}</i>`)});
+        cmap[c.name]=rr.id;
+      });
+    }
+  });
+  const noahId=prevId;
+
+  /* Noah's sons and grandsons */
+  group('sons','Быт. 10: сыновья Ноя и их сыновья','--sons','внуки Ноя без дат — пунктир; Арфаксад продолжает линию ниже');
+  const natStart=amT(D.flood+2), natLen=D.G[0].life;
+  let shemId=null;
+  ['Иафет','Хам','Сим'].forEach(sn=>{
+    const son=D.sons.find(q=>q.name===sn); const r=person(son,'sons','--sons',sn==='Сим'?0:1,noahId); if(sn==='Сим') shemId=r.id;
+    const g=NATIONS.find(q=>q.parent===sn);
+    g.list.filter(n=>n.name!=='Арфаксад').forEach(n=>{
+      const rr=add({kind:'hollow',id:'nat:'+n.name,gid:'sons',label:n.name,depth:sn==='Сим'?1:2,parentId:r.id,t0:natStart,t1:natStart+natLen,color:'--sons',sub:n.sons?n.sons.split(',')[0].replace(/ \(.*$/,'')+'…':'',tip:tip(`<b>${esc(n.name)}, сын ${g.gen}</b><span class="m">родился после потопа; годы жизни не указаны</span><br>${n.sons?'Сыновья: '+esc(n.sons)+'.<br>':''}Отождествление: ${esc(n.ident)}.<br>Отрезок условный: первые годы после потопа, длина как у Арфаксада (${natLen} лет).`)});
+      if(n.name==='Хуш') add({kind:'hollow',id:'nat:Нимрод',gid:'sons',label:'Нимрод',depth:3,parentId:rr.id,t0:natStart+40,t1:natStart+40+natLen,color:'--sons',sub:'внук Хама',tip:tip(`<b>Нимрод, сын Хуша</b><span class="m">внук Хама; 2–3 поколения после потопа</span><br>«Сильный зверолов пред Господом»; основал Вавилон, Эрех (Урук), Аккад, Халне в Сеннааре, Ниневию, Калах в Ассирии.<br><i>Быт. 10:8–12</i>`)});
+    });
+  });
+
+  /* Genesis 11 */
+  group('gen11','Быт. 11: Сим → Арфаксад → Авраам','--post',`Вавилон ≈ ${D.epoch-D.peleg.born} до н.э.; Авраам ${D.epoch-D.abr.born} до н.э.`);
+  prevId=shemId;
+  D.G.forEach(p=>{ const r=person(p,'gen11','--post',0,prevId); prevId=r.id; });
+  const abrId=prevId;
+
+  /* Abraham → Jacob → tribes, royal line, kings, post-exile */
+  const lateGroups=[
+    {gid:'tribes',label:'Дети Авраама, Исаака, Иакова: Измаил, Исав, 12 колен',color:'--egypt',until:'Вениамин'},
+    {gid:'royal',label:'Родословие Христа по Мф. 1: Иуда → Иессей',color:'--anat',until:'Иессей'},
+    {gid:'kings',label:'Давид и цари Иудеи (Мф. 1)',color:'--other',until:'Иехония'},
+    {gid:'postexile',label:'После плена: Салафииль → Иосиф → Иисус Христос',color:'--mesop',until:'Иисус Христос'}
+  ];
+  let gi=0; let cur=lateGroups[0]; group(cur.gid,cur.label,cur.color,'');
+  const byName={'Авраам':abrId}; prevId=abrId;
+  D.late.forEach(p=>{
+    const parent=p.parent?(byName[p.parent]||prevId):prevId;
+    const depth=p.branch?1:0;
+    const king=cur.gid==='kings';
+    const r=person(Object.assign({king},p),cur.gid,cur.color,depth,parent); byName[p.name]=r.id; if(!p.branch) prevId=r.id;
+    if(p.name===cur.until && gi<lateGroups.length-1){ gi++; cur=lateGroups[gi]; group(cur.gid,cur.label,cur.color,''); }
+  });
+  group('others','Другие лица: Моисей, Иисус Навин','--post','не в родословии Христа');
+  D.others.forEach(p=>person(p,'others','--post',0,null));
+
+  /* periods, peoples */
+  group('periods','История Израиля (по Ашшеру)','--fg','после Авраама обе хронологии совпадают');
+  PERIODS.forEach(q=>add({kind:'range',gid:'periods',label:q.label,sub:`${-q.a}–${q.b<=0?-q.b:q.b+' н.э.'}`,t0:q.a,t1:q.b,color:'--fg',tip:tip(`<b>${esc(q.label)}</b><span class="m">${fmtBC(q.a)} – ${fmtBC(q.b)}</span><br>${esc(q.note)}`)}));
+  group('peoples','От Иафета до русских','--sons','цепочка летописной традиции; общепринятые даты');
+  PEOPLES.forEach(q=>{
+    if(q.m!=null) add({kind:'marker',gid:'peoples',label:q.label,sub:fmtBC(q.m),t:q.m,color:'--sons',tip:tip(`<b>${esc(q.label)}</b><span class="m">${fmtBC(q.m)}</span><br>${esc(q.note)}<br><i>${esc(q.ref)}</i>`)});
+    else add({kind:'range',gid:'peoples',label:q.label,sub:`${q.a<=0?-q.a:q.a+' н.э.'} – ${q.b<=0?-q.b:q.b+' н.э.'}`,t0:q.a,t1:q.b,color:'--sons',tip:tip(`<b>${esc(q.label)}</b><span class="m">${fmtBC(q.a)} – ${fmtBC(q.b)}</span><br>${esc(q.note)}<br><i>${esc(q.ref)}</i>`)});
+  });
+
+  /* archaeology */
+  const REG={mesop:'--mesop',egypt:'--egypt',anat:'--anat',other:'--other',crim:'--crim'};
+  const siteRow=(s,gid)=>{
+    const color=REG[s.cls]; const extra=`${s.who?'<br>Исследователи: '+esc(s.who)+'.':''}${s.bib?'<br>Прочтение в схеме: '+esc(s.bib)+'.':''}`;
+    if(s.off) return add({kind:'off',gid,label:s.label,sub:s.ky,color,tip:tip(`<b>${esc(s.label)}</b><span class="m">общепринято: ${esc(s.ky)} — раньше начала шкалы</span><br>${esc(s.note)}${extra}`)});
+    if(s.m!=null) return add({kind:'marker',gid,label:s.label,sub:'≈ '+fmtBC(-s.m),t:-s.m,color,tip:tip(`<b>${esc(s.label)}</b><span class="m">≈ ${fmtBC(-s.m)}</span><br>${esc(s.note)}${extra}`)});
+    return add({kind:'range',gid,label:s.label,sub:`${s.a<=0?-s.a+' н.э.':s.a} – ${s.b<=0?-s.b+' н.э.':s.b}`,t0:-s.a,t1:-s.b,color,tip:tip(`<b>${esc(s.label)}</b><span class="m">${fmtBC(-s.a)} – ${fmtBC(-s.b)}</span><br>${esc(s.note)}${extra}`)});
+  };
+  group('sites','Памятники и цивилизации Ближнего Востока','--mesop','общепринятые даты · цвет = регион');
+  SITES.forEach(s=>siteRow(s,'sites'));
+  group('crimea','Крым: раскопки Бибикова, Бонч-Осмоловского и других','--crim','общепринятые даты; в схеме — памятники потомков Иафета');
+  CRIMEA.forEach(s=>siteRow(s,'crimea'));
+}
+
+/* ---------- Geometry ---------- */
+function est(s,fs){ return String(s).length*fs*0.58; }
+function tickStep(pxPerYear){ const steps=[10,25,50,100,250,500,1000,2000,5000]; for(const st of steps){ if(st*pxPerYear>=72) return st; } return 5000; }
+
+function layoutRows(){
+  let y=0;
+  rows.forEach(r=>{
+    const hidden=r.kind!=='group'&&collapsed.has(r.gid);
+    r.hidden=hidden; r.y=y; r.h=hidden?0:(r.kind==='group'?GROUP_H:r.kind==='band'?BAND_H:ROW_H); y+=r.h;
+  });
+  return y;
+}
 
 function render(){
-  const W=Math.max(320,chart.clientWidth-2);
-  const padL=6,padR=6,innerW=W-padL-padR;
-  const span=view.t1-view.t0;
-  const x=t=>padL+(t-view.t0)/span*innerW;
-  const small=W<640; const fs=small?10.5:11.5; const row=small?15:17;
-  const out=[]; tips=[];
-  const tip=html=>{tips.push(html);return tips.length-1;};
+  const Wv=Math.max(200,scroller.clientWidth); const W=Math.round(Wv*zoom);
+  const span=FULL.t1-FULL.t0; const pxY=W/span; const x=t=>(t-FULL.t0)*pxY;
+  const H=layoutRows();
+  const small=window.innerWidth<640; const fs=small?10.5:11.5;
 
-  // layout
-  const axisH=36, epY=42, epH=24, clY=epY+epH+10, clH=80;
-  const evY=clY+clH+8, evH=46;
-  let y=evY+evH+6;
-  const preRows=D.P.length, sonsRows=D.sons.length, postRows=D.G.length;
-  const nrow=row-3; const natRows=NATIONS.reduce((n,g)=>n+g.list.length,0);
-  const natH=(natRows-1)*nrow+NATIONS.length*16+10;
-  const genH=18+D.late.length*nrow+D.late.filter(q=>q.capBefore).length*16+18+D.others.length*row+6;
-  const cainH=12+CAIN.length*nrow+4;
-  const patY=y; y+=(preRows+sonsRows+postRows)*row+3*10+6+natH+genH+cainH;
-  const perY=y+8; y=perY+PERIODS.length*(row-4)+16;
-  const peoY=y+8; y=peoY+PEOPLES.length*(row-4)+16;
-  const arcHeadY=y; y+=22;
-  const arcY=y; y+=SITES.length*(row-1)+6;
-  const crimHeadY=y; y+=22;
-  const crimY=y; y+=CRIMEA.length*(row-1)+6;
-  const botAxisY=y; const H=botAxisY+axisH+4;
+  /* names column */
+  const counts={}; rows.forEach(r=>{ if(r.kind!=='group') counts[r.gid]=(counts[r.gid]||0)+1; });
+  namesCol.innerHTML=rows.filter(r=>!r.hidden).map(r=>{
+    if(r.kind==='group') return `<div class="nm grp${collapsed.has(r.gid)?' col':''}" data-row="${r.id}" style="--c:var(${r.color});height:${r.h}px" role="button" tabindex="0" aria-expanded="${!collapsed.has(r.gid)}"><span class="tri"></span><span class="gl">${esc(r.label)}</span><span class="cnt">${counts[r.gid]||0}</span></div>`;
+    return `<div class="nm${r.id===selectedId?' sel':''}" data-row="${r.id}" style="height:${r.h}px;--c:var(${r.color})"><span class="ind" style="width:${(r.depth||0)*14}px"></span><span class="sw${r.kind==='hollow'||r.kind==='cut'?' hol':''}"></span><span class="lb${r.christ?' christ':''}">${esc(r.label)}</span><span class="sb">${esc(r.sub||'')}</span></div>`;
+  }).join('');
 
-  out.push(`<defs><clipPath id="clip"><rect x="${padL}" y="0" width="${innerW}" height="${H}"/></clipPath>
-  <linearGradient id="fadeS" x1="0" x2="1"><stop offset="0" stop-color="var(--sons)"/><stop offset="1" stop-color="var(--sons)" stop-opacity="0"/></linearGradient>
-  <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="none"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--model)" stroke-width="2"/></pattern></defs>`);
+  /* axis */
+  const step=tickStep(pxY); const ax=[]; const AXH=64;
+  const first=Math.ceil(FULL.t0/step)*step;
+  for(let t=first;t<=FULL.t1;t+=step){ const X=x(t); ax.push(`<line x1="${X}" y1="0" x2="${X}" y2="${AXH}" class="axt"/>`); ax.push(`<text class="num" x="${X+3}" y="13" font-size="${fs}">${t<=0?(-t).toLocaleString('ru-RU'):t+' н.э.'}</text>`); }
+  const amFirst=Math.max(0,Math.ceil((FULL.t0+D.epoch)/step)*step);
+  for(let am=amFirst;am<=FULL.t1+D.epoch;am+=step){ const X=x(amT(am)); ax.push(`<text class="num muted" x="${X+3}" y="29" font-size="${fs-1}">${am.toLocaleString('ru-RU')}</text>`); }
+  ax.push(`<line x1="0" y1="17" x2="${W}" y2="17" class="axl"/><line x1="0" y1="33" x2="${W}" y2="33" class="axl"/>`);
+  D.events.forEach((e,i)=>{ const X=x(amT(e.am)); const k=tips.push(`<b>${esc(e.label)}</b><span class="m">${fmtAM(e.am)} · ${fmtBC(amT(e.am))}</span><br>${esc(e.ref)}`)-1;
+    ax.push(`<g data-i="${k}"><line x1="${X}" y1="34" x2="${X}" y2="${AXH}" class="evl ${e.cls||''}"/><text x="${X+4}" y="${i%2?61:48}" font-size="${fs}" font-weight="600" class="evt ${e.cls||''}">${esc(e.label)}</text></g>`); });
+  axisSvg.setAttribute('viewBox',`0 0 ${W} ${AXH}`); axisSvg.setAttribute('width',W); axisSvg.setAttribute('height',AXH); axisSvg.innerHTML=ax.join('');
 
-  // grid + top axis (BC)
-  const step=tickStep(span);
-  const first=Math.ceil(view.t0/step)*step;
-  for(let t=first;t<=view.t1;t+=step){
-    const X=x(t); const major=(t%(step*2)===0);
-    out.push(`<line class="grid" x1="${X}" y1="${axisH}" x2="${X}" y2="${botAxisY}" ${major?'':'opacity=".5"'}/>`);
-    out.push(`<text class="num" x="${X}" y="14" text-anchor="middle" font-size="${fs}">${t<=0?(-t).toLocaleString('ru-RU'):t+' н.э.'}</text>`);
-  }
-  out.push(`<text class="cap" x="${padL+2}" y="${axisH-6}">годы до н.э.</text>`);
-  out.push(`<line class="axis" x1="${padL}" y1="${axisH}" x2="${W-padR}" y2="${axisH}"/>`);
-  // bottom axis (AM)
-  out.push(`<line class="axis" x1="${padL}" y1="${botAxisY}" x2="${W-padR}" y2="${botAxisY}"/>`);
-  const amFirst=Math.max(0,Math.ceil((view.t0+D.epoch)/step)*step);
-  for(let am=amFirst;am<=view.t1+D.epoch;am+=step){
-    const X=x(amT(am));
-    out.push(`<line class="axis" x1="${X}" y1="${botAxisY}" x2="${X}" y2="${botAxisY+5}"/>`);
-    out.push(`<text class="num" x="${X}" y="${botAxisY+18}" text-anchor="middle" font-size="${fs}">${am.toLocaleString('ru-RU')}</text>`);
-  }
-  out.push(`<text class="cap" x="${padL+2}" y="${botAxisY+30}">годы от сотворения мира (${esc(D.label)})</text>`);
-
-  out.push(`<g clip-path="url(#clip)">`);
-
-  // epochs band
-  EPOCHS.forEach((e,i)=>{
-    const a=Math.max(-e[1],view.t0), b=Math.min(-e[2],view.t1); if(b<=a)return;
-    const X=x(a), Wd=x(b)-X;
-    const k=tip(`<b>${esc(e[0])}</b><span class="m">${fmtBC(-e[1])} – ${fmtBC(-e[2])}</span><br>Общепринятая периодизация Ближнего Востока.`);
-    out.push(`<rect data-i="${k}" x="${X}" y="${epY}" width="${Wd}" height="${epH}" fill="var(${i%2?'--band-b':'--band-a'})"/>`);
-    if(Wd>40) out.push(`<text x="${X+6}" y="${epY+epH/2+4}" font-size="${fs}" pointer-events="none">${fitText(e[0],Wd-10,fs)}</text>`);
+  /* body */
+  const out=[];
+  out.push(`<defs>${['--pre','--sons','--post'].map(c=>`<linearGradient id="fade${c.slice(2)}" x1="0" x2="1"><stop offset="0" stop-color="var(${c})"/><stop offset="1" stop-color="var(${c})" stop-opacity="0"/></linearGradient>`).join('')}<pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="var(--model)" stroke-width="2"/></pattern></defs>`);
+  // group tints + zebra
+  let zi=0;
+  rows.forEach(r=>{ if(r.hidden) return;
+    if(r.kind==='group'){ out.push(`<rect x="0" y="${r.y}" width="${W}" height="${r.h}" fill="var(${r.color})" opacity=".16"/>`); zi=0; }
+    else { out.push(`<rect x="0" y="${r.y}" width="${W}" height="${r.h}" fill="var(${r.color})" opacity="${zi%2?.03:.07}"/>`); zi++; }
   });
-  out.push(`<text class="cap" x="${padL+2}" y="${epY-3}">археологические эпохи (общепринятая шкала)</text>`);
-
-  // climate lane
-  out.push(`<text class="cap" x="${padL+2}" y="${clY+8}">климат: ледники, наводнения, засухи</text>`);
-  // creationist post-flood ice age band
-  {
-    const a=amT(D.flood), b=amT(D.flood+700);
-    const k=tip(`<b>Послепотопный ледниковый период (модель Орда)</b><span class="m">${fmtAM(D.flood)} – ${fmtAM(D.flood+700)}</span><br>Креационистская модель: один ледниковый период, вызванный потопом, максимум через ~500 лет, таяние ~200 лет. Не часть общепринятой науки.`);
-    out.push(`<rect data-i="${k}" x="${x(a)}" y="${clY+14}" width="${Math.max(2,x(b)-x(a))}" height="10" fill="url(#hatch)" opacity=".85"/>`);
-    if(x(b)-x(a)>90) out.push(`<text class="muted" x="${x(a)+3}" y="${clY+36}" font-size="${fs-1.5}" pointer-events="none">ледник по модели Орда</text>`);
-  }
-  CLIMATE.forEach(c=>{
-    if(c.t==='r'){
-      const a=-c.a,b=-c.b; const X=x(a),Wd=Math.max(2,x(b)-X);
-      const k=tip(`<b>${esc(c.label)}</b><span class="m">${c.a.toLocaleString('ru-RU')} – ${c.b.toLocaleString('ru-RU')} до н.э.</span><br>${esc(c.note)}`);
-      const yy=c.cls==='cold'?clY+14:clY+28;
-      out.push(`<rect data-i="${k}" class="rng ${c.cls}" x="${X}" y="${yy}" width="${Wd}" height="11" rx="2" opacity=".85"/>`);
-      const lw=est(c.label,fs-1.5)+8;
-      if(Wd>lw) out.push(`<text x="${X+4}" y="${yy+9}" font-size="${fs-1.5}" fill="#fff" pointer-events="none">${esc(c.label)}</text>`);
-      else if(X+Wd+lw<W) out.push(`<text class="muted" x="${X+Wd+4}" y="${yy+9}" font-size="${fs-1.5}" pointer-events="none">${esc(c.label)}</text>`);
+  // vertical grid
+  for(let t=first;t<=FULL.t1;t+=step){ const X=x(t); out.push(`<line x1="${X}" y1="0" x2="${X}" y2="${H}" class="grid"/>`); }
+  // event lines
+  D.events.forEach(e=>{ const X=x(amT(e.am)); out.push(`<line x1="${X}" y1="0" x2="${X}" y2="${H}" class="evl ${e.cls||''}"/>`); });
+  // rows
+  const chain=selectedId?ancestry(selectedId):new Set();
+  rows.forEach(r=>{ if(r.hidden||r.kind==='group') return;
+    const cy=r.y+r.h/2, by=cy-BAR_H/2; const ink=INK[r.color]||'#fff';
+    const hl=chain.has(r.id); const hit=(x0,w)=>`<rect data-i="${r.tip}" data-row="${r.id}" class="hit" x="${x0}" y="${r.y}" width="${Math.max(w,24)}" height="${r.h}"/>`;
+    if(r.kind==='band'){
+      r.blocks.forEach(b=>{ const X=x(b.t0), Wd=x(b.t1)-X; out.push(`<rect data-i="${b.tip}" x="${X}" y="${r.y+3}" width="${Wd}" height="${r.h-6}" rx="3" fill="var(${b.color})" opacity=".55"/>`); if(Wd>est(b.label,fs)+10) out.push(`<text x="${X+6}" y="${cy+4}" font-size="${fs}" font-weight="500" pointer-events="none">${esc(b.label)}</text>`); });
+      return;
     }
-  });
-  let mi=0;
-  const CLIM_M=CLIMATE.filter(c=>c.t==='m').concat([{cls:'flood',bibAM:D.flood+600,label:'Черноморский потоп (в этой схеме)',note:'Следствие всемирного потопа, произошедшее явно позже схода его вод: прорыв Босфора при подъёме Мирового океана во время таяния послепотопного ледника. Положение условное — конец таяния ледника по модели Орда, примерно 500–700 лет после потопа.'}]);
-  CLIM_M.forEach(c=>{
-    const tt=c.bibAM!=null?amT(c.bibAM):-c.a; const X=x(tt); if(X<padL-20||X>W)return;
-    const k=tip(`<b>${esc(c.label)}</b><span class="m">≈ ${c.bibAM!=null?fmtAM(c.bibAM)+' · ':''}${fmtBC(tt)}</span><br>${esc(c.note)}`);
-    const yy=clY+50; const ly=clY+[62,72,82][mi%3];
-    out.push(`<circle data-i="${k}" class="mk ${c.cls}" cx="${X}" cy="${yy}" r="4.5" ${c.hollow?'fill="var(--surface)" stroke="var(--flood)" stroke-width="1.5"':''}/>`);
-    out.push(`<text class="muted" x="${X+6}" y="${ly}" font-size="${fs-1.5}" pointer-events="none">${esc(shortLabel(c.label,span))}</text>`);
-    mi++;
-  });
-
-  // biblical events: vertical lines
-  D.events.forEach((e,i)=>{
-    const X=x(amT(e.am)); if(X<padL-2||X>W)return;
-    const k=tip(`<b>${esc(e.label)}</b><span class="m">${fmtAM(e.am)} · ${fmtBC(amT(e.am))}</span><br>${esc(e.ref)}`);
-    out.push(`<line data-i="${k}" class="evline ${e.cls||''}" x1="${X}" y1="${evY}" x2="${X}" y2="${botAxisY}"/>`);
-    out.push(`<rect data-i="${k}" class="hit" x="${X-5}" y="${evY}" width="10" height="${botAxisY-evY}"/>`);
-    const ly=evY+[12,26,40][i%3];
-    out.push(`<text x="${X+4}" y="${ly}" font-size="${fs}" font-weight="${e.cls?'600':'500'}" ${e.cls==='flood'?'fill="var(--flood)"':''} pointer-events="none">${esc(span>3000&&e.short?e.short:e.label)}</text>`);
-  });
-
-  const bandAt=out.length;
-
-  // patriarch bars
-  function bar(p,yy,prev,rh){
-    rh=rh||row; const fz=rh<row?fs-1:fs;
-    const a=p.t0!=null?p.t0:amT(p.born); const X=x(a);
-    const cls=p.group;
-    let Wd;
-    if(p.hollow){ Wd=x(a+70)-X; }
-    else if(p.died==null){ Wd=x(amT(p.born+600))-X; }
-    else Wd=x(p.t1!=null?p.t1:amT(p.died))-X;
-    Wd=Math.max(1.5,Wd);
-    const lifeTxt=p.nolife?'земная жизнь: от Рождества до Воскресения':(p.hollow?'годы жизни в тексте не указаны; положение отрезка условное, длина 70 лет':(p.reign?'показаны годы правления':(p.life==null?'продолжительность жизни в тексте не указана':`прожил ${p.life} лет`)));
-    const sonTxt=p.sonAge?`сын родился, когда ему было ${p.sonAge}`:'';
-    const tEnd=p.died==null?null:(p.t1!=null?p.t1:amT(p.died));
-    const k=tip(`<b>${esc(p.name)}</b><span class="m">${p.approx?'≈ ':''}${fmtAM(p.born)} → ${p.died==null?'?':fmtAM(p.died)}</span><br><span class="m">${fmtBC(a)} → ${tEnd==null?'?':fmtBC(tEnd)}</span><br>${lifeTxt}${sonTxt?'; '+sonTxt:''}${p.note?'<br>'+esc(p.note):''}${p.taken?'; взят Богом, не умер (Быт. 5:24)':''}${p.t0!=null&&chKey==='lxx'?'; даты от Исхода и далее даны по Ашшеру в обеих хронологиях':''}<br>${esc(p.ref)}`);
-    if(p.hollow) out.push(`<rect data-i="${k}" x="${X}" y="${yy}" width="${Wd}" height="${rh-6}" rx="2" fill="var(--post)" fill-opacity=".14" stroke="var(--post)" stroke-dasharray="3 2" stroke-width="1"/>`);
-    else if(p.died==null) out.push(`<rect data-i="${k}" x="${X}" y="${yy}" width="${Wd}" height="${rh-6}" fill="url(#fadeS)" rx="2"/>`);
-    else out.push(`<rect data-i="${k}" class="bar ${cls}" x="${X}" y="${yy}" width="${Wd}" height="${rh-6}" ${p.christ?'stroke="var(--fg)" stroke-width="1.5"':''} ${p.reign?'fill-opacity=".55"':''}/>`);
-    out.push(`<rect data-i="${k}" class="hit" x="${X}" y="${yy-2}" width="${Wd}" height="${rh-2}"/>`);
-    if(p.taken) out.push(`<text x="${X+Wd+2}" y="${yy+rh-7}" font-size="${fz}" fill="var(--pre)" pointer-events="none">↑</text>`);
-    // connector from parent at birth
-    if(prev){ const py=prev.y+(prev.h||row-6)/2; out.push(`<path class="conn" d="M${X},${py} L${X},${yy}"/>`); }
-    p.h=rh-6;
-    // label
-    const lifeLbl=p.nolife?'':(p.hollow?` <tspan class="muted" font-size="${fz-1}">≈</tspan>`:(p.reign?` <tspan class="muted" font-size="${fz-1}">правл.</tspan>`:(p.life!=null?` <tspan class="num muted" font-size="${fz-1}">${p.life}</tspan>`:` <tspan class="muted" font-size="${fz-1}">† ?</tspan>`)));
-    const lx=Math.max(X,padL)+ (p.taken?14:0);
-    const labelW=est(p.name,fz)+28;
-    let tx; let anchor='start';
-    if(X+Wd+labelW<W-padR) tx=X+Wd+(p.taken?14:5);
-    else if(Wd>labelW+8) tx=Math.max(X,padL)+5;
-    else { tx=X-4; anchor='end'; }
-    const inside=(anchor==='start' && tx<X+Wd && tx>=X);
-    const visible=(X+Wd>padL && X<W-padR);
-    if(visible) out.push(`<text x="${tx}" y="${yy+rh-7}" font-size="${fz}" font-weight="500" text-anchor="${anchor}" ${inside?'fill="#fff"':''} pointer-events="none">${esc(p.name)}${inside?'':lifeLbl}</text>`);
-    p.y=yy;
-  }
-  let yy=patY; let prev=null;
-  const cainLen=Math.round(D.flood*0.3), cainMap={};
-  const cainRow=c=>{
-    const bAM=Math.round(D.flood*c.frac); const eAM=c.abel?D.P[1].born-5:bAM+cainLen;
-    const X=x(amT(bAM)), Wd=Math.max(1.5,x(amT(eAM))-X);
-    const k=tip(`<b>${esc(c.name)}</b><span class="m">≈ ${fmtAM(bAM)} · ${fmtBC(amT(bAM))}${c.abel?' → убит до '+fmtAM(eAM):''}</span><br>${c.note?esc(c.note)+'<br>':''}Дат в тексте нет; положение отрезка условное${c.abel?'':', длина '+cainLen+' лет'}.<br>${esc(c.ref)}`);
-    out.push(`<rect data-i="${k}" x="${X}" y="${yy}" width="${Wd}" height="${nrow-5}" rx="2" fill="var(--pre)" fill-opacity=".14" stroke="var(--pre)" stroke-dasharray="3 2" stroke-width="1"/>`);
-    out.push(`<rect data-i="${k}" class="hit" x="${X}" y="${yy-1}" width="${Wd}" height="${nrow-2}"/>`);
-    const par=c.parent==='Адам'?{y:D.P[0].y,h:row-6}:cainMap[c.parent];
-    if(par) out.push(`<path class="conn" d="M${X},${par.y+(par.h||nrow-5)/2} L${X},${yy}" opacity=".35"/>`);
-    if(X+Wd>padL && X<W-padR) out.push(`<text x="${X+Wd+5}" y="${yy+nrow-6}" font-size="${fs-1}" pointer-events="none">${esc(c.name)}<tspan class="muted" font-size="${fs-2}"> ${c.abel?'† убит':'≈'}</tspan></text>`);
-    cainMap[c.name]={y:yy,h:nrow-5};
-    yy+=nrow;
-  };
-  D.P.forEach((p,i)=>{
-    bar(p,yy,i===0?null:D.P[i-1]); yy+=row;
-    if(i===0){ // children of Adam in hierarchy: Cain (with his descendants beneath him), Abel, then Seth continues the line
-      out.push(`<text class="cap" x="${Math.max(x(amT(0)),padL)+2}" y="${yy+8}">дети Адама · Быт. 4: Каин и его потомки, Авель; далее Сиф (Быт. 5)</text>`); yy+=12;
-      CAIN.filter(c=>!c.abel).forEach(cainRow);
-      CAIN.filter(c=>c.abel).forEach(cainRow);
-      yy+=4;
+    if(r.kind==='off'){
+      out.push(`<path data-i="${r.tip}" data-row="${r.id}" d="M2,${cy} l10,-6 l0,12 z" fill="var(${r.color})"/><text x="16" y="${cy+4}" font-size="${fs-1}" class="muted" pointer-events="none">раньше начала шкалы: ${esc(r.sub)}</text>`);
+      out.push(hit(0,220)); return;
     }
-  });
-  yy+=10;
-  // Noah's sons, each with his sons (Gen 10) beneath him; Shem last so the line continues to Arphaxad
-  const natStart=amT(D.flood+2), natLen=D.G[0].life;
-  const sonOrder=['Иафет','Хам','Сим'];
-  sonOrder.forEach(sn=>{
-    const son=D.sons.find(q=>q.name===sn); bar(son,yy,D.noah); yy+=row;
-    const g=NATIONS.find(q=>q.parent===sn);
-    out.push(`<text class="cap" x="${Math.max(x(natStart),padL)+2}" y="${yy+8}">сыновья ${g.gen} · ${g.ref} · даты в тексте не указаны${sn==='Сим'?' · Арфаксад — ниже, линия продолжается':''}</text>`);
-    yy+=12;
-    g.list.filter(n=>n.name!=='Арфаксад').forEach(n=>{
-      const X=x(natStart), Wd=Math.max(1.5,x(amT(D.flood+2+natLen))-X);
-      const k=tip(`<b>${esc(n.name)}, сын ${g.gen}</b><span class="m">родился после потопа; годы жизни в тексте не указаны</span><br>${n.sons?'Сыновья: '+esc(n.sons)+'.<br>':''}Отождествление: ${esc(n.ident)}.<br>Отрезок условный: начало — первые годы после потопа, длина — как у Арфаксада (${natLen} лет).`);
-      out.push(`<rect data-i="${k}" x="${X}" y="${yy}" width="${Wd}" height="${nrow-5}" rx="2" fill="var(--sons)" fill-opacity=".14" stroke="var(--sons)" stroke-dasharray="3 2" stroke-width="1"/>`);
-      out.push(`<rect data-i="${k}" class="hit" x="${X}" y="${yy-1}" width="${Wd}" height="${nrow-2}"/>`);
-      out.push(`<path class="conn" d="M${X},${son.y+(row-6)/2} L${X},${yy}" opacity=".25"/>`);
-      if(X+Wd>padL && X<W-padR) out.push(`<text x="${X+Wd+5}" y="${yy+nrow-6}" font-size="${fs-1}" pointer-events="none">${esc(n.name)}<tspan class="muted" font-size="${fs-2}">${n.sons?' · '+esc(n.sons):''}</tspan></text>`);
-      yy+=nrow;
-    });
-    yy+=4;
-  });
-  prev=D.sons.find(q=>q.name==='Сим');
-  const g11Y=yy;
-  D.G.forEach(p=>{ bar(p,yy,prev); prev=p; yy+=row; });
-  { // Nimrod band behind the Gen 11 rows (post-Flood, before/around Babel)
-    const a=amT(D.flood+60), b=amT(D.peleg.born+100);
-    const k=tip(`<b>Нимрод строит города (Быт. 10:8–12)</b><span class="m">внук Хама; примерно 2–4 поколения после потопа</span><br>Вавилон, Эрех (Урук), Аккад, Халне в Сеннааре; Ниневия, Реховоф-ир, Калах, Ресен в Ассирии.`);
-    out.splice(bandAt,0,`<rect data-i="${k}" x="${x(a)}" y="${g11Y-4}" width="${Math.max(2,x(b)-x(a))}" height="${D.G.length*row}" fill="var(--post)" opacity=".08"/>`);
-  }
-  yy+=4;
-  out.push(`<text class="cap" x="${padL+2}" y="${yy+10}">родословие Иисуса Христа по Мф. 1 (царская линия Давида) · пунктир — положение условное, дат в тексте нет · линия Лк. 3 через Нафана — в таблице ниже</text>`);
-  yy+=16;
-  const byName={'Авраам':D.abr};
-  D.late.forEach(p=>{
-    if(p.capBefore){ out.push(`<text class="cap" x="${padL+2}" y="${yy+10}">${esc(p.capBefore)}</text>`); yy+=16; }
-    const par=p.parent?(byName[p.parent]||prev):prev;
-    bar(p,yy,par,nrow); byName[p.name]=p; if(!p.branch) prev=p; yy+=nrow;
-  });
-  yy+=4;
-  out.push(`<text class="cap" x="${padL+2}" y="${yy+10}">другие лица: Моисей, Иисус Навин</text>`);
-  yy+=16;
-  D.others.forEach(p=>{ bar(p,yy,null,row); yy+=row; });
-  // Periods of Israel's history
-  out.push(`<text class="cap" x="${padL+2}" y="${perY-2}">история Израиля по Ашшеру (даты до н.э.; после Авраама обе хронологии совпадают)</text>`);
-  let py=perY+4; const prow=row-4;
-  PERIODS.forEach(q=>{
-    const X=x(q.a), Wd=Math.max(1.5,x(q.b)-X); if(X+Wd<padL||X>W-padR){py+=prow;return;}
-    const k=tip(`<b>${esc(q.label)}</b><span class="m">${fmtBC(q.a)} – ${fmtBC(q.b)}</span><br>${esc(q.note)}`);
-    out.push(`<rect data-i="${k}" class="bar per" x="${X}" y="${py}" width="${Wd}" height="${prow-5}"/>`);
-    out.push(`<rect data-i="${k}" class="hit" x="${X}" y="${py-1}" width="${Wd}" height="${prow-2}"/>`);
-    const lw=est(q.label,fs-1)+8; let tx=X+Wd+4, inside=false;
-    if(tx+lw>W-padR){ if(Wd>lw){tx=Math.max(X,padL)+4;inside=true;} else tx=Math.max(padL,W-padR-lw); }
-    out.push(`<text x="${tx}" y="${py+prow-6}" font-size="${fs-1}" ${inside?'fill="var(--bg)"':''} pointer-events="none">${esc(q.label)}</text>`);
-    py+=prow;
-  });
-  // Peoples lane: from Japheth to the Russians
-  out.push(`<text class="cap" x="${padL+2}" y="${peoY-2}">от Иафета до русских: народы Северного Причерноморья и Руси (общепринятые даты; цепочка летописной традиции)</text>`);
-  py=peoY+4;
-  PEOPLES.forEach(q=>{
-    if(q.m!=null){
-      const X=x(q.m); if(X<padL||X>W-padR){py+=prow;return;}
-      const k=tip(`<b>${esc(q.label)}</b><span class="m">${fmtBC(q.m)}</span><br>${esc(q.note)}<br>${esc(q.ref)}`);
-      out.push(`<path data-i="${k}" class="bar sons" d="M${X},${py+1} l5,${(prow-6)/2} l-5,${(prow-6)/2} l-5,-${(prow-6)/2} z" style="opacity:1"/>`);
-      out.push(`<text x="${X+8}" y="${py+prow-6}" font-size="${fs-1}" pointer-events="none">${esc(q.label)}</text>`);
-      py+=prow; return;
+    if(r.kind==='marker'){
+      const X=x(r.t);
+      out.push(`<path data-i="${r.tip}" data-row="${r.id}" d="M${X},${cy-6} l6,6 l-6,6 l-6,-6 z" fill="${r.hollow?'var(--surface)':`var(${r.color})`}" stroke="var(${r.color})" stroke-width="1.5"/>`);
+      out.push(`<text x="${X+10}" y="${cy+4}" font-size="${fs-1}" pointer-events="none">${esc(r.label)}</text>`);
+      out.push(hit(X-12,24)); return;
     }
-    const X=x(q.a), Wd=Math.max(1.5,x(q.b)-X); if(X+Wd<padL||X>W-padR){py+=prow;return;}
-    const k=tip(`<b>${esc(q.label)}</b><span class="m">${fmtBC(q.a)} – ${fmtBC(q.b)}</span><br>${esc(q.note)}<br>${esc(q.ref)}`);
-    out.push(`<rect data-i="${k}" class="bar sons" x="${X}" y="${py}" width="${Wd}" height="${prow-5}"/>`);
-    out.push(`<rect data-i="${k}" class="hit" x="${X}" y="${py-1}" width="${Wd}" height="${prow-2}"/>`);
-    const lw=est(q.label,fs-1)+8; let tx=X+Wd+4, inside=false;
-    if(tx+lw>W-padR){ if(Wd>lw){tx=Math.max(X,padL)+4;inside=true;} else tx=Math.max(padL,W-padR-lw); }
-    out.push(`<text x="${tx}" y="${py+prow-6}" font-size="${fs-1}" ${inside?'fill="#fff"':''} pointer-events="none">${esc(q.label)}</text>`);
-    py+=prow;
+    const X=x(r.t0), Wd=Math.max(2,x(r.t1)-X);
+    // connector to parent
+    if(r.parentId){ const pr=rowById[r.parentId]; if(pr&&!pr.hidden){ const py=pr.y+pr.h/2; out.push(`<path class="conn${hl?' hl':''}" d="M${X},${py} L${X},${by}"/>`); } }
+    if(r.kind==='hollow'||r.kind==='cut') out.push(`<rect data-i="${r.tip}" data-row="${r.id}" x="${X}" y="${by}" width="${Wd}" height="${BAR_H}" rx="3" fill="var(${r.color})" fill-opacity=".16" stroke="var(${r.color})" stroke-dasharray="${r.kind==='cut'?'2 2':'4 3'}" stroke-width="1.2"/>`);
+    else if(r.kind==='fade') out.push(`<rect data-i="${r.tip}" data-row="${r.id}" x="${X}" y="${by}" width="${Wd}" height="${BAR_H}" rx="3" fill="url(#fade${r.color.slice(2)})"/>`);
+    else if(r.kind==='hatch') out.push(`<rect data-i="${r.tip}" data-row="${r.id}" x="${X}" y="${by}" width="${Wd}" height="${BAR_H}" rx="3" fill="url(#hatch)"/>`);
+    else out.push(`<rect data-i="${r.tip}" data-row="${r.id}" class="bar${r.id===selectedId?' sel':''}${hl?' hl':''}" x="${X}" y="${by}" width="${Wd}" height="${BAR_H}" rx="3" fill="var(${r.color})" ${r.reign?'fill-opacity=".6"':''} ${r.christ?'stroke="var(--fg)" stroke-width="1.5"':''}/>`);
+    if(r.kind==='cut') out.push(`<text x="${X+Wd+3}" y="${cy+4}" font-size="${fs}" fill="var(--flood)" pointer-events="none">†</text>`);
+    if(r.taken) out.push(`<text x="${X+Wd+3}" y="${cy+4}" font-size="${fs}" fill="var(${r.color})" font-weight="700" pointer-events="none">↑ взят</text>`);
+    // in-bar / beside label
+    const isPerson=['gen5','sons','gen11','tribes','royal','kings','postexile','others'].includes(r.gid);
+    const txt=isPerson?r.inbar:r.label;
+    if(txt){ const tw=est(txt,fs-0.5)+10;
+      if(r.kind==='bar'&&Wd>=tw) out.push(`<text x="${X+5}" y="${cy+4}" font-size="${fs-0.5}" fill="${ink}" font-weight="500" pointer-events="none">${esc(txt)}</text>`);
+      else if(!isPerson) out.push(`<text x="${X+Wd+5}" y="${cy+4}" font-size="${fs-0.5}" pointer-events="none">${esc(txt)}</text>`);
+      else if(isPerson&&r.kind==='bar') out.push(`<text x="${X+Wd+4}" y="${cy+4}" font-size="${fs-1}" class="muted" pointer-events="none">${esc(txt)}</text>`);
+    }
+    out.push(hit(X,Wd));
   });
-
-  // archaeology lane
-  out.push(`<text class="cap" x="${padL+2}" y="${arcHeadY+14}">памятники и цивилизации (общепринятые даты)</text>`);
-  let ay=arcY; const arow=row-1;
-  const renderSite=s=>{
-    if(s.off){
-      if(view.t0>FULL.t0+1){ay+=arow;return;}
-      const k=tip(`<b>${esc(s.label)}</b><span class="m">общепринято: ${esc(s.ky)} — раньше начала шкалы</span><br>${esc(s.note)}<br>Исследователи: ${esc(s.who)}.<br>Прочтение в схеме: ${esc(s.bib)}.`);
-      out.push(`<path data-i="${k}" class="mk ${s.cls}" d="M${padL+2},${ay+(arow-6)/2+1} l9,-${(arow-6)/2} l0,${arow-6} z"/>`);
-      out.push(`<text x="${padL+15}" y="${ay+arow-7}" font-size="${fs-0.5}" pointer-events="none">${esc(s.label)}<tspan class="muted" font-size="${fs-2}"> · ${esc(s.ky)}, за пределами шкалы</tspan></text>`);
-      ay+=arow; return;
-    }
-    if(s.m!=null){
-      const X=x(-s.m); if(X<padL||X>W-padR){ay+=arow;return;}
-      const k=tip(`<b>${esc(s.label)}</b><span class="m">≈ ${fmtBC(-s.m)}</span><br>${esc(s.note)}${s.who?'<br>Исследователи: '+esc(s.who)+'.':''}${s.bib?'<br>Прочтение в схеме: '+esc(s.bib)+'.':''}`);
-      out.push(`<path data-i="${k}" class="mk ${s.cls}" d="M${X},${ay+1} l5,${(arow-6)/2} l-5,${(arow-6)/2} l-5,-${(arow-6)/2} z"/>`);
-      out.push(`<text x="${X+8}" y="${ay+arow-7}" font-size="${fs-0.5}" pointer-events="none">${esc(s.label)}</text>`);
-    } else {
-      const X=x(-s.a), Wd=Math.max(1.5,x(-s.b)-X); if(X+Wd<padL||X>W-padR){ay+=arow;return;}
-      const k=tip(`<b>${esc(s.label)}</b><span class="m">${fmtBC(-s.a)} – ${fmtBC(-s.b)}</span><br>${esc(s.note)}${s.who?'<br>Исследователи: '+esc(s.who)+'.':''}${s.bib?'<br>Прочтение в схеме: '+esc(s.bib)+'.':''}`);
-      out.push(`<rect data-i="${k}" class="bar ${s.cls}" x="${X}" y="${ay}" width="${Wd}" height="${arow-6}"/>`);
-      out.push(`<rect data-i="${k}" class="hit" x="${X}" y="${ay-2}" width="${Wd}" height="${arow-2}"/>`);
-      const labelW=est(s.label,fs-0.5)+8;
-      let tx=X+Wd+5; let inside=false;
-      if(tx+labelW>W-padR){ if(Wd>labelW){tx=Math.max(X,padL)+5;inside=true;} else tx=Math.max(padL,W-padR-labelW); }
-      if(tx<padL) tx=padL+2;
-      out.push(`<text x="${tx}" y="${ay+arow-7}" font-size="${fs-0.5}" ${inside?'fill="#fff"':''} pointer-events="none">${esc(s.label)}</text>`);
-    }
-    ay+=arow;
-  };
-  SITES.forEach(renderSite);
-  out.push(`<text class="cap" x="${padL+2}" y="${crimHeadY+14}">Крым: раскопки Бибикова, Бонч-Осмоловского и других (общепринятые даты; в схеме — памятники потомков Иафета)</text>`);
-  ay=crimY; CRIMEA.forEach(renderSite);
-
-  out.push(`</g>`);
-  svg.setAttribute('viewBox',`0 0 ${W} ${H}`); svg.setAttribute('width',W); svg.setAttribute('height',H);
-  svg.style.height=H+'px';
-  svg.innerHTML=out.join('');
+  bodySvg.setAttribute('viewBox',`0 0 ${W} ${H}`); bodySvg.setAttribute('width',W); bodySvg.setAttribute('height',H); bodySvg.innerHTML=out.join('');
+  syncAxis(); updateZoomUI(); markPreset();
 }
-function est(s,fs){ return s.length*fs*0.58; }
-function fitText(s,w,fs){ const n=Math.floor(w/(fs*0.58)); if(s.length<=n) return esc(s); if(n<4) return ''; return esc(s.slice(0,n-1).trim()+'…'); }
-function shortLabel(s,span){ if(span>5000){ const i=s.indexOf(' ('); const j=s.indexOf(';'); let c=s; if(j>0)c=c.slice(0,j); if(i>0&&i<c.length)c=c.slice(0,i); return c; } return s; }
+function ancestry(id){ const s=new Set(); let r=rowById[id]; let n=0; while(r&&n<200){ s.add(r.id); r=r.parentId?rowById[r.parentId]:null; n++; } return s; }
+function lineage(id){ const a=[]; let r=rowById[id]; let n=0; while(r&&n<200){ a.unshift(r.label.replace(/^[♛✝] /,'')); r=r.parentId?rowById[r.parentId]:null; n++; } return a; }
 
-/* ---------- Interaction ---------- */
-function clampView(){
-  let span=view.t1-view.t0; const full=FULL.t1-FULL.t0;
-  if(span>full){view.t0=FULL.t0;view.t1=FULL.t1;return;}
-  if(span<150){const c=(view.t0+view.t1)/2;view.t0=c-75;view.t1=c+75;}
-  if(view.t0<FULL.t0){view.t1+=FULL.t0-view.t0;view.t0=FULL.t0;}
-  if(view.t1>FULL.t1){view.t0-=view.t1-FULL.t1;view.t1=FULL.t1;}
+/* ---------- Zoom & navigation ---------- */
+const clampZ=z=>Math.min(ZMAX,Math.max(ZMIN,z));
+function syncAxis(){ axisWrap.scrollLeft=scroller.scrollLeft; }
+function setZoom(z,anchorFrac){
+  anchorFrac=anchorFrac==null?0.5:anchorFrac;
+  const Wv=scroller.clientWidth; const oldW=Wv*zoom; const span=FULL.t1-FULL.t0;
+  const tA=FULL.t0+(scroller.scrollLeft+anchorFrac*Wv)/oldW*span;
+  zoom=clampZ(z); render();
+  scroller.scrollLeft=(tA-FULL.t0)/span*Wv*zoom-anchorFrac*Wv; syncAxis(); updateZoomUI(); markPreset();
 }
-function setView(a,b){ view={t0:-a,t1:-b}; clampView(); render(); markPreset(); }
-function zoomAt(factor,fx){ const span=view.t1-view.t0; const tc=view.t0+fx*span; view.t0=tc-(tc-view.t0)*factor; view.t1=tc+(view.t1-tc)*factor; clampView(); render(); markPreset(); }
-function markPreset(){ document.querySelectorAll('[data-view]').forEach(b=>{ const r=resolveView(b.dataset.view); b.setAttribute('aria-pressed', r && Math.abs(-r[0]-view.t0)<1 && Math.abs(-r[1]-view.t1)<1 ? 'true':'false'); }); };
+function showRange(a,b){ // years BC (positive) or negative for AD
+  const t0=-a,t1=-b; const Wv=scroller.clientWidth; const span=FULL.t1-FULL.t0;
+  zoom=clampZ(span/(t1-t0)); render();
+  scroller.scrollLeft=(t0-FULL.t0)/span*Wv*zoom; syncAxis(); updateZoomUI(); markPreset();
+}
+function visibleRange(){ const Wv=scroller.clientWidth; const span=FULL.t1-FULL.t0; const W=Wv*zoom; const t0=FULL.t0+scroller.scrollLeft/W*span; return [t0,t0+Wv/W*span]; }
+function updateZoomUI(){ const v=Math.round((Math.log(zoom)-Math.log(ZMIN))/(Math.log(ZMAX)-Math.log(ZMIN))*100); const sl=el('zslider'); if(sl&&+sl.value!==v) sl.value=v; const [a,b]=visibleRange(); el('zinfo').textContent=`${fmtBC(Math.round(a))} — ${fmtBC(Math.round(b))} · ×${zoom<10?zoom.toFixed(1):Math.round(zoom)}`; }
 function resolveView(v){
   if(v==='pre') return [D.epoch+60, D.epoch-D.flood-120];
   if(v==='post') return [D.epoch-D.flood+80, D.epoch-(D.abr.born+175)-40];
-  if(v==='late') return [2100,-100];
-  const p=v.split(',').map(Number); return p;
+  return v.split(',').map(Number);
 }
-document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{const r=resolveView(b.dataset.view); setView(r[0],r[1]);}));
-document.getElementById('zin').addEventListener('click',()=>zoomAt(0.7,0.5));
-document.getElementById('zout').addEventListener('click',()=>zoomAt(1/0.7,0.5));
-
-svg.addEventListener('wheel',e=>{ e.preventDefault(); const r=svg.getBoundingClientRect(); const fx=(e.clientX-r.left)/r.width; zoomAt(Math.exp(e.deltaY*0.0012),fx); hideTip(); },{passive:false});
+function markPreset(){ const [a,b]=visibleRange(); document.querySelectorAll('[data-view]').forEach(bt=>{ const r=resolveView(bt.dataset.view); bt.setAttribute('aria-pressed', Math.abs(-r[0]-a)<(b-a)*0.03 && Math.abs(-r[1]-b)<(b-a)*0.03 ? 'true':'false'); }); }
+document.querySelectorAll('[data-view]').forEach(bt=>bt.addEventListener('click',()=>{ const r=resolveView(bt.dataset.view); showRange(r[0],r[1]); }));
+el('zin').addEventListener('click',()=>setZoom(zoom*1.5));
+el('zout').addEventListener('click',()=>setZoom(zoom/1.5));
+el('zslider').addEventListener('input',e=>{ const v=+e.target.value; setZoom(Math.exp(Math.log(ZMIN)+v/100*(Math.log(ZMAX)-Math.log(ZMIN)))); });
+scroller.addEventListener('scroll',()=>{ syncAxis(); updateZoomUI(); markPreset(); });
+scroller.addEventListener('wheel',e=>{ if(e.ctrlKey||e.metaKey){ e.preventDefault(); const rct=scroller.getBoundingClientRect(); setZoom(zoom*Math.exp(-e.deltaY*0.0025),(e.clientX-rct.left)/rct.width); hideTip(); } },{passive:false});
+// drag to pan (horizontal)
 let drag=null;
-svg.addEventListener('pointerdown',e=>{ drag={x:e.clientX,t0:view.t0,t1:view.t1,moved:false}; svg.setPointerCapture(e.pointerId); });
-svg.addEventListener('pointermove',e=>{
-  if(drag){ const r=svg.getBoundingClientRect(); const dx=e.clientX-drag.x; if(Math.abs(dx)>3){drag.moved=true;svg.classList.add('dragging');hideTip();}
-    const span=drag.t1-drag.t0; const dt=-dx/r.width*span; view.t0=drag.t0+dt; view.t1=drag.t1+dt; clampView(); render(); markPreset(); return; }
-  const el=e.target.closest&&e.target.closest('[data-i]');
-  if(el){ showTip(tips[+el.dataset.i],e); } else hideTip();
-});
-svg.addEventListener('pointerup',()=>{ drag=null; svg.classList.remove('dragging'); });
-svg.addEventListener('pointercancel',()=>{ drag=null; svg.classList.remove('dragging'); });
-svg.addEventListener('pointerleave',()=>{ if(!drag) hideTip(); });
-function showTip(html,e){ if(!html){hideTip();return;} tipEl.innerHTML=html; tipEl.hidden=false; const r=chart.getBoundingClientRect(); let lx=e.clientX-r.left+14, ly=e.clientY-r.top+14; const tw=tipEl.offsetWidth, th=tipEl.offsetHeight; if(lx+tw>r.width-8) lx=e.clientX-r.left-tw-14; if(ly+th>r.height-8) ly=e.clientY-r.top-th-14; tipEl.style.left=Math.max(4,lx)+'px'; tipEl.style.top=Math.max(4,ly)+'px'; }
+bodySvg.addEventListener('pointerdown',e=>{ if(e.button!==0) return; drag={x:e.clientX,sl:scroller.scrollLeft,moved:false,id:e.pointerId}; });
+window.addEventListener('pointermove',e=>{ if(!drag) return; const dx=e.clientX-drag.x; if(Math.abs(dx)>4){ drag.moved=true; bodySvg.classList.add('dragging'); hideTip(); } scroller.scrollLeft=drag.sl-dx; });
+window.addEventListener('pointerup',()=>{ if(drag){ setTimeout(()=>{bodySvg.classList.remove('dragging');},0); } drag=null; });
+// collapse / expand
+namesCol.addEventListener('click',e=>{ const g=e.target.closest('.grp'); if(g){ toggleGroup(rowById[g.dataset.row].gid); return; } const n=e.target.closest('.nm'); if(n) select(n.dataset.row); });
+namesCol.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ const g=e.target.closest('.grp'); if(g){ e.preventDefault(); toggleGroup(rowById[g.dataset.row].gid); } } });
+function toggleGroup(gid){ if(collapsed.has(gid)) collapsed.delete(gid); else collapsed.add(gid); render(); }
+el('collapseAll').addEventListener('click',()=>{ rows.filter(r=>r.kind==='group').forEach(r=>collapsed.add(r.gid)); render(); });
+el('expandAll').addEventListener('click',()=>{ collapsed.clear(); render(); });
+
+/* ---------- Hover, select, details ---------- */
+let hovRow=null;
+function setHover(id){ if(hovRow===id) return; if(hovRow){ namesCol.querySelector(`[data-row="${CSS.escape(hovRow)}"]`)?.classList.remove('hov'); } hovRow=id; if(id){ namesCol.querySelector(`[data-row="${CSS.escape(id)}"]`)?.classList.add('hov'); } }
+function showTip(html,e){ if(!html){hideTip();return;} tipEl.innerHTML=html; tipEl.hidden=false; const tw=tipEl.offsetWidth, th=tipEl.offsetHeight; let lx=e.clientX+14, ly=e.clientY+14; if(lx+tw>innerWidth-8) lx=e.clientX-tw-14; if(ly+th>innerHeight-8) ly=e.clientY-th-14; tipEl.style.left=Math.max(4,lx)+'px'; tipEl.style.top=Math.max(4,ly)+'px'; }
 function hideTip(){ tipEl.hidden=true; }
+const onMove=e=>{ if(drag&&drag.moved){hideTip();return;} const t=e.target.closest&&e.target.closest('[data-i]'); if(t){ showTip(tips[+t.dataset.i],e); setHover(t.dataset.row||null); } else { hideTip(); setHover(null); } };
+bodySvg.addEventListener('pointermove',onMove); axisSvg.addEventListener('pointermove',onMove);
+bodySvg.addEventListener('pointerleave',()=>{hideTip();setHover(null);}); axisSvg.addEventListener('pointerleave',hideTip);
+bodySvg.addEventListener('click',e=>{ if(drag&&drag.moved) return; const t=e.target.closest&&e.target.closest('[data-row]'); if(t) select(t.dataset.row); else select(null); });
+namesCol.addEventListener('pointerover',e=>{ const n=e.target.closest('.nm'); if(n&&!n.classList.contains('grp')) setHover(n.dataset.row); });
+namesCol.addEventListener('pointerleave',()=>setHover(null));
+function select(id){
+  selectedId=(id&&id!==selectedId)?id:null; render();
+  if(!selectedId){ detail.hidden=true; return; }
+  const r=rowById[selectedId]; const lin=lineage(selectedId);
+  detail.hidden=false;
+  el('dtitle').textContent=r.label.replace(/^[♛✝] /,'');
+  el('dbody').innerHTML=(tips[r.tip]||'').replace(/^<b>[^<]*<\/b>/,'');
+  el('dline').innerHTML=lin.length>1?`<span class="k">Линия:</span> ${lin.map((n,i)=>i===lin.length-1?`<b>${esc(n)}</b>`:esc(n)).join(' → ')}`:'';
+}
+el('dclose').addEventListener('click',()=>select(null));
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ select(null); hideTip(); } });
+
+/* ---------- Search ---------- */
+const search=el('search'), dl=el('names-list');
+function fillSearch(){ dl.innerHTML=rows.filter(r=>r.kind!=='group').map(r=>`<option value="${esc(r.label.replace(/^[♛✝] /,''))}"></option>`).join(''); }
+function gotoRow(q){
+  q=q.trim().toLowerCase(); if(!q) return;
+  const r=rows.find(r=>r.kind!=='group'&&r.label.replace(/^[♛✝] /,'').toLowerCase().startsWith(q))||rows.find(r=>r.kind!=='group'&&r.label.toLowerCase().includes(q));
+  if(!r) return;
+  collapsed.delete(r.gid); selectedId=r.id; render();
+  const rr=rowById[r.id]; const t=rr.t0!=null?rr.t0:(rr.t!=null?rr.t:null);
+  if(t!=null){ const Wv=scroller.clientWidth; const span=FULL.t1-FULL.t0; if(zoom<6) zoom=6; render(); scroller.scrollLeft=(t-FULL.t0)/span*Wv*zoom-Wv*0.25; syncAxis(); }
+  const top=tlEl.getBoundingClientRect().top+window.scrollY+rr.y+axisSvg.getBoundingClientRect().height; const off=el('toolbar').offsetHeight+axisWrap.offsetHeight+40;
+  window.scrollTo({top:top-off,behavior:'smooth'});
+  select(r.id); selectedId=r.id; render();
+  const nm=namesCol.querySelector(`[data-row="${CSS.escape(r.id)}"]`); if(nm){ nm.classList.add('flash'); setTimeout(()=>nm.classList.remove('flash'),1600); }
+}
+search.addEventListener('change',()=>gotoRow(search.value));
+search.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); gotoRow(search.value); } });
+
+/* ---------- Sticky offsets & resize ---------- */
+function setOffsets(){ document.documentElement.style.setProperty('--toolbarH',el('toolbar').offsetHeight+'px'); }
+let rt, lastW=0;
+function onSize(){ setOffsets(); const w=scroller.clientWidth; if(w===lastW) return; lastW=w; clearTimeout(rt); rt=setTimeout(()=>{ const [a,b]=visibleRange(); render(); },60); }
+window.addEventListener('resize',onSize);
+if(window.ResizeObserver) new ResizeObserver(onSize).observe(scroller);
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(setOffsets);
 
 /* ---------- Chronology switch ---------- */
 function setChrono(k){
-  chKey=k; D=build(CHRONO[k]);
+  chKey=k; D=build(CHRONO[k]); buildRows(); fillSearch();
   document.getElementById('ch-mt').setAttribute('aria-pressed',k==='mt');
   document.getElementById('ch-lxx').setAttribute('aria-pressed',k==='lxx');
-  render(); fillText(); markPreset();
+  render(); fillText();
 }
 document.getElementById('ch-mt').addEventListener('click',()=>setChrono('mt'));
 document.getElementById('ch-lxx').addEventListener('click',()=>setChrono('lxx'));
@@ -1060,12 +1088,9 @@ function fillText(){
   tb.innerHTML=all.map(p=>`<tr><td><b>${esc(p.name)}</b>${p.taken?' (взят)':''}</td><td class="m">${p.sonAge??'—'}</td><td class="m">${p.life??'—'}</td><td class="m">${p.approx?'≈ ':''}${p.born}</td><td class="m">${p.died??'—'}</td><td class="m">${p.approx?'≈ ':''}${p.t0!=null?fmtBC(p.t0):bc(D,p.born)+' до н.э.'}</td><td class="m">${p.died!=null?(p.t1!=null?fmtBC(p.t1):bc(D,p.died)+' до н.э.'):'—'}</td><td>${esc(p.ref)}</td></tr>`).join('');
 }
 
-let rt, lastW=0;
-function onSize(){ const w=chart.clientWidth; if(w===lastW) return; lastW=w; clearTimeout(rt); rt=setTimeout(render,60); }
-window.addEventListener('resize',onSize);
-if(window.ResizeObserver) new ResizeObserver(onSize).observe(chart);
-if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>render());
-render(); fillText(); markPreset();
+
+/* ---------- Init ---------- */
+buildRows(); fillSearch(); setOffsets(); showRange(10000,1500); fillText();
 })();
 </script>
 
