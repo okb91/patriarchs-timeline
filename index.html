@@ -99,6 +99,10 @@ svg text{font-family:var(--body);fill:var(--fg)}
 svg text.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
 svg text.muted{fill:var(--muted)}
 svg .grid{stroke:var(--line-soft);stroke-width:1}
+svg .epcol{opacity:.07;pointer-events:none;transition:opacity .15s} svg .epcol.on{opacity:.22}
+svg .epline{stroke:var(--fg);stroke-width:1;opacity:.12;pointer-events:none}
+svg .cursor{stroke:var(--accent);stroke-width:1.2;opacity:.95;pointer-events:none}
+#curTag{pointer-events:none}
 svg .axt{stroke:var(--line);stroke-width:1} svg .axl{stroke:var(--line);stroke-width:1}
 svg .evl{stroke:var(--fg);stroke-width:1;stroke-dasharray:3 3;opacity:.45}
 svg .evl.flood{stroke:var(--flood);stroke-width:2;stroke-dasharray:none;opacity:.9}
@@ -938,7 +942,7 @@ let chKey='mt', D=build(CHRONO.mt);
 let zoom=1;
 const collapsed=new Set(['climate','sites','crimea']);
 const closedNodes=new Set();
-let rows=[], rowById={}, tips=[], selectedId=null;
+let rows=[], rowById={}, tips=[], selectedId=null, curPx=1, epochBlocks=[];
 const el=id=>document.getElementById(id);
 const scroller=el('scroller'), bodySvg=el('tlbody'), axisSvg=el('tlaxis'), axisWrap=el('axiswrap'), namesCol=el('names'), tipEl=el('tip'), detail=el('detail'), tlEl=el('tl');
 const amT=am=>am-D.epoch;
@@ -1003,6 +1007,7 @@ function buildRows(){
   EPOCHS.forEach((e,i)=>{ const t0=mapConv(e[1],'general'), t1=mapConv(e[2],'general'); if(t1-t0<1) return;
     epBlocks.push({t0,t1,label:e[0],color:EP_COL[i%EP_COL.length],tip:tip(`<b>${esc(e[0])}</b><span class="m">в схеме: ${fmtBC(t0)} – ${fmtBC(t1)}</span><br>Датировка исследователей: ${fmtBC(-e[1])} – ${fmtBC(-e[2])}. Положение на схеме — по библейской хронологии: палеолит — послепотопный ледник, неолит — после рассеяния, энеолит и ранняя бронза — время Авраама; от 2000 до н.э. шкалы совпадают.`)}); });
   epBlocks.push({t0:1000,t1:2026,label:'Средние века и Новое время',color:'--muted',tip:tip(`<b>Средние века и Новое время</b><span class="m">1000 – 2026 н.э.</span><br>Показано для масштаба.`)});
+  epochBlocks=epBlocks;
   add({kind:'band',gid:'epochs',label:'эпохи',sub:'',blocks:epBlocks});
 
   /* climate */
@@ -1142,7 +1147,7 @@ function layoutRows(){
 
 function render(){
   const Wv=Math.max(200,scroller.clientWidth); const W=Math.round(Wv*zoom);
-  const span=FULL.t1-FULL.t0; const pxY=pxPerYear(Wv); const x=t=>(t-FULL.t0)*pxY;
+  const span=FULL.t1-FULL.t0; const pxY=pxPerYear(Wv); curPx=pxY; const x=t=>(t-FULL.t0)*pxY;
   const H=layoutRows();
   sizeForZoom();
   const small=window.innerWidth<640; const fs=(small?10.5:11.5)+FS_ADD;
@@ -1168,6 +1173,7 @@ function render(){
   D.events.forEach((e,i)=>{ const X=x(amT(e.am)); const k=tips.push(`<b>${esc(e.label)}</b><span class="m">${fmtAM(e.am)} · ${fmtBC(amT(e.am))}</span><br>${esc(e.ref)}`)-1;
     const left=e.cls==='now';
     ax.push(`<g data-i="${k}"><line x1="${X}" y1="50" x2="${X}" y2="${AXH}" class="evl ${e.cls||''}"/><text x="${left?X-4:X+4}" y="${i%2?77:64}" font-size="${fs}" font-weight="600" text-anchor="${left?'end':'start'}" class="evt ${e.cls||''}">${esc(e.label)}</text></g>`); });
+  ax.push(`<g id="curTag" style="display:none"><line x1="0" y1="0" x2="0" y2="${AXH}" class="cursor"/><rect x="4" y="2" width="10" height="46" rx="4" fill="var(--fg)"/><text x="9" y="16" font-size="${fs}" fill="var(--bg)" class="num" font-weight="600"></text><text x="9" y="31" font-size="${fs-1}" fill="var(--bg)" class="num"></text><text x="9" y="45" font-size="${fs-1}" fill="var(--bg)" class="num"></text></g>`);
   axisSvg.setAttribute('viewBox',`0 0 ${W} ${AXH}`); axisSvg.setAttribute('width',W); axisSvg.setAttribute('height',AXH); axisSvg.innerHTML=ax.join('');
 
   /* body */
@@ -1179,6 +1185,8 @@ function render(){
     if(r.kind==='group'){ out.push(`<rect x="0" y="${r.y}" width="${W}" height="${r.h}" fill="var(${r.color})" opacity=".16"/>`); zi=0; }
     else { out.push(`<rect x="0" y="${r.y}" width="${W}" height="${r.h}" fill="var(${r.color})" opacity="${zi%2?.03:.07}"/>`); zi++; }
   });
+  // epoch columns: vertical tint across the whole chart
+  epochBlocks.forEach((b,i)=>{ const X=x(b.t0), Wd=x(b.t1)-X; out.push(`<rect class="epcol" data-ep="${i}" x="${X}" y="0" width="${Wd}" height="${H}" fill="var(${b.color})"/>`); out.push(`<line x1="${X}" y1="0" x2="${X}" y2="${H}" class="epline"/>`); });
   // vertical grid
   for(let t=first;t<=FULL.t1;t+=step){ const X=x(t); out.push(`<line x1="${X}" y1="0" x2="${X}" y2="${H}" class="grid"/>`); }
   // event lines
@@ -1190,7 +1198,7 @@ function render(){
     const hl=chain.has(r.id); const rowCls=hl?'hl':(selectedId?'dim':''); const hit=(x0,w)=>`<rect data-i="${r.tip}" data-row="${r.id}" class="hit" x="${x0}" y="${r.y}" width="${Math.max(w,24)}" height="${r.h}"/>`;
     if(r.kind!=='band') out.push(`<g class="rowg ${rowCls}">`);
     if(r.kind==='band'){
-      r.blocks.forEach(b=>{ const X=x(b.t0), Wd=x(b.t1)-X; out.push(`<rect data-i="${b.tip}" x="${X}" y="${r.y+3}" width="${Wd}" height="${r.h-6}" rx="3" fill="var(${b.color})" opacity=".55"/>`); if(Wd>est(b.label,fs)+10) out.push(`<text x="${X+6}" y="${cy+4}" font-size="${fs}" font-weight="500" pointer-events="none">${esc(b.label)}</text>`); });
+      r.blocks.forEach((b,bi)=>{ const X=x(b.t0), Wd=x(b.t1)-X; out.push(`<rect data-i="${b.tip}" data-ep="${bi}" x="${X}" y="${r.y+3}" width="${Wd}" height="${r.h-6}" rx="3" fill="var(${b.color})" opacity=".55"/>`); if(Wd>est(b.label,fs)+10) out.push(`<text x="${X+6}" y="${cy+4}" font-size="${fs}" font-weight="500" pointer-events="none">${esc(b.label)}</text>`); });
       return;
     }
     if(r.kind==='off'){
@@ -1235,6 +1243,7 @@ function render(){
       out.push(`<path class="stub" d="M${X},${cy+BAR_H/2} v${Math.max(6,r.h/2-BAR_H/2-1)}"/>`); shown++; });
     if(shown){ const c=rowById[r.children.find(cid=>rowById[cid].hidden)]; const X=x(c.t0!=null?c.t0:c.t); out.push(`<text x="${X+3}" y="${r.y+r.h-2}" font-size="9" class="muted" pointer-events="none">+${descendants(r.id)}</text>`); }
   });
+  out.push(`<line id="cur" class="cursor" x1="-10" y1="0" x2="-10" y2="${H}"/>`);
   bodySvg.setAttribute('viewBox',`0 0 ${W} ${H}`); bodySvg.setAttribute('width',W); bodySvg.setAttribute('height',H); bodySvg.innerHTML=out.join('');
   syncAxis(); updateZoomUI(); markPreset();
 }
@@ -1283,12 +1292,30 @@ function toggleGroup(gid){ if(collapsed.has(gid)) collapsed.delete(gid); else co
 el('collapseAll').addEventListener('click',()=>{ rows.filter(r=>r.kind==='group').forEach(r=>collapsed.add(r.gid)); render(); });
 el('expandAll').addEventListener('click',()=>{ collapsed.clear(); closedNodes.clear(); render(); });
 
+/* ---------- Time cursor following the pointer ---------- */
+function moveCursor(clientX){
+  const rect=bodySvg.getBoundingClientRect(); const X=clientX-rect.left; const W=+bodySvg.getAttribute('width');
+  const cur=el('cur'), tag=el('curTag'); if(!cur||!tag) return;
+  if(X<0||X>W){ cur.setAttribute('x1',-10); cur.setAttribute('x2',-10); tag.style.display='none'; return; }
+  const tt=Math.round(FULL.t0+X/curPx); const am=tt+D.epoch;
+  cur.setAttribute('x1',X); cur.setAttribute('x2',X);
+  const ts=tag.querySelectorAll('text'); ts[0].textContent=fmtBC(tt); ts[1].textContent=am>=0?fmtAM(am):'до сотворения'; ts[2].textContent=am>=D.flood?`+${(am-D.flood).toLocaleString('ru-RU')} после потопа`:(am>=0?`за ${(D.flood-am).toLocaleString('ru-RU')} до потопа`:'');
+  const w=Math.max(...[...ts].map(x=>x.getComputedTextLength()))+10; const r=tag.querySelector('rect'); r.setAttribute('width',w);
+  const flip=X+w+8>W; tag.setAttribute('transform',`translate(${X},0)`); r.setAttribute('x',flip?-w-4:4); ts.forEach(x=>x.setAttribute('x',flip?-w+1:9));
+  tag.style.display='';
+}
+function hideCursor(){ const cur=el('cur'), tag=el('curTag'); if(cur){cur.setAttribute('x1',-10);cur.setAttribute('x2',-10);} if(tag) tag.style.display='none'; }
+scroller.addEventListener('pointermove',e=>moveCursor(e.clientX)); axisWrap.addEventListener('pointermove',e=>moveCursor(e.clientX));
+scroller.addEventListener('pointerleave',hideCursor); axisWrap.addEventListener('pointerleave',hideCursor);
+let epOn=null;
+function setEp(i){ if(epOn===i) return; bodySvg.querySelectorAll('.epcol.on').forEach(n=>n.classList.remove('on')); epOn=i; if(i!=null){ const c=bodySvg.querySelector(`.epcol[data-ep="${i}"]`); if(c) c.classList.add('on'); } }
+
 /* ---------- Hover, select, details ---------- */
 let hovRow=null;
 function setHover(id){ if(hovRow===id) return; if(hovRow){ namesCol.querySelector(`[data-row="${CSS.escape(hovRow)}"]`)?.classList.remove('hov'); } hovRow=id; if(id){ namesCol.querySelector(`[data-row="${CSS.escape(id)}"]`)?.classList.add('hov'); } }
 function showTip(html,e){ if(!html){hideTip();return;} tipEl.innerHTML=html; tipEl.hidden=false; const tw=tipEl.offsetWidth, th=tipEl.offsetHeight; let lx=e.clientX+14, ly=e.clientY+14; if(lx+tw>innerWidth-8) lx=e.clientX-tw-14; if(ly+th>innerHeight-8) ly=e.clientY-th-14; tipEl.style.left=Math.max(4,lx)+'px'; tipEl.style.top=Math.max(4,ly)+'px'; }
 function hideTip(){ tipEl.hidden=true; }
-const onMove=e=>{ if(drag&&drag.moved){hideTip();return;} const t=e.target.closest&&e.target.closest('[data-i]'); if(t){ showTip(tips[+t.dataset.i],e); setHover(t.dataset.row||null); } else { hideTip(); setHover(null); } };
+const onMove=e=>{ if(drag&&drag.moved){hideTip();return;} const t=e.target.closest&&e.target.closest('[data-i]'); if(t){ showTip(tips[+t.dataset.i],e); setHover(t.dataset.row||null); setEp(t.dataset.ep!=null?+t.dataset.ep:null); } else { hideTip(); setHover(null); setEp(null); } };
 bodySvg.addEventListener('pointermove',onMove); axisSvg.addEventListener('pointermove',onMove);
 bodySvg.addEventListener('pointerleave',()=>{hideTip();setHover(null);}); axisSvg.addEventListener('pointerleave',hideTip);
 bodySvg.addEventListener('click',e=>{ if(drag&&drag.moved) return; const t=e.target.closest&&e.target.closest('[data-row]'); if(t) select(t.dataset.row); else select(null); });
