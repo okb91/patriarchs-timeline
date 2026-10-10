@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Таймлайн от Адама до Иисуса Христа: патриархи, сыновья и внуки Ноя, родословие Христа, история Израиля и археология Ближнего Востока и Крыма.">
+<meta name="description" content="Таймлайн от Адама до Руси: патриархи, ветвь Каина, 12 колен, родословие Христа, народы от сыновей Ноя, история Израиля и археология Ближнего Востока и Крыма.">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Патриархи и древности</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:wght@500;700&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -97,6 +97,8 @@ th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute
 td.m{font-family:var(--mono);font-size:13px;white-space:nowrap}
 td b{font-weight:600}
 ul.src{font-size:13.5px;color:var(--muted);padding-left:18px}
+ul.tree{padding-left:18px;font-size:14px;max-width:none} ul.tree li{margin-bottom:6px;max-width:none} ul.tree ul{padding-left:18px;margin-top:4px;color:var(--muted);font-size:13px}
+p.chain{font-size:15px;line-height:1.7;max-width:none;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
 ul.src li{margin-bottom:4px;max-width:90ch}
 .kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:14px;align-items:baseline}
 .kv .k{font-family:var(--mono);font-size:13px;color:var(--muted);white-space:nowrap}
@@ -121,11 +123,12 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
   <div class="ctl-group" role="group" aria-label="Диапазон">
     <span class="lbl">Диапазон</span>
     <button class="chip" data-view="10000,1500">Обзор 10 000–1500</button>
-    <button class="chip" data-view="12000,-100">Весь 12 000 — 100 н.э.</button>
+    <button class="chip" data-view="12000,-1000">Весь 12 000 — 1000 н.э.</button>
     <button class="chip" data-view="pre">Допотопный мир</button>
     <button class="chip" data-view="post">От потопа до Авраама</button>
     <button class="chip" data-view="4500,1500">Шумер, Египет, Авраам</button>
     <button class="chip" data-view="2100,-100">От Авраама до Христа</button>
+    <button class="chip" data-view="1200,-1000">От Иафета до Руси</button>
     <button class="icon" id="zin" title="Приблизить">+</button>
     <button class="icon" id="zout" title="Отдалить">−</button>
   </div>
@@ -140,6 +143,7 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
   <span><i style="border:1px dashed var(--post);background:transparent"></i>родословие Христа: положение условное</span>
   <span><i style="background:var(--fg);opacity:.35"></i>периоды истории Израиля</span>
   <span><i style="background:var(--crim)"></i>Крым: памятники потомков Иафета</span>
+  <span><i style="background:var(--sons)"></i>народы от Иафета до русских</span>
   <span><i style="background:var(--mesop)"></i>Месопотамия</span>
   <span><i style="background:var(--egypt)"></i>Египет</span>
   <span><i style="background:var(--anat)"></i>Анатолия и Левант</span>
@@ -229,6 +233,12 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
         <td>Мезолит гротов Шан-Коба, Фатьма-Коба, Мурзак-Коба (общепринято 10 000–6 000) — первые поколения после рассеяния; кеми-обинская и ямная культуры — время Авраама; киммерийцы, тавры (кизил-кобинская культура), греки, скифы — эпоха царей и Второго храма, где шкалы совпадают.</td>
       </tr>
       <tr>
+        <td><b>От скифов до Руси</b><br>потомки Иафета в Причерноморье</td>
+        <td class="m">700 до н.э. – 1000 н.э.</td><td class="m">те же даты</td>
+        <td>Скифы, сарматы и славяне в Писании прямо не названы; летопись возводит славян и Русь к Иафету (Быт. 10:2–5).</td>
+        <td>Железный век, римский и византийский периоды, раннее средневековье: скифские курганы, Неаполь Скифский, сарматы, готы, анты, Русь. Шкалы полностью совпадают.</td>
+      </tr>
+      <tr>
         <td><b>Иисус Христос</b></td>
         <td class="m">4 до н.э. – 33 н.э.</td><td class="m">те же даты</td>
         <td>Рождество при Ироде Великом (Мф. 2:1), выход на проповедь «лет тридцати» (Лк. 3:23), распятие при Понтии Пилате.</td>
@@ -281,6 +291,46 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
 </section>
 
 <section>
+  <h2>Народы от сыновей Ноя и путь от Иафета до русских</h2>
+  <div class="cols">
+    <div>
+      <h3>Иафет — «острова народов», север и запад</h3>
+      <ul class="tree">
+        <li><b>Гомер</b> → киммерийцы → (в традиции) кельты, галлы, кимвры
+          <ul><li>Аскеназ → ашкузы-скифы; в средневековой традиции — германцы (отсюда «ашкеназы» о евреях Германии)</li><li>Рифат → пафлагонцы</li><li>Фогарма → армяне, грузины (Тогарма армянской и грузинской традиции), хазары (по хазарской переписке)</li></ul></li>
+        <li><b>Магог</b> → скифы (Иосиф Флавий); по «Повести временных лет» от Иафета — славяне и Русь</li>
+        <li><b>Мадай</b> → мидяне → курды, персы Мидии</li>
+        <li><b>Иаван</b> → ионийцы, греки → византийцы
+          <ul><li>Елиса → эолийцы, Кипр</li><li>Фарсис → Тартесс (Испания), в традиции Тарс</li><li>Киттим → Кипр; в поздней традиции римляне, Италия</li><li>Доданим (Роданим) → Родос, Додона</li></ul></li>
+        <li><b>Фувал</b> → Табал → иберы Кавказа, грузины (традиция); в «Синопсисе» XVII в. — иллирийцы</li>
+        <li><b>Мешех</b> → мушки, фригийцы → каппадокийцы; в легенде XVI–XVII вв. «Мосох» — родоначальник Москвы и московитов</li>
+        <li><b>Фирас</b> → фракийцы, тирсены → даки, геты; по одной традиции — тавры</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Хам — юг</h3>
+      <ul class="tree">
+        <li><b>Хуш</b> → Куш: нубийцы, эфиопы; Сева, Хавила, Раама — племена Аравии и Африканского Рога; Нимрод — первые царства Сеннаара</li>
+        <li><b>Мицраим</b> → египтяне → копты; Патрусим — Верхний Египет; Каслухим → филистимляне; Кафторим → Крит</li>
+        <li><b>Фут</b> → ливийцы → берберы</li>
+        <li><b>Ханаан</b> → хананеи, финикийцы → карфагеняне; Сидон, Хет (хетты), Иевусей (Иерусалим), Аморрей, Арвад, Хамат</li>
+      </ul>
+      <h3>Сим — Ближний Восток</h3>
+      <ul class="tree">
+        <li><b>Елам</b> → эламиты (Сузы)</li>
+        <li><b>Ассур</b> → ассирийцы → современные ассирийцы-айсоры</li>
+        <li><b>Арфаксад</b> → халдеи (Ур) → Евер → евреи: Авраам → Исаак → Иаков → 12 колен Израилевых; Измаил → арабы; Исав → идумеи; Иоктан → племена Южной Аравии (Саба, Хадрамаут)</li>
+        <li><b>Луд</b> → лидийцы</li>
+        <li><b>Арам</b> → арамеи → сирийцы, арамейский язык</li>
+      </ul>
+    </div>
+  </div>
+  <h3>Цепочка от Иафета до русских</h3>
+  <p class="chain">Иафет → Магог (или Гомер → Аскеназ) → скифы (VII в. до н.э. – III в. н.э.) → сарматы и роксоланы (IV в. до н.э. – IV в. н.э.) → анты и склавины (IV–VI вв.) → восточные славяне: поляне, древляне, кривичи, словене (VI–IX вв.) → Русь (862) → русские, украинцы, белорусы.</p>
+  <p class="note">Это цепочка русской летописной и книжной традиции: «Повесть временных лет» выводит славян от Иафета, Иосиф Флавий отождествляет Магога со скифами, а «Синопсис» 1674 года возводит московитов к Мешеху. Языкознание относит славян к отдельной ветви индоевропейцев, а скифов и сарматов к иранской; степные народы здесь — предшественники и соседи славян на той же земле, а не прямые предки по языку. На таймлайне цепочка показана полосой «от Иафета до русских».</p>
+</section>
+
+<section>
   <h2>Крым: раскопки с точки зрения библейской хронологии</h2>
   <div class="cols">
     <div>
@@ -317,6 +367,7 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
     <li>Внебиблейские свидетельства: стела Мернептаха (Petrie 1896); A. Biran, J. Naveh, Israel Exploration Journal 43 (1993) — стела из Тель-Дана; призма Синаххериба (Британский музей); A. K. Grayson, Assyrian and Babylonian Chronicles (1975); цилиндр Кира; надпись Пилата (Frova 1961); E. R. Thiele, The Mysterious Numbers of the Hebrew Kings (1983) — даты царей.</li>
     <li>D. Kaniewski et al., PLoS ONE 8 (2013) — засуха 3,2 тыс. лет назад и крах бронзового века.</li>
     <li>Родословие: Мф. 1:1–17; Лк. 3:23–38; Руфь 4:18–22; 1 Пар. 3; 3–4 Цар. (возраст царей при воцарении); Евсевий Кесарийский, Церковная история I.7 (согласование Матфея и Луки).</li>
+    <li>Народы и Русь: Повесть временных лет (вводная часть, статьи 6370, 6496 гг.); Иосиф Флавий, Иудейские древности I.6; Иордан, Гетика; Прокопий Кесарийский, Война с готами; Киевский Синопсис (1674); В. В. Седов, «Происхождение и ранняя история славян» (1979); А. И. Айбабин, «Этническая история ранневизантийского Крыма» (1999).</li>
     <li>Крым: С. Н. Бибиков, «Грот Мурзак-Коба — новая позднепалеолитическая стоянка в Крыму», Советская археология 5 (1940); Г. А. Бонч-Осмоловский, «Итоги изучения крымского палеолита» (1934) и «Палеолит Крыма» I–III (1940–1954); А. А. Формозов, «Пещерная стоянка Староселье» (1958); Д. А. Крайнов, «Пещерная стоянка Таш-Аир I» (1960); Ю. Г. Колосов, «Мустьерские стоянки района Белогорска» (1983); А. А. Яневич, Буран-Кая III (Stratum plus, 2000-е); А. А. Щепинский, «Культуры энеолита и бронзы в Крыму» (1966); И. Н. Храпунов, «Древняя история Крыма» (2005); Геродот, История IV.</li>
     <li>Византийская эра от сотворения мира 5509 до н.э.: Георгий Синкелл, «Хронография»; русская летописная традиция (5508).</li>
     <li>K. Schmidt, Sie bauten die ersten Tempel (2006); O. Dietrich et al., Antiquity 87 (2013) — Гёбекли-Тепе. N. Karul, Türk Arkeoloji ve Etnografya Dergisi (2021) — Карахан-Тепе.</li>
@@ -381,8 +432,14 @@ function build(ch){
   ch.gen11.forEach(r=>{ G.push({name:r[0],group:'post',born:b,died:b+r[2],life:r[2],sonAge:r[1],ref:r[3]}); if(r[1]) b+=r[1]; });
   const abr=G[G.length-1]; const peleg=G.find(p=>p.name==='Фалек');
   const late=[], others=[];
-  GEN_REL.forEach(r=>{ late.push({name:r.name,group:'post',born:abr.born+r.rel,died:abr.born+r.rel+r.life,life:r.life,ref:r.ref}); });
-  GEN_ABS.forEach(r=>{ late.push(Object.assign({},r,{group:'post',born:r.t0+ch.epoch,died:r.t1!=null?r.t1+ch.epoch:null,life:r.life==null?null:r.life})); });
+  const mkRel=r=>Object.assign({},r,{group:'post',born:abr.born+r.rel,died:r.life!=null?abr.born+r.rel+r.life:null});
+  const T={}; TRIBES.forEach(r=>T[r.name]=r);
+  late.push(Object.assign(mkRel(T['Измаил']),{branch:true}));          // Авраам → Измаил
+  late.push(mkRel(GEN_REL[0]));                                       // Авраам → Исаак (линия)
+  late.push(Object.assign(mkRel(T['Исав']),{branch:true}));            // Исаак → Исав
+  late.push(mkRel(GEN_REL[1]));                                       // Исаак → Иаков (линия)
+  TRIBES.filter(r=>r.name!=='Измаил'&&r.name!=='Исав').forEach(r=>late.push(Object.assign(mkRel(r),{branch:true}))); // Иаков → 11 сыновей и Дина
+  GEN_ABS.forEach(r=>{ late.push(Object.assign({},r,{group:'post',born:r.t0+ch.epoch,died:r.t1!=null?r.t1+ch.epoch:null,life:r.life==null?null:r.life})); }); // Иаков → Иуда → … → Иисус Христос
   OTHERS.forEach(r=>{ if(r.rel!=null) others.push({name:r.name,group:'post',born:abr.born+r.rel,died:abr.born+r.rel+r.life,life:r.life,ref:r.ref,note:r.note}); else others.push(Object.assign({},r,{group:'post',born:r.t0+ch.epoch,died:r.t1+ch.epoch})); });
   return {epoch:ch.epoch,label:ch.label,P,sons,G,late,others,noah,flood,shemBorn,abr,peleg,enoch,
     events:[
@@ -445,7 +502,7 @@ const GEN_REL=[ // relative to Abraham where the text gives the interval
   {name:'Иаков',rel:160,life:147,ref:'Быт. 25:26; 47:28; Мф. 1:2'}
 ];
 const GEN_ABS=[ // Matthew 1 royal line, Ussher BC; hollow = date not given, position estimated
-  {name:'Иуда',t0:-1750,hollow:true,ref:'Быт. 29:35; Мф. 1:2',note:'Четвёртый сын Иакова от Лии; год рождения оценочный.'},
+  {name:'Иуда',t0:-1750,hollow:true,parent:'Иаков',capBefore:'царская линия от Иуды: Иуда → Давид → цари Иудеи → Иосиф → Иисус Христос',ref:'Быт. 29:35; Мф. 1:2',note:'Четвёртый сын Иакова от Лии; год рождения оценочный.'},
   {name:'Фарес',t0:-1710,hollow:true,ref:'Быт. 38:29; Руфь 4:18',note:'Сын Иуды от Фамари, родился до переселения в Египет (1706).'},
   {name:'Есром',t0:-1670,hollow:true,ref:'Быт. 46:12; Руфь 4:18',note:'Пришёл в Египет с Иаковом.'},
   {name:'Арам',t0:-1620,hollow:true,ref:'Руфь 4:19; Мф. 1:3',note:'Поколение в Египте.'},
@@ -485,8 +542,23 @@ const GEN_ABS=[ // Matthew 1 royal line, Ussher BC; hollow = date not given, pos
   {name:'Мария',t0:-18,hollow:true,ref:'Лк. 1:27; Мф. 1:16',note:'Дева Мария, матерь Иисуса; год рождения в тексте не указан.'},
   {name:'Иисус Христос',t0:-4,t1:33,life:null,nolife:true,christ:true,ref:'Мф. 1:16; 2:1; Лк. 3:23; Ашшер: Рождество 4 до н.э., распятие 33 н.э.'}
 ];
+const TRIBES=[ // rel = years after Abraham's birth; hollow = dates not given
+  {name:'Измаил',rel:86,life:137,parent:'Авраам',ref:'Быт. 16:16; 25:17',note:'Сын Агари; 12 князей (Быт. 25:13–16) — измаильтяне, арабские племена Аравии.',capBefore:'дети Авраама → Исаака → Иакова: Измаил, Исав, двенадцать колен Израилевых'},
+  {name:'Исав',rel:160,hollow:true,parent:'Исаак',ref:'Быт. 25:25; 36',note:'Близнец Иакова; Едом — идумеи, земля Сеир.'},
+  {name:'Рувим',rel:244,hollow:true,parent:'Иаков',ref:'Быт. 29:32; 49:3',note:'Первенец от Лии; удел за Иорданом.'},
+  {name:'Симеон',rel:245,hollow:true,parent:'Иаков',ref:'Быт. 29:33; 49:5',note:'От Лии; удел внутри Иуды.'},
+  {name:'Левий',rel:246,life:137,parent:'Иаков',ref:'Быт. 29:34; Исх. 6:16',note:'От Лии; прожил 137 лет; священство, без удела.'},
+  {name:'Дан',rel:248,hollow:true,parent:'Иаков',ref:'Быт. 30:6; 49:16',note:'От Валлы; удел у Иоппии, позже на севере.'},
+  {name:'Неффалим',rel:249,hollow:true,parent:'Иаков',ref:'Быт. 30:8; 49:21',note:'От Валлы; Галилея.'},
+  {name:'Гад',rel:249,hollow:true,parent:'Иаков',ref:'Быт. 30:11; 49:19',note:'От Зелфы; Галаад.'},
+  {name:'Асир',rel:250,hollow:true,parent:'Иаков',ref:'Быт. 30:13; 49:20',note:'От Зелфы; побережье у Тира.'},
+  {name:'Иссахар',rel:250,hollow:true,parent:'Иаков',ref:'Быт. 30:18; 49:14',note:'От Лии; долина Изреель.'},
+  {name:'Завулон',rel:251,hollow:true,parent:'Иаков',ref:'Быт. 30:20; 49:13',note:'От Лии; Нижняя Галилея.'},
+  {name:'Дина',rel:251,hollow:true,parent:'Иаков',ref:'Быт. 30:21; 34',note:'Дочь Лии.'},
+  {name:'Иосиф',rel:251,life:110,parent:'Иаков',ref:'Быт. 41:46; 50:26',note:'От Рахили; правитель Египта; колена Ефрема и Манассии.'},
+  {name:'Вениамин',rel:266,hollow:true,parent:'Иаков',ref:'Быт. 35:18; 49:27',note:'От Рахили; удел у Иерусалима; колено Саула и апостола Павла.'}
+];
 const OTHERS=[
-  {name:'Иосиф',rel:251,life:110,ref:'Быт. 41:46; 50:26',note:'Сын Иакова, правитель Египта; не в родословии Христа.'},
   {name:'Моисей',t0:-1571,t1:-1451,life:120,ref:'Втор. 34:7; Ашшер'},
   {name:'Иисус Навин',t0:-1536,t1:-1426,life:110,ref:'Нав. 24:29; Ашшер',approx:true}
 ];
@@ -512,9 +584,23 @@ const CRIMEA=[
   {cls:'crim',a:900,b:300,label:'Кизил-кобинская культура: тавры',who:'Г. А. Бонч-Осмоловский, 1920-е; О. И. Домбровский, В. А. Колотухин',note:'Пещера Кизил-Коба, каменные ящики тавров Горного Крыма; Геродот IV.103.',bib:'тавры — потомки Иафета (Фирас или Гомер); эпоха царей и плена'},
   {cls:'crim',m:600,label:'Пантикапей: ионийские греки',who:'раскопки с 1859',note:'Колония Милета на месте Керчи; с 480 — столица Боспорского царства.',bib:'Иаван, сын Иафета → ионийцы; время плена и Второго храма'},
   {cls:'crim',m:422,label:'Херсонес Таврический',who:'раскопки с 1827',note:'Дорийская колония Гераклеи Понтийской; позже место крещения князя Владимира.',bib:'Иаван → греки; время Ездры и Неемии'},
-  {cls:'crim',a:300,b:-100,label:'Неаполь Скифский',who:'П. Н. Шульц, 1945–1950-е',note:'Столица позднескифского царства у Симферополя; мавзолей Скилура.',bib:'скифы — Магог или Аскеназ, потомки Иафета; время Маккавеев и Рождества'}
+  {cls:'crim',a:480,b:-370,label:'Боспорское царство',who:'раскопки Керчи, Фанагории, Нимфея с XIX в.',note:'Греко-варварское царство Спартокидов; Митридат VI; позднее под Римом.',bib:'Иаван (греки) с местными потомками Иафета'},
+  {cls:'crim',a:300,b:-250,label:'Неаполь Скифский',who:'П. Н. Шульц, 1945–1950-е',note:'Столица позднескифского царства у Симферополя; мавзолей Скилура.',bib:'скифы — Магог или Аскеназ, потомки Иафета; время Маккавеев и Рождества'},
+  {cls:'crim',a:-250,b:-700,label:'Готы и аланы в Горном Крыму (Крымская Готия)',who:'А. И. Айбабин, Эски-Кермен, Мангуп',note:'Могильники с орлиноголовыми пряжками; Дорос (Мангуп) — центр Готии.',bib:'потомки Иафета (Аскеназ, Магог)'},
+  {cls:'crim',m:-988,label:'Херсонес: крещение князя Владимира',who:'Повесть временных лет, 6496 г.',note:'Корсунский поход и крещение Владимира, затем крещение Руси.',bib:'Русь — потомки Иафета по летописи'}
 ];
 
+const PEOPLES=[ // Japheth → Russians: conventional dates; chain of the Russian chronicle tradition
+  {a:-1000,b:-600,label:'Киммерийцы — Гомер',note:'Причерноморье и Крым; упомянуты у Гомера и в ассирийских анналах (Гимирри); вытеснены скифами.',ref:'Быт. 10:2; Иез. 38:6'},
+  {a:-700,b:250,label:'Скифы — Магог (у Иосифа Флавия), Аскеназ (ашкузы)',note:'Иранские кочевники степей; «Скифия» античных авторов; поздние скифы в Крыму до III в. н.э.',ref:'Быт. 10:2–3; Иер. 51:27; Иосиф Флавий, Древности I.6'},
+  {a:-400,b:400,label:'Сарматы, роксоланы, аланы',note:'Сменили скифов в степях; роксоланы — «светлые аланы»; в поздней традиции — предки славян (Сарматия Птолемея, «сарматизм»).',ref:'Страбон VII; Птолемей, География III'},
+  {a:-250,b:450,label:'Готы — в традиции потомки Аскеназа (германцы)',note:'Черняховская культура, держава Германариха; готы в Крыму до XVI в.',ref:'Иордан, Гетика'},
+  {a:400,b:600,label:'Анты и склавины — первые славяне в источниках',note:'Иордан и Прокопий Кесарийский (VI в.) называют антов и склавинов одним народом; пражско-корчакская и пеньковская культуры.',ref:'Иордан, Гетика 34–35; Прокопий, Война с готами VII.14'},
+  {a:600,b:880,label:'Восточные славяне: поляне, древляне, кривичи, словене',note:'Расселение по Днепру, Волхову и Оке; «Повесть временных лет» выводит славян от Иафета («нарци, еже суть словене»).',ref:'Повесть временных лет, вводная часть'},
+  {m:862,label:'Призвание Рюрика',note:'Начало Руси по летописи; Новгород, затем Киев (882).',ref:'Повесть временных лет, 6370 г.'},
+  {a:862,b:1000,label:'Русь: Рюрик, Олег, Игорь, Ольга, Святослав, Владимир',note:'Киевская Русь; русские, украинцы и белорусы — потомки восточных славян Руси.',ref:'Повесть временных лет'},
+  {m:988,label:'Крещение Руси',note:'Владимир крещён в Херсонесе (Корсуни), крещение Киева.',ref:'Повесть временных лет, 6496 г.'}
+];
 const PERIODS=[
   {a:-1921,b:-1706,label:'Патриархи в Ханаане',note:'От призвания Авраама до переселения Иакова в Египет (Быт. 12–46).'},
   {a:-1706,b:-1491,label:'Израиль в Египте',note:'215 лет по Ашшеру (430 лет от призвания Авраама, Исх. 12:40 LXX; Гал. 3:17).'},
@@ -531,7 +617,7 @@ const PERIODS=[
 /* ---------- Conventional archaeology (years BC, rounded) ---------- */
 const EPOCHS=[
   ['Верхний палеолит',40000,12500],['Эпипалеолит, мезолит (натуфий)',12500,9700],['Докерамический неолит',9700,6500],
-  ['Керамический неолит',6500,4500],['Энеолит',4500,3300],['Ранняя бронза',3300,2000],['Средняя бронза',2000,1550],['Поздняя бронза',1550,1200],['Железный век',1200,550],['Персидский период',550,332],['Эллинизм',332,63],['Римский период',63,-100]
+  ['Керамический неолит',6500,4500],['Энеолит',4500,3300],['Ранняя бронза',3300,2000],['Средняя бронза',2000,1550],['Поздняя бронза',1550,1200],['Железный век',1200,550],['Персидский период',550,332],['Эллинизм',332,63],['Римский период',63,-330],['Византийский период',330,-650],['Раннее средневековье',650,-1000]
 ];
 const CLIMATE=[
   {t:'r',cls:'cold',a:10900,b:9700,label:'Поздний дриас',note:'Последний холодный эпизод ледникового периода; окончание — начало голоцена 11 700 лет назад (Rasmussen et al. 2014).'},
@@ -583,7 +669,7 @@ const SITES=[
 ];
 
 /* ---------- State ---------- */
-const FULL={t0:-12000,t1:100};
+const FULL={t0:-12000,t1:1000};
 let view={t0:-10000,t1:-1500};
 let chKey='mt', D=build(CHRONO.mt);
 const svg=document.getElementById('tl'), tipEl=document.getElementById('tip'), chart=document.getElementById('chart');
@@ -610,11 +696,12 @@ function render(){
   let y=evY+evH+6;
   const preRows=D.P.length, sonsRows=D.sons.length, postRows=D.G.length;
   const nrow=row-3; const natRows=NATIONS.reduce((n,g)=>n+g.list.length,0);
-  const natH=natRows*nrow+NATIONS.length*14+10;
-  const genH=18+D.late.length*nrow+18+D.others.length*row+6;
-  const cainH=16+CAIN.length*nrow+6;
+  const natH=(natRows-1)*nrow+NATIONS.length*16+10;
+  const genH=18+D.late.length*nrow+D.late.filter(q=>q.capBefore).length*16+18+D.others.length*row+6;
+  const cainH=12+CAIN.length*nrow+4;
   const patY=y; y+=(preRows+sonsRows+postRows)*row+3*10+6+natH+genH+cainH;
   const perY=y+8; y=perY+PERIODS.length*(row-4)+16;
+  const peoY=y+8; y=peoY+PEOPLES.length*(row-4)+16;
   const arcHeadY=y; y+=22;
   const arcY=y; y+=SITES.length*(row-1)+6;
   const crimHeadY=y; y+=22;
@@ -698,12 +785,7 @@ function render(){
     out.push(`<text x="${X+4}" y="${ly}" font-size="${fs}" font-weight="${e.cls?'600':'500'}" ${e.cls==='flood'?'fill="var(--flood)"':''} pointer-events="none">${esc(span>3000&&e.short?e.short:e.label)}</text>`);
   });
 
-  // Nimrod band (post-Flood, before/around Babel)
-  {
-    const a=amT(D.flood+60), b=amT(D.peleg.born+100);
-    const k=tip(`<b>Нимрод строит города (Быт. 10:8–12)</b><span class="m">внук Хама; примерно 2–4 поколения после потопа</span><br>Вавилон, Эрех (Урук), Аккад, Халне в Сеннааре; Ниневия, Реховоф-ир, Калах, Ресен в Ассирии.`);
-    out.push(`<rect data-i="${k}" x="${x(a)}" y="${patY+(preRows+sonsRows)*row+26+natH+cainH}" width="${Math.max(2,x(b)-x(a))}" height="${D.G.length*row}" fill="var(--post)" opacity=".08"/>`);
-  }
+  const bandAt=out.length;
 
   // patriarch bars
   function bar(p,yy,prev,rh){
@@ -741,13 +823,8 @@ function render(){
     p.y=yy;
   }
   let yy=patY; let prev=null;
-  D.P.forEach(p=>{ bar(p,yy,prev); prev=p; yy+=row; });
-  // Cain's branch (Gen 4): hollow bars, no dates in the text
-  yy+=4;
-  out.push(`<text class="cap" x="${Math.max(x(amT(0)),padL)+2}" y="${yy+10}">ветвь Каина · Быт. 4 · даты в тексте не указаны, положение условное</text>`);
-  yy+=16;
   const cainLen=Math.round(D.flood*0.3), cainMap={};
-  CAIN.forEach(c=>{
+  const cainRow=c=>{
     const bAM=Math.round(D.flood*c.frac); const eAM=c.abel?D.P[1].born-5:bAM+cainLen;
     const X=x(amT(bAM)), Wd=Math.max(1.5,x(amT(eAM))-X);
     const k=tip(`<b>${esc(c.name)}</b><span class="m">≈ ${fmtAM(bAM)} · ${fmtBC(amT(bAM))}${c.abel?' → убит до '+fmtAM(eAM):''}</span><br>${c.note?esc(c.note)+'<br>':''}Дат в тексте нет; положение отрезка условное${c.abel?'':', длина '+cainLen+' лет'}.<br>${esc(c.ref)}`);
@@ -758,35 +835,55 @@ function render(){
     if(X+Wd>padL && X<W-padR) out.push(`<text x="${X+Wd+5}" y="${yy+nrow-6}" font-size="${fs-1}" pointer-events="none">${esc(c.name)}<tspan class="muted" font-size="${fs-2}"> ${c.abel?'† убит':'≈'}</tspan></text>`);
     cainMap[c.name]={y:yy,h:nrow-5};
     yy+=nrow;
+  };
+  D.P.forEach((p,i)=>{
+    bar(p,yy,i===0?null:D.P[i-1]); yy+=row;
+    if(i===0){ // children of Adam in hierarchy: Cain (with his descendants beneath him), Abel, then Seth continues the line
+      out.push(`<text class="cap" x="${Math.max(x(amT(0)),padL)+2}" y="${yy+8}">дети Адама · Быт. 4: Каин и его потомки, Авель; далее Сиф (Быт. 5)</text>`); yy+=12;
+      CAIN.filter(c=>!c.abel).forEach(cainRow);
+      CAIN.filter(c=>c.abel).forEach(cainRow);
+      yy+=4;
+    }
   });
   yy+=10;
-  D.sons.forEach(p=>{ bar(p,yy,D.noah); yy+=row; });
-  yy+=10;
-  // Table of nations (Gen 10): hollow bars, no dates in the text
+  // Noah's sons, each with his sons (Gen 10) beneath him; Shem last so the line continues to Arphaxad
   const natStart=amT(D.flood+2), natLen=D.G[0].life;
-  NATIONS.forEach(g=>{
-    const parent=D.sons.find(q=>q.name===g.parent);
-    out.push(`<text class="cap" x="${Math.max(x(natStart),padL)+2}" y="${yy+10}">сыновья ${g.gen} · ${g.ref} · даты в тексте не указаны</text>`);
-    yy+=14;
-    g.list.forEach(n=>{
+  const sonOrder=['Иафет','Хам','Сим'];
+  sonOrder.forEach(sn=>{
+    const son=D.sons.find(q=>q.name===sn); bar(son,yy,D.noah); yy+=row;
+    const g=NATIONS.find(q=>q.parent===sn);
+    out.push(`<text class="cap" x="${Math.max(x(natStart),padL)+2}" y="${yy+8}">сыновья ${g.gen} · ${g.ref} · даты в тексте не указаны${sn==='Сим'?' · Арфаксад — ниже, линия продолжается':''}</text>`);
+    yy+=12;
+    g.list.filter(n=>n.name!=='Арфаксад').forEach(n=>{
       const X=x(natStart), Wd=Math.max(1.5,x(amT(D.flood+2+natLen))-X);
       const k=tip(`<b>${esc(n.name)}, сын ${g.gen}</b><span class="m">родился после потопа; годы жизни в тексте не указаны</span><br>${n.sons?'Сыновья: '+esc(n.sons)+'.<br>':''}Отождествление: ${esc(n.ident)}.<br>Отрезок условный: начало — первые годы после потопа, длина — как у Арфаксада (${natLen} лет).`);
       out.push(`<rect data-i="${k}" x="${X}" y="${yy}" width="${Wd}" height="${nrow-5}" rx="2" fill="var(--sons)" fill-opacity=".14" stroke="var(--sons)" stroke-dasharray="3 2" stroke-width="1"/>`);
       out.push(`<rect data-i="${k}" class="hit" x="${X}" y="${yy-1}" width="${Wd}" height="${nrow-2}"/>`);
-      if(parent) out.push(`<path class="conn" d="M${X},${parent.y+(row-6)/2} L${X},${yy}" opacity=".25"/>`);
+      out.push(`<path class="conn" d="M${X},${son.y+(row-6)/2} L${X},${yy}" opacity=".25"/>`);
       if(X+Wd>padL && X<W-padR) out.push(`<text x="${X+Wd+5}" y="${yy+nrow-6}" font-size="${fs-1}" pointer-events="none">${esc(n.name)}<tspan class="muted" font-size="${fs-2}">${n.sons?' · '+esc(n.sons):''}</tspan></text>`);
       yy+=nrow;
     });
+    yy+=4;
   });
-  yy+=10;
-  prev=D.sons[1];
+  prev=D.sons.find(q=>q.name==='Сим');
+  const g11Y=yy;
   D.G.forEach(p=>{ bar(p,yy,prev); prev=p; yy+=row; });
+  { // Nimrod band behind the Gen 11 rows (post-Flood, before/around Babel)
+    const a=amT(D.flood+60), b=amT(D.peleg.born+100);
+    const k=tip(`<b>Нимрод строит города (Быт. 10:8–12)</b><span class="m">внук Хама; примерно 2–4 поколения после потопа</span><br>Вавилон, Эрех (Урук), Аккад, Халне в Сеннааре; Ниневия, Реховоф-ир, Калах, Ресен в Ассирии.`);
+    out.splice(bandAt,0,`<rect data-i="${k}" x="${x(a)}" y="${g11Y-4}" width="${Math.max(2,x(b)-x(a))}" height="${D.G.length*row}" fill="var(--post)" opacity=".08"/>`);
+  }
   yy+=4;
   out.push(`<text class="cap" x="${padL+2}" y="${yy+10}">родословие Иисуса Христа по Мф. 1 (царская линия Давида) · пунктир — положение условное, дат в тексте нет · линия Лк. 3 через Нафана — в таблице ниже</text>`);
   yy+=16;
-  D.late.forEach(p=>{ bar(p,yy,prev,nrow); prev=p; yy+=nrow; });
+  const byName={'Авраам':D.abr};
+  D.late.forEach(p=>{
+    if(p.capBefore){ out.push(`<text class="cap" x="${padL+2}" y="${yy+10}">${esc(p.capBefore)}</text>`); yy+=16; }
+    const par=p.parent?(byName[p.parent]||prev):prev;
+    bar(p,yy,par,nrow); byName[p.name]=p; if(!p.branch) prev=p; yy+=nrow;
+  });
   yy+=4;
-  out.push(`<text class="cap" x="${padL+2}" y="${yy+10}">другие лица: Иосиф, Моисей, Иисус Навин</text>`);
+  out.push(`<text class="cap" x="${padL+2}" y="${yy+10}">другие лица: Моисей, Иисус Навин</text>`);
   yy+=16;
   D.others.forEach(p=>{ bar(p,yy,null,row); yy+=row; });
   // Periods of Israel's history
@@ -800,6 +897,26 @@ function render(){
     const lw=est(q.label,fs-1)+8; let tx=X+Wd+4, inside=false;
     if(tx+lw>W-padR){ if(Wd>lw){tx=Math.max(X,padL)+4;inside=true;} else tx=Math.max(padL,W-padR-lw); }
     out.push(`<text x="${tx}" y="${py+prow-6}" font-size="${fs-1}" ${inside?'fill="var(--bg)"':''} pointer-events="none">${esc(q.label)}</text>`);
+    py+=prow;
+  });
+  // Peoples lane: from Japheth to the Russians
+  out.push(`<text class="cap" x="${padL+2}" y="${peoY-2}">от Иафета до русских: народы Северного Причерноморья и Руси (общепринятые даты; цепочка летописной традиции)</text>`);
+  py=peoY+4;
+  PEOPLES.forEach(q=>{
+    if(q.m!=null){
+      const X=x(q.m); if(X<padL||X>W-padR){py+=prow;return;}
+      const k=tip(`<b>${esc(q.label)}</b><span class="m">${fmtBC(q.m)}</span><br>${esc(q.note)}<br>${esc(q.ref)}`);
+      out.push(`<path data-i="${k}" class="bar sons" d="M${X},${py+1} l5,${(prow-6)/2} l-5,${(prow-6)/2} l-5,-${(prow-6)/2} z" style="opacity:1"/>`);
+      out.push(`<text x="${X+8}" y="${py+prow-6}" font-size="${fs-1}" pointer-events="none">${esc(q.label)}</text>`);
+      py+=prow; return;
+    }
+    const X=x(q.a), Wd=Math.max(1.5,x(q.b)-X); if(X+Wd<padL||X>W-padR){py+=prow;return;}
+    const k=tip(`<b>${esc(q.label)}</b><span class="m">${fmtBC(q.a)} – ${fmtBC(q.b)}</span><br>${esc(q.note)}<br>${esc(q.ref)}`);
+    out.push(`<rect data-i="${k}" class="bar sons" x="${X}" y="${py}" width="${Wd}" height="${prow-5}"/>`);
+    out.push(`<rect data-i="${k}" class="hit" x="${X}" y="${py-1}" width="${Wd}" height="${prow-2}"/>`);
+    const lw=est(q.label,fs-1)+8; let tx=X+Wd+4, inside=false;
+    if(tx+lw>W-padR){ if(Wd>lw){tx=Math.max(X,padL)+4;inside=true;} else tx=Math.max(padL,W-padR-lw); }
+    out.push(`<text x="${tx}" y="${py+prow-6}" font-size="${fs-1}" ${inside?'fill="#fff"':''} pointer-events="none">${esc(q.label)}</text>`);
     py+=prow;
   });
 
