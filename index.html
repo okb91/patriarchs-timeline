@@ -105,6 +105,8 @@ svg .evl.christ{stroke:var(--fg);stroke-width:2;stroke-dasharray:none;opacity:.9
 svg .evt.flood{fill:var(--flood)}
 svg .conn{stroke:var(--fg);stroke-width:1;fill:none;opacity:.35}
 svg .conn.hl{stroke:var(--accent);stroke-width:2;opacity:1}
+svg .conn.far{stroke-dasharray:3 3;opacity:.5}
+svg .stub{stroke:var(--fg);stroke-width:1.5;opacity:.6;fill:none}
 svg .bar.hl{stroke:var(--accent);stroke-width:2}
 svg .bar.sel{stroke:var(--fg);stroke-width:2}
 svg .hit{fill:transparent}
@@ -395,6 +397,17 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
       </table>
       </div>
     </div>
+  </div>
+</section>
+
+<section>
+  <h2>Родословные библейских лиц до Ноя</h2>
+  <p class="note">Ветви, добавленные под их предками на таймлайне: родня Авраама (Нахор, Аран, Лот, Лаван, Ревекка, Иов), дети Хеттуры и Измаила, потомки Исава до Ирода, левиты и священники от Аарона до Ездры, Маккавеев и Иоанна Крестителя, судьи, Саул и Есфирь (Вениамин), Иисус Навин и Гедеон (Иосиф), родоначальники народов среди внуков Ноя, а также иноплеменники, чьи народы Писание возводит к сыновьям Ноя: Агарь и фараоны (Мицраим), Голиаф (Каслухим), Хирам и Иезавель (Сидон), Урия (Хет), Навуходоносор (халдеи), Кир (Елам), Дарий Мидянин (Мадай), Крёз (Луд), Александр и Антиох (Иаван), Пилат (Киттим). Где текст не даёт дат, положение оценочное и отрезок пунктирный.</p>
+  <div class="tablewrap">
+  <table id="xtable">
+    <thead><tr><th>Лицо или народ</th><th>Годы</th><th>Линия от Ноя</th></tr></thead>
+    <tbody></tbody>
+  </table>
   </div>
 </section>
 
@@ -718,6 +731,201 @@ const SITES=[
   {cls:'anat',m:-30,label:'Надпись Пилата из Кесарии',note:'Посвятительная надпись префекта Понтия Пилата (найдена 1961); 26–36 н.э.'}
 ];
 
+/* ---------- Extra genealogies traceable to Noah: inserted beneath their ancestors ----------
+   rel = years after Abraham's birth (pre-Exodus, follows the chosen chronology); b/d = absolute BC (negative = AD).
+   bar:true = dates given by the text or Ussher; otherwise the position is an estimate (dashed). */
+const EXTRA=[
+ {anchor:'gen11:Фарра',nodes:[
+  {name:'Аран',rel:-60,note:'Старший сын Фарры, умер в Уре при жизни отца.',ref:'Быт. 11:27–28',children:[
+    {name:'Лот',rel:6,note:'Племянник Авраама; Содом, спасение, Сигор.',ref:'Быт. 11:27; 19',children:[
+      {name:'Моав',rel:100,note:'Родоначальник моавитян.',ref:'Быт. 19:37',children:[
+        {name:'Валак, царь Моава',b:1480,note:'Нанял Валаама проклясть Израиль.',ref:'Числ. 22'},
+        {name:'Руфь Моавитянка',b:1150,note:'Прабабка Давида; её потомки — Овид, Иессей, Давид (выше).',ref:'Руфь 1–4; Мф. 1:5'}]},
+      {name:'Бен-Амми',rel:100,note:'Родоначальник аммонитян (Наас, Аннон).',ref:'Быт. 19:38'}]},
+    {name:'Милка',rel:-25,note:'Жена Нахора, бабка Ревекки.',ref:'Быт. 11:29'},
+    {name:'Иска',rel:-20,note:'По иудейской традиции — Сарра.',ref:'Быт. 11:29'}]},
+  {name:'Нахор',rel:-30,note:'Брат Авраама; остался в Харране.',ref:'Быт. 11:26; 22:20–24',children:[
+    {name:'Уц',rel:5,note:'Земля Уц — родина Иова (одно из отождествлений).',ref:'Быт. 22:21',children:[
+      {name:'Иов',rel:60,d:null,note:'«Был человек в земле Уц»; происхождение в книге не названо: по одной традиции потомок Нахора, по другой (LXX) — Иовав из Едома; прожил после испытаний ещё 140 лет.',ref:'Иов 1:1; 42:16'}]},
+    {name:'Вуз',rel:7,note:'Родоначальник вузитян.',ref:'Быт. 22:21',children:[
+      {name:'Елиуй Вузитянин',rel:80,note:'Молодой собеседник Иова.',ref:'Иов 32:2'}]},
+    {name:'Кемуил',rel:9,note:'«Отец Арама» (арамеи Харрана).',ref:'Быт. 22:21'},
+    {name:'Кесед',rel:11,note:'По традиции — предок халдеев («касдим»).',ref:'Быт. 22:22'},
+    {name:'Вафуил',rel:60,note:'Арамеянин из Месопотамии.',ref:'Быт. 22:23; 25:20',children:[
+      {name:'Лаван',rel:110,note:'Тесть Иакова.',ref:'Быт. 29–31',children:[
+        {name:'Лия',rel:150,note:'Мать Рувима, Симеона, Левия, Иуды, Иссахара, Завулона, Дины.',ref:'Быт. 29:31–35'},
+        {name:'Рахиль',rel:155,note:'Мать Иосифа и Вениамина.',ref:'Быт. 30:22–24; 35:18'}]},
+      {name:'Ревекка',rel:120,note:'Жена Исаака, мать Исава и Иакова.',ref:'Быт. 24; 25:20'}]}]}
+ ]},
+ {anchor:'tribes:Измаил',nodes:[
+  {name:'Наваиоф',rel:120,note:'Первенец Измаила; набатеи (по традиции).',ref:'Быт. 25:13'},
+  {name:'Кидар',rel:122,note:'Кидаряне, кочевники Аравии.',ref:'Быт. 25:13; Ис. 21:16'},
+  {name:'Адбеел, Мивсам, Мишма, Дума, Масса, Хадад, Фема, Иетур, Нафиш, Кедма',rel:125,note:'Остальные десять князей Измаила.',ref:'Быт. 25:13–16'}
+ ]},
+ {anchor:'tribes:Измаил',parent:'gen11:Авраам',nodes:[
+  {name:'Зимран, Медан, Ишбак',rel:140,note:'Сыновья Авраама от Хеттуры; арабские племена.',ref:'Быт. 25:1–2'},
+  {name:'Иокшан',rel:140,note:'От Хеттуры.',ref:'Быт. 25:2–3',children:[{name:'Шева, Дедан',rel:175,note:'Племена Аравии (Дедан — оазис Эль-Ула).',ref:'Быт. 25:3'}]},
+  {name:'Мадиан',rel:140,note:'Родоначальник мадианитян.',ref:'Быт. 25:2',children:[
+    {name:'Иофор (Рагуил), священник Мадиамский',b:1600,note:'Тесть Моисея.',ref:'Исх. 2:16–21; 18',children:[
+      {name:'Сепфора',b:1570,note:'Жена Моисея.',ref:'Исх. 2:21'},
+      {name:'Ховав; кенеяне',b:1560,note:'Кенеяне пошли с Израилем в Ханаан.',ref:'Числ. 10:29; Суд. 1:16',children:[{name:'Иаиль, жена Хевера Кенеянина',b:1300,note:'Убила Сисару.',ref:'Суд. 4:17–22'}]}]}]},
+  {name:'Шуах',rel:140,note:'От Хеттуры.',ref:'Быт. 25:2',children:[{name:'Вилдад Савхеянин',rel:200,note:'Друг Иова.',ref:'Иов 2:11'}]}
+ ]},
+ {anchor:'tribes:Исав',nodes:[
+  {name:'Елифаз',rel:190,note:'Первенец Исава от Ады.',ref:'Быт. 36:4, 10–12',children:[
+    {name:'Феман',rel:220,note:'Феманитяне; Елифаз Феманитянин — друг Иова.',ref:'Быт. 36:11; Иов 2:11'},
+    {name:'Амалик',rel:225,note:'Родоначальник амаликитян.',ref:'Быт. 36:12',children:[{name:'Агаг, царь Амалика',b:1070,note:'Пощажён Саулом, убит Самуилом.',ref:'1 Цар. 15'}]}]},
+  {name:'Рагуил',rel:190,note:'Сын Исава от Васемафы.',ref:'Быт. 36:4, 13'},
+  {name:'Иеус, Иеглом, Корей',rel:195,note:'Сыновья Исава от Оливемы.',ref:'Быт. 36:5'},
+  {name:'Едом → идумеи',rel:260,note:'Царство Едом; при Маккавеях обращены в иудейство.',ref:'Быт. 36:31–43',children:[{name:'Ирод Великий (идумей)',b:73,d:4,bar:true,note:'Царь Иудеи 37–4 до н.э.; избиение младенцев.',ref:'Мф. 2; Иосиф Флавий'}]}
+ ]},
+ {anchor:'tribes:Левий',nodes:[
+  {name:'Гирсон',rel:275,note:'Род гирсонян.',ref:'Исх. 6:16'},
+  {name:'Кааф',rel:278,note:'Прожил 133 года.',ref:'Исх. 6:18',children:[
+    {name:'Амрам',rel:330,note:'Прожил 137 лет; жена Иохаведа.',ref:'Исх. 6:20',children:[
+      {name:'Мариам',b:1580,note:'Пророчица, сестра Моисея.',ref:'Исх. 15:20'},
+      {name:'Аарон',b:1574,d:1452,bar:true,note:'Первый первосвященник; умер на горе Ор в 123 года.',ref:'Числ. 33:39',children:[
+        {name:'Надав и Авиуд',b:1540,d:1490,note:'Погибли за «чуждый огонь».',ref:'Лев. 10'},
+        {name:'Елеазар',b:1540,note:'Второй первосвященник.',ref:'Числ. 20:28',children:[
+          {name:'Финеес',b:1510,note:'Ревность в Ситтиме; «завет священства вечного».',ref:'Числ. 25',children:[
+            {name:'Авишуй → Буккий → Озия → Зерахия → Мераиоф → Амария → Ахитув',b:1480,d:1100,note:'Семь поколений священников по 1 Пар. 6:4–8.',ref:'1 Пар. 6:4–8',children:[
+              {name:'Садок',b:1080,d:1000,note:'Первосвященник при Давиде и Соломоне; род саддукеев.',ref:'2 Цар. 8:17; 3 Цар. 1',children:[
+                {name:'Ахимаас → Азария → … → Хелкия',b:1050,d:630,note:'Хелкия нашёл книгу Закона при Иосии (622).',ref:'1 Пар. 6:8–13; 4 Цар. 22',children:[
+                  {name:'Азария → Сераия',b:640,d:586,note:'Сераия казнён Навуходоносором в Ривле.',ref:'4 Цар. 25:18–21',children:[
+                    {name:'Иоседек',b:620,d:560,note:'Уведён в плен.',ref:'1 Пар. 6:14–15',children:[{name:'Иисус, сын Иоседека, первосвященник',b:570,d:500,note:'Первосвященник возвращения; строил Второй храм.',ref:'Ездр. 3:2; Зах. 3'}]},
+                    {name:'Ездра, священник и книжник',b:480,d:420,note:'Возглавил второе возвращение (458); учитель Закона.',ref:'Ездр. 7:1–6'}]}]}]}]}]}]},
+        {name:'Ифамар',b:1538,note:'Четвёртый сын Аарона.',ref:'Исх. 6:23',children:[
+          {name:'Илий',b:1210,d:1112,note:'Судья и первосвященник в Силоме 40 лет; умер в 98 лет.',ref:'1 Цар. 4:15–18',children:[
+            {name:'Финеес (сын Илия) → Ахитув → Ахимелех',b:1180,d:1060,note:'Ахимелех убит Саулом в Номве.',ref:'1 Цар. 22',children:[
+              {name:'Авиафар',b:1085,d:1010,note:'Священник при Давиде, отстранён Соломоном в Анафоф.',ref:'3 Цар. 2:26–27',children:[
+                {name:'Иеремия, пророк',b:650,d:580,note:'«Из священников в Анафофе» — потомков Авиафара.',ref:'Иер. 1:1'}]}]}]}]},
+        {name:'Иезекииль, священник и пророк',b:622,d:570,note:'Сын Вузия, священник в плену на Ховаре.',ref:'Иез. 1:3'},
+        {name:'Захария, сын Варахии, пророк',b:550,d:490,note:'Внук священника Адды.',ref:'Зах. 1:1; Неем. 12:16'},
+        {name:'Маттафия из рода Иоарива',b:190,d:166,bar:true,note:'Начало Маккавейского восстания (167).',ref:'1 Макк. 2',children:[
+          {name:'Иуда Маккавей',b:190,d:160,bar:true,note:'Очистил Храм (164); Ханука.',ref:'1 Макк. 3–9'},
+          {name:'Симон → Хасмонеи',b:185,d:134,bar:true,note:'Династия Хасмонеев до 37 до н.э.',ref:'1 Макк. 13–16'}]},
+        {name:'Захария, священник из чреды Авиевой',b:60,d:-5,note:'Отец Иоанна Крестителя; жена Елисавета «из рода Ааронова».',ref:'Лк. 1:5',children:[
+          {name:'Иоанн Креститель',b:5,d:-29,bar:true,note:'Родился за полгода до Иисуса; казнён Иродом Антипой.',ref:'Лк. 1:36; Мк. 6'}]}]},
+      {name:'Моисей',b:1571,d:1451,bar:true,note:'Вождь Исхода; умер в 120 лет на Нево.',ref:'Втор. 34:7',children:[{name:'Гирсам, Елиезер',b:1560,note:'Сыновья Моисея от Сепфоры.',ref:'Исх. 18:3–4'}]}]},
+    {name:'Ицгар',rel:332,note:'',ref:'Исх. 6:18',children:[{name:'Корей',b:1500,d:1471,note:'Восстание Корея, Дафана и Авирона.',ref:'Числ. 16'}]},
+    {name:'Елкана (род Каафа)',b:1180,note:'Из Рамафаим-Цофима.',ref:'1 Цар. 1:1; 1 Пар. 6:33–38',children:[{name:'Самуил',b:1155,d:1060,note:'Последний судья и пророк; помазал Саула и Давида.',ref:'1 Цар. 1–25'}]}]},
+  {name:'Мерари',rel:280,note:'Род мерарян.',ref:'Исх. 6:16'},
+  {name:'Варнава (Иосия), левит с Кипра',b:-1,d:-61,note:'Спутник апостола Павла.',ref:'Деян. 4:36'}
+ ]},
+ {anchor:'royal:Иуда',nodes:[
+  {name:'Зара',rel:248,note:'Брат-близнец Фареса.',ref:'Быт. 38:30',children:[{name:'Ахан',b:1480,d:1451,note:'Взял заклятое в Иерихоне.',ref:'Нав. 7'}]},
+  {name:'Халев, сын Есрома',rel:310,note:'По 1 Пар. 2:18 (другой Халев, не сын Иефоннии).',ref:'1 Пар. 2:18–20',children:[{name:'Хур → Урий',b:1600,note:'',ref:'1 Пар. 2:19–20',children:[{name:'Веселеил',b:1520,note:'Строитель скинии.',ref:'Исх. 31:2'}]}]},
+  {name:'Халев, сын Иефоннии (кенезеянин, причислен к Иуде)',b:1536,d:1440,note:'Соглядатай; получил Хеврон в 85 лет.',ref:'Числ. 13:7; Нав. 14:10',children:[{name:'Гофониил (сын Кеназа, брата Халева)',b:1500,d:1420,note:'Первый судья.',ref:'Суд. 3:9–11'}]},
+  {name:'Елимелех и Ноеминь (Вифлеем)',b:1180,note:'Свёкор и свекровь Руфи.',ref:'Руфь 1'},
+  {name:'Амос из Фекои',b:790,d:740,note:'Пастух-пророк (Иуда).',ref:'Ам. 1:1'}
+ ]},
+ {anchor:'royal:Иессей',nodes:[
+  {name:'Елиав, Аминадав, Самма и другие братья Давида',b:1095,note:'Семь старших сыновей Иессея.',ref:'1 Цар. 16:6–11'},
+  {name:'Саруия, сестра Давида',b:1092,note:'',ref:'1 Пар. 2:16',children:[
+    {name:'Иоав',b:1080,d:1015,note:'Военачальник Давида; казнён Соломоном.',ref:'2 Цар. 2; 3 Цар. 2'},
+    {name:'Авесса и Асаил',b:1078,note:'Асаил убит Авениром.',ref:'2 Цар. 2:18–23'}]},
+  {name:'Авигея, сестра Давида',b:1090,note:'',ref:'1 Пар. 2:17',children:[{name:'Амессай',b:1070,d:1023,note:'Убит Иоавом.',ref:'2 Цар. 20:10'}]}
+ ]},
+ {anchor:'kings:Давид',nodes:[
+  {name:'Амнон, Авессалом, Адония',b:1052,d:1015,note:'Старшие сыновья Давида; Авессалом погиб при мятеже (~1023).',ref:'2 Цар. 3:2–4; 18; 3 Цар. 2'},
+  {name:'Нафан, сын Давида',b:1032,note:'Линия Лк. 3 ведёт от Нафана к Илию и Иосифу (по традиции — к Марии).',ref:'2 Цар. 5:14; Лк. 3:31'},
+  {name:'Исаия, пророк (по традиции из царского рода)',b:765,d:690,note:'Талмуд называет отца Исаии Амоса братом царя Амасии.',ref:'Ис. 1:1'},
+  {name:'Даниил (из царского рода Иуды)',b:620,d:535,note:'«Из рода царского и княжеского».',ref:'Дан. 1:3–6'}
+ ]},
+ {anchor:'tribes:Вениамин',nodes:[
+  {name:'Бела, Бехер, Иедиаил и другие сыновья',rel:295,note:'',ref:'Быт. 46:21; 1 Пар. 7:6'},
+  {name:'Кис (род Матри)',b:1150,note:'',ref:'1 Цар. 9:1',children:[
+    {name:'Саул',b:1135,d:1055,bar:true,note:'Первый царь (1095–1055); погиб на Гелвуе.',ref:'1 Цар. 9–31',children:[
+      {name:'Ионафан',b:1105,d:1055,note:'Друг Давида.',ref:'1 Цар. 18; 31',children:[{name:'Мемфивосфей',b:1060,note:'Хромой сын Ионафана.',ref:'2 Цар. 9'}]},
+      {name:'Иевосфей',b:1095,d:1048,note:'Царь Израиля два года.',ref:'2 Цар. 2:8–10; 4'},
+      {name:'Мелхола',b:1100,note:'Жена Давида.',ref:'1 Цар. 18:27'}]}]},
+  {name:'Кис → Шимей → Иаир',b:620,note:'Предки Мардохея, уведённые с Иехонией.',ref:'Есф. 2:5',children:[
+    {name:'Мардохей',b:530,d:460,note:'При дворе Ксеркса в Сузах.',ref:'Есф. 2–10'},
+    {name:'Есфирь (Гадасса)',b:505,d:440,note:'Двоюродная сестра и воспитанница Мардохея; царица Персии.',ref:'Есф. 2:7'}]},
+  {name:'Павел (Савл) из Тарса',b:-5,d:-67,note:'«Из рода Израилева, колена Вениаминова».',ref:'Флп. 3:5'}
+ ]},
+ {anchor:'tribes:Иосиф',nodes:[
+  {name:'Манассия',rel:265,note:'Первенец Иосифа; колено Манассии.',ref:'Быт. 41:51',children:[
+    {name:'Махир → Галаад',b:1700,note:'Заиорданские роды.',ref:'Числ. 26:29',children:[{name:'Иеффай Галаадитянин',b:1190,d:1180,note:'Судья шесть лет.',ref:'Суд. 11–12'}]},
+    {name:'Иоас из Офры (род Авиезера)',b:1270,note:'',ref:'Суд. 6:11',children:[{name:'Гедеон',b:1250,d:1210,note:'Судья; 300 воинов.',ref:'Суд. 6–8'}]}]},
+  {name:'Ефрем',rel:263,note:'Второй сын Иосифа; колено Ефрема.',ref:'Быт. 41:52',children:[
+    {name:'Шутелах → … → Елишама → Нон',b:1700,d:1500,note:'Девять поколений по 1 Пар. 7:20–27.',ref:'1 Пар. 7:20–27',children:[
+      {name:'Иисус Навин',b:1536,d:1426,bar:true,note:'Преемник Моисея; умер в 110 лет.',ref:'Нав. 24:29'}]},
+    {name:'Нават → Иеровоам I',b:1010,d:954,note:'Первый царь Северного царства (975–954).',ref:'3 Цар. 11:26'}]}
+ ]},
+ {anchor:'tribes:Дан',nodes:[{name:'Маной из Цоры',b:1145,note:'',ref:'Суд. 13',children:[{name:'Самсон',b:1120,d:1080,note:'Судья 20 лет; погиб в Газе.',ref:'Суд. 13–16'}]}]},
+ {anchor:'tribes:Завулон',nodes:[{name:'Иона, сын Амафии (Гафхефер)',b:810,d:750,note:'Пророк при Иеровоаме II.',ref:'4 Цар. 14:25; Ион. 1:1'}]},
+ {anchor:'tribes:Иссахар',nodes:[{name:'Фола, сын Фуи',b:1230,d:1182,note:'Судья 23 года.',ref:'Суд. 10:1–2'}]},
+ {anchor:'tribes:Неффалим',nodes:[{name:'Варак, сын Авиноама',b:1310,d:1260,note:'Полководец Деворы.',ref:'Суд. 4'}]},
+ {anchor:'gen11:Арфаксад',nodes:[{name:'Халдеи (Ур Халдейский) → Навуходоносор II',b:634,d:562,bar:true,note:'Халдеи — по традиции от Арфаксада (или от Кеседа, сына Нахора); Навуходоносор разрушил Иерусалим в 586.',ref:'Быт. 11:28; 4 Цар. 25'}]},
+ {anchor:'sons:Сим',nodes:[{name:'Мелхиседек, царь Салима',rel:60,note:'Происхождение в Писании не названо; иудейская традиция отождествляет его с Симом, доживавшим до дней Авраама.',ref:'Быт. 14:18; Евр. 7:3'}]},
+ {anchor:'nat:Елам',nodes:[
+  {name:'Кедорлаомер, царь Еламский',rel:85,note:'Война царей, пленение Лота.',ref:'Быт. 14'},
+  {name:'Персы (по традиции от Елама) → Кир II Великий',b:600,d:530,bar:true,note:'Указ о возвращении иудеев (536). Персы в Быт. 10 не названы; традиция возводит их к Еламу или к Мадаю.',ref:'Ездр. 1; Ис. 45:1'}]},
+ {anchor:'nat:Ассур',nodes:[
+  {name:'Тиглатпаласар III (Фул)',b:780,d:727,note:'Увёл заиорданские колена (732).',ref:'4 Цар. 15:29'},
+  {name:'Синаххериб',b:745,d:681,note:'Осада Иерусалима (701); убит сыновьями.',ref:'4 Цар. 18–19'}]},
+ {anchor:'nat:Арам',nodes:[
+  {name:'Уц (сын Арама)',rel:-240,note:'Второе отождествление земли Уц.',ref:'Быт. 10:23'},
+  {name:'Валаам, сын Веора, из Пефора',b:1490,d:1451,note:'Пророк с Евфрата; убит при Мадиаме.',ref:'Числ. 22–24; 31:8'},
+  {name:'Венадад II и Азаил, цари Дамаска',b:880,d:800,note:'Войны с Ахавом и Ииуем.',ref:'3 Цар. 20; 4 Цар. 8'},
+  {name:'Нееман Сириянин',b:870,d:820,note:'Исцелён Елисеем.',ref:'4 Цар. 5'}]},
+ {anchor:'nat:Мадай',nodes:[{name:'Мидяне → Дарий Мидянин',b:600,d:538,note:'Принял царство после Валтасара.',ref:'Дан. 5:31; 6'}]},
+ {anchor:'nat:Иаван',nodes:[
+  {name:'Греки → Александр Македонский',b:356,d:323,bar:true,note:'«Козёл с запада» Даниила; Иудея под греками с 332.',ref:'Дан. 8:21; 1 Макк. 1:1'},
+  {name:'Антиох IV Епифан (Селевкиды)',b:215,d:164,bar:true,note:'Осквернение Храма (167).',ref:'Дан. 11:21–35; 1 Макк. 1'},
+  {name:'Киттим → римляне (по традиции)',b:753,note:'«Корабли Киттимские»; в поздней традиции Киттим — Рим.',ref:'Числ. 24:24; Дан. 11:30',children:[{name:'Понтий Пилат',b:-26,d:-36,bar:true,note:'Префект Иудеи 26–36 н.э.',ref:'Мф. 27; надпись из Кесарии'}]}]},
+ {anchor:'nat:Хуш',nodes:[
+  {name:'Раама → Шева',rel:-200,note:'Сабейцы Южной Аравии (второе отождествление — Шева, сын Иоктана).',ref:'Быт. 10:7',children:[{name:'Царица Савская',b:990,d:950,note:'Посещение Соломона.',ref:'3 Цар. 10'}]},
+  {name:'Зарай Ефиоплянин',b:960,d:930,note:'Поход на Иудею при Асе (941).',ref:'2 Пар. 14:9'}]},
+ {anchor:'nat:Мицраим',nodes:[
+  {name:'Египтяне → Агарь',b:1930,d:1860,note:'Египтянка, служанка Сарры, мать Измаила.',ref:'Быт. 16'},
+  {name:'Фараон Исхода',b:1530,d:1491,note:'Погиб в Чермном море (1491 по Ашшеру).',ref:'Исх. 5–14'},
+  {name:'Сусаким (Шешонк I)',b:980,d:924,bar:true,note:'Поход на Иерусалим при Ровоаме (971).',ref:'3 Цар. 14:25'},
+  {name:'Каслухим → филистимляне',rel:-180,note:'«От них вышли филистимляне».',ref:'Быт. 10:14',children:[
+    {name:'Авимелех, царь Герарский',rel:95,note:'Договор с Авраамом и Исааком.',ref:'Быт. 20; 26'},
+    {name:'Голиаф из Гефа',b:1090,d:1063,note:'Убит Давидом.',ref:'1 Цар. 17'}]}]},
+ {anchor:'nat:Ханаан',nodes:[
+  {name:'Сидон → финикийцы',rel:-230,note:'Сидон и Тир.',ref:'Быт. 10:15',children:[
+    {name:'Хирам, царь Тирский',b:1010,d:975,note:'Строил Храм Соломона.',ref:'3 Цар. 5'},
+    {name:'Ефваал Сидонский → Иезавель',b:900,d:841,note:'Жена Ахава; сброшена с окна в Изрееле.',ref:'3 Цар. 16:31; 4 Цар. 9'}]},
+  {name:'Хет → хетты',rel:-230,note:'',ref:'Быт. 10:15',children:[
+    {name:'Ефрон Хеттеянин',rel:120,note:'Продал Аврааму пещеру Махпелу.',ref:'Быт. 23'},
+    {name:'Урия Хеттеянин',b:1045,d:1035,note:'Муж Вирсавии, убит по приказу Давида.',ref:'2 Цар. 11'}]},
+  {name:'Иевусей → Орна Иевусеянин',b:1040,d:1000,note:'Гумно Орны — место Храма.',ref:'2 Цар. 24:18'},
+  {name:'Аморрей → Сигон Есевонский',b:1490,d:1452,note:'Разбит Израилем за Иорданом.',ref:'Числ. 21:21–31'},
+  {name:'Раав из Иерихона',b:1480,d:1420,note:'Хананеянка; жена Салмона, мать Вооза.',ref:'Нав. 2; Мф. 1:5'}]}
+,
+ /* ---- nation founders among Noah's grandsons, with explicitly traceable peoples and persons ---- */
+ {anchor:'nat:Гомер',nodes:[
+  {name:'Аскеназ → скифы (ашкузы)',rel:-230,note:'«Царства Араратские, Минийские и Аскеназские» против Вавилона; в средневековой традиции — германцы.',ref:'Быт. 10:3; Иер. 51:27'},
+  {name:'Рифат → пафлагонцы',rel:-230,note:'По Иосифу Флавию.',ref:'Быт. 10:3'},
+  {name:'Фогарма → «дом Фогарма»: армяне, грузины (традиция)',rel:-230,note:'Торговал с Тиром конями; армянский родоначальник Хайк — потомок Фогармы по Мовсесу Хоренаци.',ref:'Быт. 10:3; Иез. 27:14; 38:6'}]},
+ {anchor:'nat:Магог',nodes:[{name:'Скифы (Иосиф Флавий); у пророка — Гог в земле Магог',rel:-200,note:'«Повесть временных лет» выводит от Иафета славян и Русь.',ref:'Иез. 38–39; Откр. 20:8'}]},
+ {anchor:'nat:Иаван',nodes:[
+  {name:'Елиса → Алашия (Кипр), эолийцы',rel:-230,note:'Пурпур «с островов Елисы».',ref:'Быт. 10:4; Иез. 27:7'},
+  {name:'Фарсис → Тартесс (Испания)',rel:-230,note:'«Корабли Фарсисские» Соломона и Ионы.',ref:'Быт. 10:4; 3 Цар. 10:22; Ион. 1:3'},
+  {name:'Доданим (Роданим) → Родос',rel:-230,note:'',ref:'Быт. 10:4; 1 Пар. 1:7'}]},
+ {anchor:'nat:Фувал',nodes:[{name:'Табал (Анатолия) → иберы Кавказа, грузины (традиция)',rel:-200,note:'Торговля с Тиром медью и рабами.',ref:'Иез. 27:13; 38:2'}]},
+ {anchor:'nat:Мешех',nodes:[{name:'Мушки, фригийцы; «Мосох» → Москва (легенда XVI–XVII вв.)',rel:-200,note:'Киевский Синопсис возводит московитов к Мешеху.',ref:'Иез. 38:2; Синопсис 1674'}]},
+ {anchor:'nat:Фирас',nodes:[{name:'Фракийцы, тирсены',rel:-200,note:'По Иосифу Флавию — фракийцы.',ref:'Быт. 10:2'}]},
+ {anchor:'nat:Фут',nodes:[{name:'Ливийцы (Фут в войсках Египта и Тира)',rel:-200,note:'',ref:'Иер. 46:9; Иез. 27:10; Наум 3:9'}]},
+ {anchor:'nat:Луд',nodes:[{name:'Лидийцы → Крёз, царь Лидии',b:595,d:546,bar:true,note:'Лидия завоёвана Киром в 546.',ref:'Быт. 10:22; Ис. 66:19'}]},
+ {anchor:'gen11:Евер',nodes:[
+  {name:'Иоктан',rel:-270,note:'Брат Фалека; 13 сыновей — племена Южной Аравии.',ref:'Быт. 10:25–30',children:[
+    {name:'Шева → сабейцы (Сабейское царство)',rel:-240,note:'Второе отождествление царицы Савской.',ref:'Быт. 10:28; 3 Цар. 10'},
+    {name:'Офир → «золото Офирское»',rel:-240,note:'Флот Соломона и Хирама ходил в Офир.',ref:'Быт. 10:29; 3 Цар. 9:28'},
+    {name:'Хацармавеф → Хадрамаут; Узал → Сана; Хавила, Иовав и другие',rel:-240,note:'',ref:'Быт. 10:26–29'}]}]},
+ {anchor:'nat:Мицраим',nodes:[
+  {name:'Патрусим → Верхний Египет (Патрос)',rel:-180,note:'',ref:'Быт. 10:14; Иез. 29:14'},
+  {name:'Кафторим → Крит (Кафтор); минойцы',rel:-180,note:'Филистимляне «из Кафтора».',ref:'Быт. 10:14; Ам. 9:7'},
+  {name:'Лудим, Анамим, Легавим, Нафтухим',rel:-180,note:'Ливийские и египетские племена.',ref:'Быт. 10:13'}]},
+ {anchor:'nat:Хуш',nodes:[{name:'Сева, Хавила, Савта, Савтеха',rel:-200,note:'Племена Нубии и Аравии.',ref:'Быт. 10:7; Ис. 43:3'}]},
+ {anchor:'nat:Ханаан',nodes:[
+  {name:'Евей (Сихем, Гаваон), Гергесей, Аркей, Синей',rel:-230,note:'Еммор Евеянин — отец Сихема.',ref:'Быт. 10:16–17; 34:2'},
+  {name:'Арвадей → Арвад; Цемарей; Химафей → Емаф',rel:-230,note:'Фой, царь Емафский, слал дары Давиду.',ref:'Быт. 10:18; 2 Цар. 8:9'}]}
+];
+
 /* ---------- State ---------- */
 const FULL={t0:-12000,t1:1000};
 const ZMIN=1, ZMAX=120;
@@ -733,7 +941,8 @@ const fmtBC=t=>t<=0?(-t).toLocaleString('ru-RU')+' до н.э.':(t).toLocaleStri
 const fmtAM=am=>am.toLocaleString('ru-RU')+' от С.М.';
 const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 const INK={'--egypt':'#1b1b1b','--sons':'#fff','--pre':'#fff','--post':'#fff','--mesop':'#fff','--anat':'#1b1b1b','--other':'#fff','--crim':'#fff','--cold':'#fff','--flood':'#fff','--model':'#fff','--fg':'var(--bg)'};
-const ROW_H=22, GROUP_H=28, BAND_H=30, BAR_H=13;
+let ROW_H=22, GROUP_H=28, BAND_H=30, BAR_H=13, FS_ADD=0;
+function sizeForZoom(){ const f=Math.min(1,Math.log(zoom)/Math.log(ZMAX)); ROW_H=Math.round(22+12*f); BAR_H=Math.round(13+9*f); GROUP_H=Math.round(28+6*f); BAND_H=Math.round(30+8*f); FS_ADD=2*f; }
 
 /* ---------- Rows model ---------- */
 function buildRows(){
@@ -820,8 +1029,6 @@ function buildRows(){
     const r=person(Object.assign({king},p),cur.gid,cur.color,depth,parent); byName[p.name]=r.id; if(!p.branch) prevId=r.id;
     if(p.name===cur.until && gi<lateGroups.length-1){ gi++; cur=lateGroups[gi]; group(cur.gid,cur.label,cur.color,''); }
   });
-  group('others','Другие лица: Моисей, Иисус Навин','--post','не в родословии Христа');
-  D.others.forEach(p=>person(p,'others','--post',0,null));
 
   /* periods, peoples */
   group('periods','История Израиля (по Ашшеру)','--fg','после Авраама обе хронологии совпадают');
@@ -844,8 +1051,30 @@ function buildRows(){
   SITES.forEach(s=>siteRow(s,'sites'));
   group('crimea','Крым: раскопки Бибикова, Бонч-Осмоловского и других','--crim','общепринятые даты; в схеме — памятники потомков Иафета');
   CRIMEA.forEach(s=>siteRow(s,'crimea'));
+  insertExtras(tip);
   rows.forEach(r=>{r.children=[];});
   rows.forEach(r=>{ if(r.parentId&&rowById[r.parentId]) rowById[r.parentId].children.push(r.id); });
+}
+function insertExtras(tip){
+  const short=t=>t<=0?String(-t):t+' н.э.';
+  let seq=0;
+  EXTRA.forEach(blk=>{
+    const ai=rows.findIndex(r=>r.id===blk.anchor); if(ai<0){ console.warn('no anchor',blk.anchor); return; }
+    const anchor=rows[ai]; const parentId=blk.parent||anchor.id; const par=rowById[parentId]||anchor;
+    const gid=anchor.gid, color=anchor.color; const flat=[];
+    const mk=(n,depth,pid)=>{
+      const t0=n.rel!=null?amT(D.abr.born+n.rel):-n.b;
+      const hasEnd=n.d!=null; const t1=hasEnd?-n.d:t0+70;
+      const kind=n.bar?'bar':'hollow';
+      const id='x'+(seq++)+':'+n.name;
+      const sub=n.bar?`${short(t0)}–${short(t1)}`:(hasEnd?`≈ ${short(t0)}–${short(t1)}`:`≈ ${short(t0)}`);
+      const k=tip(`<b>${esc(n.name)}</b><span class="m">${n.bar?'':'≈ '}${fmtBC(t0)}${hasEnd?' → '+fmtBC(t1):''}</span><br>${n.note?esc(n.note)+'<br>':''}${n.bar?'Даты по тексту или по Ашшеру.':'Положение оценочное; точных дат в тексте нет.'}<br><i>${esc(n.ref||'')}</i>`);
+      return {kind,id,gid,label:n.name,depth,parentId:pid,t0,t1,color,tip:k,sub,extra:true,hasEnd,inbar:''};
+    };
+    const walk=(n,depth,pid)=>{ const r=mk(n,depth,pid); flat.push(r); (n.children||[]).forEach(c=>walk(c,depth+1,r.id)); };
+    blk.nodes.forEach(n=>walk(n,Math.min((par.depth||0)+1,7),parentId));
+    rows.splice(ai+1,0,...flat); flat.forEach(r=>rowById[r.id]=r);
+  });
 }
 function ancestorClosed(r){ let p=r.parentId, n=0; while(p&&n<200){ if(closedNodes.has(p)) return true; const pr=rowById[p]; p=pr?pr.parentId:null; n++; } return false; }
 function descendants(id){ let n=0; const st=[id]; while(st.length){ const r=rowById[st.pop()]; if(!r) continue; r.children.forEach(c=>{n++; st.push(c);}); } return n; }
@@ -867,7 +1096,8 @@ function render(){
   const Wv=Math.max(200,scroller.clientWidth); const W=Math.round(Wv*zoom);
   const span=FULL.t1-FULL.t0; const pxY=W/span; const x=t=>(t-FULL.t0)*pxY;
   const H=layoutRows();
-  const small=window.innerWidth<640; const fs=small?10.5:11.5;
+  sizeForZoom();
+  const small=window.innerWidth<640; const fs=(small?10.5:11.5)+FS_ADD;
 
   /* names column */
   const counts={}; rows.forEach(r=>{ if(r.kind!=='group') counts[r.gid]=(counts[r.gid]||0)+1; });
@@ -923,7 +1153,8 @@ function render(){
     }
     const X=x(r.t0), Wd=Math.max(2,x(r.t1)-X);
     // connector to parent
-    if(r.parentId){ const pr=rowById[r.parentId]; if(pr&&!pr.hidden){ const py=pr.y+pr.h/2; out.push(`<path class="conn${hl?' hl':''}" d="M${X},${py} L${X},${by}"/>`); } }
+    if(r.parentId){ let pr=rowById[r.parentId], far=false, n=0; while(pr&&pr.hidden&&n<200){ pr=pr.parentId?rowById[pr.parentId]:null; far=true; n++; }
+      if(pr){ const py=pr.y+pr.h/2; out.push(`<path class="conn${hl?' hl':''}${far?' far':''}" d="M${X},${py} L${X},${by}"/>`); } }
     if(r.kind==='hollow'||r.kind==='cut') out.push(`<rect data-i="${r.tip}" data-row="${r.id}" x="${X}" y="${by}" width="${Wd}" height="${BAR_H}" rx="3" fill="var(${r.color})" fill-opacity=".16" stroke="var(${r.color})" stroke-dasharray="${r.kind==='cut'?'2 2':'4 3'}" stroke-width="1.2"/>`);
     else if(r.kind==='fade') out.push(`<rect data-i="${r.tip}" data-row="${r.id}" x="${X}" y="${by}" width="${Wd}" height="${BAR_H}" rx="3" fill="url(#fade${r.color.slice(2)})"/>`);
     else if(r.kind==='hatch') out.push(`<rect data-i="${r.tip}" data-row="${r.id}" x="${X}" y="${by}" width="${Wd}" height="${BAR_H}" rx="3" fill="url(#hatch)"/>`);
@@ -934,16 +1165,23 @@ function render(){
     let txt;
     if(isPerson){
       const nm=r.label;
-      if(r.kind==='hollow') txt=`${nm} ≈ ${short(r.t0)}`;
+      if(r.kind==='hollow') txt=`${nm} ≈ ${short(r.t0)}${r.hasEnd?'–'+short(r.t1):''}`;
       else if(r.kind==='cut') txt=`${nm} ≈ ${short(r.t0)} † убит до ${short(r.t1)}`;
       else if(r.kind==='fade') txt=`${nm} · ${short(r.t0)} – ?`;
       else txt=`${nm} · ${short(r.t0)}–${short(r.t1)}${r.reign?' (правл.)':''}${r.inbar?' · '+r.inbar+' лет':''}${r.taken?' ↑ взят':''}`;
-    } else txt=`${r.label} · ${short(r.t0)}–${short(r.t1)}`;
+    } else txt=r.kind==='hollow'?`${r.label} ≈ ${short(r.t0)}${r.hasEnd?'–'+short(r.t1):''}`:`${r.label} · ${short(r.t0)}–${short(r.t1)}`;
     const tw=est(txt,fs-0.5)+10;
-    const solid=(r.kind==='bar'||r.kind==='range'||r.kind==='hatch');
-    if(solid&&Wd>=tw) out.push(`<text x="${X+5}" y="${cy+4}" font-size="${fs-0.5}" fill="${r.kind==='hatch'?'var(--fg)':ink}" font-weight="500" pointer-events="none">${esc(txt)}</text>`);
+    const solid=(r.kind==='bar'||r.kind==='range');
+    if(Wd>=tw) out.push(`<text x="${X+5}" y="${cy+4}" font-size="${fs-0.5}" fill="${solid?ink:'var(--fg)'}" font-weight="500" pointer-events="none">${esc(txt)}</text>`);
     else out.push(`<text x="${X+Wd+5}" y="${cy+4}" font-size="${fs-0.5}" font-weight="500" pointer-events="none">${esc(txt)}</text>`);
     out.push(hit(X,Wd));
+  });
+  // stubs: where collapsed (hidden) children branch off a visible parent
+  rows.forEach(r=>{ if(r.hidden||r.kind==='group'||!r.children||!r.children.length) return;
+    const cy=r.y+r.h/2; let shown=0;
+    r.children.forEach(cid=>{ const c=rowById[cid]; if(!c||!c.hidden) return; const tc=c.t0!=null?c.t0:c.t; if(tc==null) return; const X=x(tc);
+      out.push(`<path class="stub" d="M${X},${cy+BAR_H/2} v${Math.max(6,r.h/2-BAR_H/2-1)}"/>`); shown++; });
+    if(shown){ const c=rowById[r.children.find(cid=>rowById[cid].hidden)]; const X=x(c.t0!=null?c.t0:c.t); out.push(`<text x="${X+3}" y="${r.y+r.h-2}" font-size="9" class="muted" pointer-events="none">+${descendants(r.id)}</text>`); }
   });
   bodySvg.setAttribute('viewBox',`0 0 ${W} ${H}`); bodySvg.setAttribute('width',W); bodySvg.setAttribute('height',H); bodySvg.innerHTML=out.join('');
   syncAxis(); updateZoomUI(); markPreset();
@@ -1041,9 +1279,15 @@ window.addEventListener('resize',onSize);
 if(window.ResizeObserver) new ResizeObserver(onSize).observe(scroller);
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(setOffsets);
 
+/* ---------- Table of extra genealogies ---------- */
+function fillExtraTable(){
+  const tb=document.querySelector('#xtable tbody'); if(!tb) return;
+  tb.innerHTML=rows.filter(r=>r.extra).map(r=>{ const lin=lineage(r.id); return `<tr><td><b>${esc(r.label)}</b></td><td class="m">${esc(r.sub)}</td><td>${lin.slice(0,-1).map(esc).join(' → ')}</td></tr>`; }).join('');
+}
+
 /* ---------- Chronology switch ---------- */
 function setChrono(k){
-  chKey=k; D=build(CHRONO[k]); buildRows(); fillSearch();
+  chKey=k; D=build(CHRONO[k]); buildRows(); fillSearch(); fillExtraTable();
   document.getElementById('ch-mt').setAttribute('aria-pressed',k==='mt');
   document.getElementById('ch-lxx').setAttribute('aria-pressed',k==='lxx');
   render(); fillText();
@@ -1105,7 +1349,7 @@ function fillText(){
 
 
 /* ---------- Init ---------- */
-buildRows(); fillSearch(); setOffsets(); showRange(10000,1500); fillText();
+buildRows(); fillSearch(); fillExtraTable(); setOffsets(); showRange(10000,1500); fillText();
 })();
 </script>
 
