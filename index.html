@@ -1040,7 +1040,7 @@ function buildRows(){
   group('sons','Быт. 10: сыновья Ноя и их сыновья','--sons','внуки Ноя без дат — пунктир; Арфаксад продолжает линию ниже');
   const natStart=amT(D.flood+2), natLen=D.G[0].life;
   let shemId=null;
-  ['Иафет','Хам','Сим'].forEach(sn=>{
+  ['Сим','Хам','Иафет'].forEach(sn=>{
     const son=D.sons.find(q=>q.name===sn); const r=person(son,'sons','--sons',sn==='Сим'?0:1,noahId); if(sn==='Сим') shemId=r.id;
     const g=NATIONS.find(q=>q.parent===sn);
     g.list.filter(n=>n.name!=='Арфаксад').forEach(n=>{
