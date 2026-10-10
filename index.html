@@ -202,7 +202,7 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
 
 <div class="tl" id="tl">
   <div class="tl-head">
-    <div class="corner"><b>годы до н.э. / н.э.</b>вторая строка — от сотворения мира</div>
+    <div class="corner"><b>годы до н.э. / н.э.</b>2-я строка — от сотворения мира<br>3-я строка — лет после потопа</div>
     <div id="axiswrap"><svg id="tlaxis" role="img" aria-label="Ось времени"></svg></div>
   </div>
   <div class="tl-body">
@@ -980,7 +980,8 @@ function buildRows(){
   const add=r=>{ if(!r.id) r.id='r'+rows.length; rows.push(r); rowById[r.id]=r; return r; };
   const group=(gid,label,color,sub)=>add({kind:'group',id:'g:'+gid,gid,label,color,sub});
   const lifeTxt=p=>p.nolife?'земная жизнь: от Рождества до Воскресения':(p.hollow?'годы жизни в тексте не указаны; положение условное':(p.reign?'показаны годы правления':(p.life==null?'продолжительность жизни не указана':`прожил ${p.life} лет`)));
-  const personTip=(p,a,b,extra)=>tip(`<b>${esc(p.name)}</b><span class="m">${p.approx||p.hollow?'≈ ':''}${p.born!=null?fmtAM(p.born):''}${p.born!=null?' → ':''}${p.died==null?'?':fmtAM(p.died)}</span><br><span class="m">${fmtBC(a)} → ${b==null?'?':fmtBC(b)}</span><br>${lifeTxt(p)}${p.sonAge?'; сын родился, когда ему было '+p.sonAge:''}${p.note?'<br>'+esc(p.note):''}${p.taken?'<br>Взят Богом, не умер (Быт. 5:24)':''}${extra||''}<br><i>${esc(p.ref||'')}</i>`);
+  const afterFlood=am=>am==null?'':(am>=D.flood?` · ${am-D.flood} лет после потопа`:` · за ${D.flood-am} лет до потопа`);
+  const personTip=(p,a,b,extra)=>tip(`<b>${esc(p.name)}</b><span class="m">${p.approx||p.hollow?'≈ ':''}${p.born!=null?fmtAM(p.born):''}${p.born!=null?' → ':''}${p.died==null?'?':fmtAM(p.died)}${p.born!=null?afterFlood(p.born):''}</span><br><span class="m">${fmtBC(a)} → ${b==null?'?':fmtBC(b)}</span><br>${lifeTxt(p)}${p.sonAge?'; сын родился, когда ему было '+p.sonAge:''}${p.note?'<br>'+esc(p.note):''}${p.taken?'<br>Взят Богом, не умер (Быт. 5:24)':''}${extra||''}<br><i>${esc(p.ref||'')}</i>`);
   const person=(p,gid,color,depth,parentId,opts)=>{
     opts=opts||{};
     const a=p.t0!=null?p.t0:amT(p.born);
@@ -1155,14 +1156,15 @@ function render(){
   }).join('');
 
   /* axis */
-  const step=tickStep(pxY); const ax=[]; const AXH=64;
+  const step=tickStep(pxY); const ax=[]; const AXH=80;
   const first=Math.ceil(FULL.t0/step)*step;
   for(let t=first;t<=FULL.t1;t+=step){ const X=x(t); ax.push(`<line x1="${X}" y1="0" x2="${X}" y2="${AXH}" class="axt"/>`); ax.push(`<text class="num" x="${X+3}" y="13" font-size="${fs}">${t<=0?(-t).toLocaleString('ru-RU'):t+' н.э.'}</text>`); }
   const amFirst=Math.max(0,Math.ceil((FULL.t0+D.epoch)/step)*step);
   for(let am=amFirst;am<=FULL.t1+D.epoch;am+=step){ const X=x(amT(am)); ax.push(`<text class="num muted" x="${X+3}" y="29" font-size="${fs-1}">${am.toLocaleString('ru-RU')}</text>`); }
-  ax.push(`<line x1="0" y1="17" x2="${W}" y2="17" class="axl"/><line x1="0" y1="33" x2="${W}" y2="33" class="axl"/>`);
+  for(let k=0;D.flood+k*step<=FULL.t1+D.epoch;k+=1){ const am=D.flood+k*step; const X=x(amT(am)); ax.push(`<text class="num" x="${X+3}" y="45" font-size="${fs-1}" fill="var(--flood)">${k===0?'потоп':'+'+(k*step).toLocaleString('ru-RU')}</text>`); }
+  ax.push(`<line x1="0" y1="17" x2="${W}" y2="17" class="axl"/><line x1="0" y1="33" x2="${W}" y2="33" class="axl"/><line x1="0" y1="49" x2="${W}" y2="49" class="axl"/>`);
   D.events.forEach((e,i)=>{ const X=x(amT(e.am)); const k=tips.push(`<b>${esc(e.label)}</b><span class="m">${fmtAM(e.am)} · ${fmtBC(amT(e.am))}</span><br>${esc(e.ref)}`)-1;
-    ax.push(`<g data-i="${k}"><line x1="${X}" y1="34" x2="${X}" y2="${AXH}" class="evl ${e.cls||''}"/><text x="${X+4}" y="${i%2?61:48}" font-size="${fs}" font-weight="600" class="evt ${e.cls||''}">${esc(e.label)}</text></g>`); });
+    ax.push(`<g data-i="${k}"><line x1="${X}" y1="50" x2="${X}" y2="${AXH}" class="evl ${e.cls||''}"/><text x="${X+4}" y="${i%2?77:64}" font-size="${fs}" font-weight="600" class="evt ${e.cls||''}">${esc(e.label)}</text></g>`); });
   axisSvg.setAttribute('viewBox',`0 0 ${W} ${AXH}`); axisSvg.setAttribute('width',W); axisSvg.setAttribute('height',AXH); axisSvg.innerHTML=ax.join('');
 
   /* body */
