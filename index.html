@@ -77,6 +77,9 @@ input.search{font:inherit;font-size:13px;padding:5px 10px;border-radius:6px;bord
 /* name rows */
 .nm{display:flex;align-items:center;gap:6px;padding:0 8px;font-size:13px;white-space:nowrap;overflow:hidden;cursor:pointer;border-bottom:1px solid var(--line-soft)}
 .nm .ind{flex:none}
+.nm .tg{width:14px;height:14px;border:1px solid var(--line);border-radius:3px;font-size:11px;line-height:12px;text-align:center;color:var(--muted);flex:none;cursor:pointer;background:var(--surface);font-family:var(--mono)}
+.nm .tg:hover{border-color:var(--accent);color:var(--fg)}
+.nm .tg.none{visibility:hidden}
 .nm .sw{width:9px;height:9px;border-radius:2px;background:var(--c);flex:none}
 .nm .sw.hol{background:transparent;border:1.5px dashed var(--c);width:8px;height:8px}
 .nm .lb{overflow:hidden;text-overflow:ellipsis}
@@ -178,7 +181,7 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
     <button class="chip" id="collapseAll">Свернуть всё</button>
   </div>
 </div>
-<p class="hint">Колесо мыши листает страницу. Масштаб времени: слайдер, кнопки «−» «+» или <kbd>Ctrl</kbd> + колесо над схемой. Сдвиг по времени: перетаскивание схемы, <kbd>Shift</kbd> + колесо или полоса прокрутки внизу. Клик по имени или отрезку — карточка и подсветка родословной до Адама; клик по заголовку группы — свернуть или развернуть.</p>
+<p class="hint">Колесо мыши листает страницу. Масштаб времени: слайдер, кнопки «−» «+» или <kbd>Ctrl</kbd> + колесо над схемой. Сдвиг по времени: перетаскивание схемы, <kbd>Shift</kbd> + колесо или полоса прокрутки внизу. Клик по имени или отрезку — карточка и подсветка родословной до Адама. Квадратик «−/+» перед именем сворачивает потомков, как в дереве; клик по заголовку группы сворачивает группу.</p>
 <div class="legend">
   <span><i style="background:var(--pre)"></i>сплошной отрезок — даты из текста</span>
   <span><i style="background:transparent;border:1.5px dashed var(--sons)"></i>пунктир — положение условное, дат нет</span>
@@ -721,6 +724,7 @@ const ZMIN=1, ZMAX=120;
 let chKey='mt', D=build(CHRONO.mt);
 let zoom=1;
 const collapsed=new Set(['climate','sites','crimea']);
+const closedNodes=new Set();
 let rows=[], rowById={}, tips=[], selectedId=null;
 const el=id=>document.getElementById(id);
 const scroller=el('scroller'), bodySvg=el('tlbody'), axisSvg=el('tlaxis'), axisWrap=el('axiswrap'), namesCol=el('names'), tipEl=el('tip'), detail=el('detail'), tlEl=el('tl');
@@ -840,7 +844,11 @@ function buildRows(){
   SITES.forEach(s=>siteRow(s,'sites'));
   group('crimea','Крым: раскопки Бибикова, Бонч-Осмоловского и других','--crim','общепринятые даты; в схеме — памятники потомков Иафета');
   CRIMEA.forEach(s=>siteRow(s,'crimea'));
+  rows.forEach(r=>{r.children=[];});
+  rows.forEach(r=>{ if(r.parentId&&rowById[r.parentId]) rowById[r.parentId].children.push(r.id); });
 }
+function ancestorClosed(r){ let p=r.parentId, n=0; while(p&&n<200){ if(closedNodes.has(p)) return true; const pr=rowById[p]; p=pr?pr.parentId:null; n++; } return false; }
+function descendants(id){ let n=0; const st=[id]; while(st.length){ const r=rowById[st.pop()]; if(!r) continue; r.children.forEach(c=>{n++; st.push(c);}); } return n; }
 
 /* ---------- Geometry ---------- */
 function est(s,fs){ return String(s).length*fs*0.58; }
@@ -849,7 +857,7 @@ function tickStep(pxPerYear){ const steps=[10,25,50,100,250,500,1000,2000,5000];
 function layoutRows(){
   let y=0;
   rows.forEach(r=>{
-    const hidden=r.kind!=='group'&&collapsed.has(r.gid);
+    const hidden=r.kind!=='group'&&(collapsed.has(r.gid)||ancestorClosed(r));
     r.hidden=hidden; r.y=y; r.h=hidden?0:(r.kind==='group'?GROUP_H:r.kind==='band'?BAND_H:ROW_H); y+=r.h;
   });
   return y;
@@ -865,7 +873,9 @@ function render(){
   const counts={}; rows.forEach(r=>{ if(r.kind!=='group') counts[r.gid]=(counts[r.gid]||0)+1; });
   namesCol.innerHTML=rows.filter(r=>!r.hidden).map(r=>{
     if(r.kind==='group') return `<div class="nm grp${collapsed.has(r.gid)?' col':''}" data-row="${r.id}" style="--c:var(${r.color});height:${r.h}px" role="button" tabindex="0" aria-expanded="${!collapsed.has(r.gid)}"><span class="tri"></span><span class="gl">${esc(r.label)}</span><span class="cnt">${counts[r.gid]||0}</span></div>`;
-    return `<div class="nm${r.id===selectedId?' sel':''}" data-row="${r.id}" style="height:${r.h}px;--c:var(${r.color})"><span class="ind" style="width:${(r.depth||0)*14}px"></span><span class="sw${r.kind==='hollow'||r.kind==='cut'?' hol':''}"></span><span class="lb${r.christ?' christ':''}">${esc(r.label)}</span><span class="sb">${esc(r.sub||'')}</span></div>`;
+    const has=r.children&&r.children.length>0; const closed=closedNodes.has(r.id);
+    const sub=closed?`+${descendants(r.id)} скрыто`:(r.sub||'');
+    return `<div class="nm${r.id===selectedId?' sel':''}" data-row="${r.id}" style="height:${r.h}px;--c:var(${r.color})"><span class="ind" style="width:${(r.depth||0)*14}px"></span><span class="tg${has?'':' none'}" data-tg="${r.id}" role="button" aria-label="${closed?'Развернуть':'Свернуть'} потомков" title="${closed?'Развернуть':'Свернуть'} потомков">${closed?'+':'−'}</span><span class="sw${r.kind==='hollow'||r.kind==='cut'?' hol':''}"></span><span class="lb${r.christ?' christ':''}">${esc(r.label)}</span><span class="sb">${esc(sub)}</span></div>`;
   }).join('');
 
   /* axis */
@@ -908,7 +918,7 @@ function render(){
     if(r.kind==='marker'){
       const X=x(r.t);
       out.push(`<path data-i="${r.tip}" data-row="${r.id}" d="M${X},${cy-6} l6,6 l-6,6 l-6,-6 z" fill="${r.hollow?'var(--surface)':`var(${r.color})`}" stroke="var(${r.color})" stroke-width="1.5"/>`);
-      out.push(`<text x="${X+10}" y="${cy+4}" font-size="${fs-1}" pointer-events="none">${esc(r.label)}</text>`);
+      out.push(`<text x="${X+10}" y="${cy+4}" font-size="${fs-0.5}" font-weight="500" pointer-events="none">${esc(r.label)} · ${r.t<=0?-r.t:r.t+' н.э.'}</text>`);
       out.push(hit(X-12,24)); return;
     }
     const X=x(r.t0), Wd=Math.max(2,x(r.t1)-X);
@@ -918,16 +928,21 @@ function render(){
     else if(r.kind==='fade') out.push(`<rect data-i="${r.tip}" data-row="${r.id}" x="${X}" y="${by}" width="${Wd}" height="${BAR_H}" rx="3" fill="url(#fade${r.color.slice(2)})"/>`);
     else if(r.kind==='hatch') out.push(`<rect data-i="${r.tip}" data-row="${r.id}" x="${X}" y="${by}" width="${Wd}" height="${BAR_H}" rx="3" fill="url(#hatch)"/>`);
     else out.push(`<rect data-i="${r.tip}" data-row="${r.id}" class="bar${r.id===selectedId?' sel':''}${hl?' hl':''}" x="${X}" y="${by}" width="${Wd}" height="${BAR_H}" rx="3" fill="var(${r.color})" ${r.reign?'fill-opacity=".6"':''} ${r.christ?'stroke="var(--fg)" stroke-width="1.5"':''}/>`);
-    if(r.kind==='cut') out.push(`<text x="${X+Wd+3}" y="${cy+4}" font-size="${fs}" fill="var(--flood)" pointer-events="none">†</text>`);
-    if(r.taken) out.push(`<text x="${X+Wd+3}" y="${cy+4}" font-size="${fs}" fill="var(${r.color})" font-weight="700" pointer-events="none">↑ взят</text>`);
-    // in-bar / beside label
+    // label on the bar: name and dates (inside when it fits, otherwise right after the bar)
+    const short=t=>t<=0?String(-t):t+' н.э.';
     const isPerson=['gen5','sons','gen11','tribes','royal','kings','postexile','others'].includes(r.gid);
-    const txt=isPerson?r.inbar:r.label;
-    if(txt){ const tw=est(txt,fs-0.5)+10;
-      if(r.kind==='bar'&&Wd>=tw) out.push(`<text x="${X+5}" y="${cy+4}" font-size="${fs-0.5}" fill="${ink}" font-weight="500" pointer-events="none">${esc(txt)}</text>`);
-      else if(!isPerson) out.push(`<text x="${X+Wd+5}" y="${cy+4}" font-size="${fs-0.5}" pointer-events="none">${esc(txt)}</text>`);
-      else if(isPerson&&r.kind==='bar') out.push(`<text x="${X+Wd+4}" y="${cy+4}" font-size="${fs-1}" class="muted" pointer-events="none">${esc(txt)}</text>`);
-    }
+    let txt;
+    if(isPerson){
+      const nm=r.label;
+      if(r.kind==='hollow') txt=`${nm} ≈ ${short(r.t0)}`;
+      else if(r.kind==='cut') txt=`${nm} ≈ ${short(r.t0)} † убит до ${short(r.t1)}`;
+      else if(r.kind==='fade') txt=`${nm} · ${short(r.t0)} – ?`;
+      else txt=`${nm} · ${short(r.t0)}–${short(r.t1)}${r.reign?' (правл.)':''}${r.inbar?' · '+r.inbar+' лет':''}${r.taken?' ↑ взят':''}`;
+    } else txt=`${r.label} · ${short(r.t0)}–${short(r.t1)}`;
+    const tw=est(txt,fs-0.5)+10;
+    const solid=(r.kind==='bar'||r.kind==='range'||r.kind==='hatch');
+    if(solid&&Wd>=tw) out.push(`<text x="${X+5}" y="${cy+4}" font-size="${fs-0.5}" fill="${r.kind==='hatch'?'var(--fg)':ink}" font-weight="500" pointer-events="none">${esc(txt)}</text>`);
+    else out.push(`<text x="${X+Wd+5}" y="${cy+4}" font-size="${fs-0.5}" font-weight="500" pointer-events="none">${esc(txt)}</text>`);
     out.push(hit(X,Wd));
   });
   bodySvg.setAttribute('viewBox',`0 0 ${W} ${H}`); bodySvg.setAttribute('width',W); bodySvg.setAttribute('height',H); bodySvg.innerHTML=out.join('');
@@ -971,11 +986,11 @@ bodySvg.addEventListener('pointerdown',e=>{ if(e.button!==0) return; drag={x:e.c
 window.addEventListener('pointermove',e=>{ if(!drag) return; const dx=e.clientX-drag.x; if(Math.abs(dx)>4){ drag.moved=true; bodySvg.classList.add('dragging'); hideTip(); } scroller.scrollLeft=drag.sl-dx; });
 window.addEventListener('pointerup',()=>{ if(drag){ setTimeout(()=>{bodySvg.classList.remove('dragging');},0); } drag=null; });
 // collapse / expand
-namesCol.addEventListener('click',e=>{ const g=e.target.closest('.grp'); if(g){ toggleGroup(rowById[g.dataset.row].gid); return; } const n=e.target.closest('.nm'); if(n) select(n.dataset.row); });
+namesCol.addEventListener('click',e=>{ const tg=e.target.closest('.tg'); if(tg&&!tg.classList.contains('none')){ e.stopPropagation(); const id=tg.dataset.tg; if(closedNodes.has(id)) closedNodes.delete(id); else closedNodes.add(id); render(); return; } const g=e.target.closest('.grp'); if(g){ toggleGroup(rowById[g.dataset.row].gid); return; } const n=e.target.closest('.nm'); if(n) select(n.dataset.row); });
 namesCol.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ const g=e.target.closest('.grp'); if(g){ e.preventDefault(); toggleGroup(rowById[g.dataset.row].gid); } } });
 function toggleGroup(gid){ if(collapsed.has(gid)) collapsed.delete(gid); else collapsed.add(gid); render(); }
 el('collapseAll').addEventListener('click',()=>{ rows.filter(r=>r.kind==='group').forEach(r=>collapsed.add(r.gid)); render(); });
-el('expandAll').addEventListener('click',()=>{ collapsed.clear(); render(); });
+el('expandAll').addEventListener('click',()=>{ collapsed.clear(); closedNodes.clear(); render(); });
 
 /* ---------- Hover, select, details ---------- */
 let hovRow=null;
@@ -1007,7 +1022,7 @@ function gotoRow(q){
   q=q.trim().toLowerCase(); if(!q) return;
   const r=rows.find(r=>r.kind!=='group'&&r.label.replace(/^[♛✝] /,'').toLowerCase().startsWith(q))||rows.find(r=>r.kind!=='group'&&r.label.toLowerCase().includes(q));
   if(!r) return;
-  collapsed.delete(r.gid); selectedId=r.id; render();
+  collapsed.delete(r.gid); { let p=r.parentId,n=0; while(p&&n<200){ closedNodes.delete(p); const pr=rowById[p]; p=pr?pr.parentId:null; n++; } } selectedId=r.id; render();
   const rr=rowById[r.id]; const t=rr.t0!=null?rr.t0:(rr.t!=null?rr.t:null);
   if(t!=null){ const Wv=scroller.clientWidth; const span=FULL.t1-FULL.t0; if(zoom<6) zoom=6; render(); scroller.scrollLeft=(t-FULL.t0)/span*Wv*zoom-Wv*0.25; syncAxis(); }
   const top=tlEl.getBoundingClientRect().top+window.scrollY+rr.y+axisSvg.getBoundingClientRect().height; const off=el('toolbar').offsetHeight+axisWrap.offsetHeight+40;
