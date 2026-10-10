@@ -1168,12 +1168,12 @@ function render(){
   for(let t=first;t<=FULL.t1;t+=step){ const X=x(t); ax.push(`<line x1="${X}" y1="0" x2="${X}" y2="${AXH}" class="axt"/>`); ax.push(`<text class="num" x="${X+3}" y="13" font-size="${fs}">${t<=0?(-t).toLocaleString('ru-RU'):t+' н.э.'}</text>`); }
   const amFirst=Math.max(0,Math.ceil((FULL.t0+D.epoch)/step)*step);
   for(let am=amFirst;am<=FULL.t1+D.epoch;am+=step){ const X=x(amT(am)); ax.push(`<text class="num muted" x="${X+3}" y="29" font-size="${fs-1}">${am.toLocaleString('ru-RU')}</text>`); }
-  for(let k=0;D.flood+k*step<=FULL.t1+D.epoch;k+=1){ const am=D.flood+k*step; const X=x(amT(am)); ax.push(`<text class="num" x="${X+3}" y="45" font-size="${fs-1}" fill="var(--flood)">${k===0?'потоп':'+'+(k*step).toLocaleString('ru-RU')}</text>`); }
+  for(let k=0;D.flood+k*step<=FULL.t1+D.epoch;k+=1){ const am=D.flood+k*step; const X=x(amT(am)); ax.push(`<text class="num" x="${X+3}" y="45" font-size="${fs-1}" style="fill:var(--flood)">${k===0?'потоп':'+'+(k*step).toLocaleString('ru-RU')}</text>`); }
   ax.push(`<line x1="0" y1="17" x2="${W}" y2="17" class="axl"/><line x1="0" y1="33" x2="${W}" y2="33" class="axl"/><line x1="0" y1="49" x2="${W}" y2="49" class="axl"/>`);
   D.events.forEach((e,i)=>{ const X=x(amT(e.am)); const k=tips.push(`<b>${esc(e.label)}</b><span class="m">${fmtAM(e.am)} · ${fmtBC(amT(e.am))}</span><br>${esc(e.ref)}`)-1;
     const left=e.cls==='now';
     ax.push(`<g data-i="${k}"><line x1="${X}" y1="50" x2="${X}" y2="${AXH}" class="evl ${e.cls||''}"/><text x="${left?X-4:X+4}" y="${i%2?77:64}" font-size="${fs}" font-weight="600" text-anchor="${left?'end':'start'}" class="evt ${e.cls||''}">${esc(e.label)}</text></g>`); });
-  ax.push(`<g id="curTag" style="display:none"><line x1="0" y1="0" x2="0" y2="${AXH}" class="cursor"/><rect x="4" y="2" width="10" height="46" rx="4" fill="var(--fg)"/><text x="9" y="16" font-size="${fs}" fill="var(--bg)" class="num" font-weight="600"></text><text x="9" y="31" font-size="${fs-1}" fill="var(--bg)" class="num"></text><text x="9" y="45" font-size="${fs-1}" fill="var(--bg)" class="num"></text></g>`);
+  ax.push(`<g id="curTag" style="display:none"><line x1="0" y1="0" x2="0" y2="${AXH}" class="cursor"/><rect x="4" y="2" width="10" height="46" rx="4" fill="var(--fg)"/><text x="9" y="16" font-size="${fs}" style="fill:var(--bg)" class="num" font-weight="600"></text><text x="9" y="31" font-size="${fs-1}" style="fill:var(--bg)" class="num"></text><text x="9" y="45" font-size="${fs-1}" style="fill:var(--bg)" class="num"></text></g>`);
   axisSvg.setAttribute('viewBox',`0 0 ${W} ${AXH}`); axisSvg.setAttribute('width',W); axisSvg.setAttribute('height',AXH); axisSvg.innerHTML=ax.join('');
 
   /* body */
@@ -1232,7 +1232,7 @@ function render(){
     } else txt=r.kind==='hollow'?`${r.label} ≈ ${short(r.t0)}${r.hasEnd?'–'+short(r.t1):''}`:`${r.label} · ${short(r.t0)}–${short(r.t1)}`;
     const tw=est(txt,fs-0.5)+10;
     const solid=(r.kind==='bar'||r.kind==='range');
-    if(Wd>=tw) out.push(`<text x="${X+5}" y="${cy+4}" font-size="${fs-0.5}" fill="${solid?ink:'var(--fg)'}" font-weight="500" pointer-events="none">${esc(txt)}</text>`);
+    if(Wd>=tw) out.push(`<text x="${X+5}" y="${cy+4}" font-size="${fs-0.5}" style="fill:${solid?ink:'var(--fg)'}" font-weight="500" pointer-events="none">${esc(txt)}</text>`);
     else out.push(`<text x="${X+Wd+5}" y="${cy+4}" font-size="${fs-0.5}" font-weight="500" pointer-events="none">${esc(txt)}</text>`);
     out.push(hit(X,Wd)); out.push('</g>');
   });
