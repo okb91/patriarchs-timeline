@@ -131,6 +131,10 @@ svg .hit{fill:transparent}
 .detail .line{margin-top:8px;padding-top:8px;border-top:1px solid var(--line-soft);font-size:12.5px;color:var(--muted)} .detail .line b{color:var(--fg)}
 .detail .line .k{text-transform:uppercase;letter-spacing:.06em;font-size:10.5px}
 .detail .x{position:absolute;right:8px;top:8px;width:26px;height:26px;border:0;background:transparent;color:var(--muted);font-size:18px;cursor:pointer;border-radius:6px}
+.detail img{display:block;max-width:100%;max-height:200px;border-radius:8px;margin:0 0 8px;object-fit:cover}
+.detail .src{margin-top:8px;padding-top:8px;border-top:1px solid var(--line-soft);font-size:12.5px;line-height:1.6}
+.detail .src a{color:var(--accent);text-decoration:underline;text-underline-offset:2px;margin-right:8px}
+.detail .src .k{text-transform:uppercase;letter-spacing:.06em;font-size:10.5px;color:var(--muted);margin-right:6px}
 .detail .x:hover{background:var(--surface-2)}
 /* reading column */
 section{margin-top:40px}
@@ -193,7 +197,7 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
     <button class="chip" id="collapseAll">Свернуть всё</button>
   </div>
 </div>
-<p class="hint">Колесо мыши листает страницу. Масштаб времени: слайдер, кнопки «−» «+» или <kbd>Ctrl</kbd> + колесо над схемой. Сдвиг по времени: перетаскивание схемы, <kbd>Shift</kbd> + колесо или полоса прокрутки внизу. Клик по имени или отрезку — карточка и подсветка родословной до Адама. Квадратик «−/+» перед именем сворачивает потомков, как в дереве; клик по заголовку группы сворачивает группу.</p>
+<p class="hint">Колесо мыши листает страницу. Масштаб времени: слайдер, кнопки «−» «+» или <kbd>Ctrl</kbd> + колесо над схемой. Сдвиг по времени: перетаскивание схемы, <kbd>Shift</kbd> + колесо или полоса прокрутки внизу. Клик по имени или отрезку — карточка с источниками (стихи открываются на azbyka.ru, есть ссылка на Википедию), изображением и подсветкой родословной до Адама. Квадратик «−/+» перед именем сворачивает потомков, как в дереве; клик по заголовку группы сворачивает группу.</p>
 <div class="legend">
   <span><i style="background:var(--pre)"></i>сплошной отрезок — даты из текста</span>
   <span><i style="background:transparent;border:1.5px dashed var(--sons)"></i>пунктир — положение условное, дат нет</span>
@@ -218,8 +222,10 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
 <div class="detail" id="detail" hidden>
   <button class="x" id="dclose" aria-label="Закрыть">×</button>
   <h4 id="dtitle"></h4>
+  <div id="dimg"></div>
   <div id="dbody"></div>
   <div class="line" id="dline"></div>
+  <div class="src" id="dsrc"></div>
 </div>
 
 <section>
@@ -239,77 +245,9 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
 </section>
 
 <section>
-  <h2>Сопоставление: какой «археологической эпохе» отвечает библейская история</h2>
+  <h2>Какой «археологической эпохе» отвечает библейская история</h2>
   <p class="note">Логика сопоставления: от Авраама и позже обе системы датировок почти совпадают, поэтому расхождение накапливается только в глубину. Чем раньше событие, тем сильнее общепринятая дата «растянута» относительно библейской. Отсюда и порядок: память о допотопном мире и первых послепотопных поколениях попадает в то, что археология называет палеолитом и неолитом.</p>
-  <div class="tablewrap">
-  <table id="maptable">
-    <thead><tr>
-      <th>Библейская история</th><th>Масоретский текст</th><th>Септуагинта</th><th>Что говорит Библия</th><th>Общепринятая эпоха и памятники, которые сюда ложатся</th>
-    </tr></thead>
-    <tbody>
-      <tr>
-        <td><b>Допотопный мир</b><br>Адам → Ной, линия Каина</td>
-        <td class="m" data-k="pre"></td><td class="m" data-k="pre-lxx"></td>
-        <td>Город Енох (Быт. 4:17), скотоводство, музыка, обработка меди и железа у Тувалкаина (Быт. 4:20–22). То есть металлургия «бронзового и железного века» существовала до потопа. Долгожительство, одна речь.</td>
-        <td>По посылке схемы сюда относится всё, что археология помещает в палеолит, мезолит и начало неолита: пещерное искусство, натуфийские поселения, а также, по условию автора, пирамиды Гизы и Древнее царство Египта. По Ашшеру пирамиды Гизы в общепринятой дате (2600–2500) и так стоят за 150–250 лет до потопа 2348 г.</td>
-      </tr>
-      <tr>
-        <td><b>Потоп и первые поколения</b><br>Ной, Сим, Хам, Иафет</td>
-        <td class="m" data-k="flood"></td><td class="m" data-k="flood-lxx"></td>
-        <td>Год потопа — 600-й год Ноя (Быт. 7:6, 11). Выход из ковчега, завет, расселение с гор Араратских (Быт. 8–9).</td>
-        <td>Креационистские модели (М. Орд) помещают сюда единственный ледниковый период длиной 500–700 лет. В общепринятой шкале ему отвечают конец плейстоцена, поздний дриас и начало голоцена (~10 900–9 700 до н.э.), а по культуре — эпипалеолит и мезолит.</td>
-      </tr>
-      <tr>
-        <td><b>Вавилонская башня и рассеяние</b><br>«во дни Фалека»</td>
-        <td class="m" data-k="babel"></td><td class="m" data-k="babel-lxx"></td>
-        <td>Одно поселение в земле Сеннаар, кирпич и смола, разделение языков (Быт. 11:1–9; 10:25).</td>
-        <td>Первые монументальные постройки неолита: Гёбекли-Тепе и Карахан-Тепе (общепринято 9500–8000), башня и стена Иерихона (9400–7500), Чатал-Хююк (7500–5700). По этой логике докерамический неолит — первые поколения после рассеяния.</td>
-      </tr>
-      <tr>
-        <td><b>Нимрод и первые царства</b><br>Вавилон, Эрех, Аккад, Халне; Ниневия, Калах</td>
-        <td class="m" data-k="nimrod"></td><td class="m" data-k="nimrod-lxx"></td>
-        <td>Нимрод, внук Хама, «начал быть силён на земле» и основал города Сеннаара и Ассирии (Быт. 10:8–12). Эрех отождествляют с Уруком, Аккад и Вавилон известны по раскопкам.</td>
-        <td>Период Урук (4000–3100), раннединастический Шумер (2900–2334), Аккадская держава (2334–2154). В общепринятой периодизации это энеолит и ранняя бронза; сюда же ложатся первая клинопись (~3300) и царские гробницы Ура (~2600).</td>
-      </tr>
-      <tr>
-        <td><b>Авраам</b><br>Ур, Харран, Ханаан, Египет</td>
-        <td class="m" data-k="abr"></td><td class="m" data-k="abr-lxx"></td>
-        <td>Родился в Уре Халдейском, в 75 лет вышел из Харрана (Быт. 11:31; 12:4), жил 175 лет (Быт. 25:7).</td>
-        <td>III династия Ура (2112–2004), Исин и Ларса, старовавилонский период, Среднее царство Египта. Это средняя бронза I–IIA. Здесь библейская и общепринятая шкалы уже практически совпадают.</td>
-      </tr>
-      <tr>
-        <td><b>Египет, Исход, судьи</b><br>Иосиф, Моисей, Иисус Навин</td>
-        <td class="m">1706 – 1095 до н.э.</td><td class="m">те же даты (Ашшер)</td>
-        <td>215 лет в Египте, Исход в 1491, сорок лет пустыни, завоевание Ханаана с 1451, эпоха судей (Исх. 12:40; 3 Цар. 6:1).</td>
-        <td>Новое царство Египта (1550–1069), поздняя бронза и железный век I. Стела Мернептаха (1208) — первое упоминание Израиля; приход филистимлян (~1200); засуха и крах бронзового века (~1200).</td>
-      </tr>
-      <tr>
-        <td><b>Цари, плен, Второй храм</b><br>Давид, Соломон, пророки</td>
-        <td class="m">1095 – 4 до н.э.</td><td class="m">те же даты</td>
-        <td>Храм Соломона 1012, разделение царства 975, падение Самарии 721 и Иерусалима 586, возвращение 536, Второй храм 515.</td>
-        <td>Железный век II, персидский, эллинистический периоды. Стела из Тель-Дана («дом Давида», ~840), призма Синаххериба (701), Вавилонская хроника (597), цилиндр Кира (539), Кумран. Хронологии полностью совпадают.</td>
-      </tr>
-      <tr>
-        <td><b>Потомки Иафета в Крыму</b><br>Гомер, Фирас, Иаван, Магог</td>
-        <td class="m">≈ 2200 до н.э. – 100 н.э.</td><td class="m">≈ 3200 до н.э. – 100 н.э.</td>
-        <td>Сыновья Иафета заселяют «острова народов» (Быт. 10:5); киммерийцы и скифы упоминаются у пророков (Иез. 38; Иер. 51:27).</td>
-        <td>Мезолит гротов Шан-Коба, Фатьма-Коба, Мурзак-Коба (общепринято 10 000–6 000) — первые поколения после рассеяния; кеми-обинская и ямная культуры — время Авраама; киммерийцы, тавры (кизил-кобинская культура), греки, скифы — эпоха царей и Второго храма, где шкалы совпадают.</td>
-      </tr>
-      <tr>
-        <td><b>От скифов до Руси</b><br>потомки Иафета в Причерноморье</td>
-        <td class="m">700 до н.э. – 1000 н.э.</td><td class="m">те же даты</td>
-        <td>Скифы, сарматы и славяне в Писании прямо не названы; летопись возводит славян и Русь к Иафету (Быт. 10:2–5).</td>
-        <td>Железный век, римский и византийский периоды, раннее средневековье: скифские курганы, Неаполь Скифский, сарматы, готы, анты, Русь. Шкалы полностью совпадают.</td>
-      </tr>
-      <tr>
-        <td><b>Иисус Христос</b></td>
-        <td class="m">4 до н.э. – 33 н.э.</td><td class="m">те же даты</td>
-        <td>Рождество при Ироде Великом (Мф. 2:1), выход на проповедь «лет тридцати» (Лк. 3:23), распятие при Понтии Пилате.</td>
-        <td>Римский период: Храм Ирода (с 20 до н.э.), надпись Пилата из Кесарии, разрушение Храма в 70 н.э.</td>
-      </tr>
-    </tbody>
-  </table>
-  </div>
+  
 </section>
 
 <section>
@@ -330,25 +268,15 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
 </section>
 
 <section>
-  <h2>Таблица народов: сыновья Иафета, Хама и Сима (Быт. 10)</h2>
-  <p class="note">Для этого поколения Библия не даёт ни возраста, ни года смерти, только имена и порядок. На таймлайне они показаны пунктирными условными отрезками сразу после потопа, а здесь — полным списком с традиционными и научными отождествлениями народов.</p>
-  <div class="tablewrap">
-  <table id="ntable">
-    <thead><tr><th>Сын Ноя</th><th>Внук Ноя</th><th>Его сыновья</th><th>Отождествление с народами и странами</th></tr></thead>
-    <tbody></tbody>
-  </table>
-  </div>
+  <h2>Сыновья Иафета, Хама и Сима (Быт. 10)</h2>
+  <p class="note">Для этого поколения Библия не даёт ни возраста, ни года смерти, только имена и порядок. На таймлайне они показаны пунктирными условными отрезками сразу после потопа; отождествления народов — в подсказках и в разделе «Народы от сыновей Ноя».</p>
+  
 </section>
 
 <section>
   <h2>Родословие Иисуса Христа</h2>
   <p class="note">На таймлайне показана царская линия по Мф. 1: Авраам → Давид → Соломон → цари Иудеи → Иехония → Зоровавель → Иосиф. Для царей даты взяты из книг Царств (возраст при воцарении и годы правления по Ашшеру). Для предков от Иуды до Иессея и для одиннадцати имён после плена Писание дат не даёт, их отрезки условные и помечены знаком ≈. Евангелие от Луки ведёт линию от Давида через Нафана до Илия, отца (по Луке) Иосифа; по древнему толкованию это родословие Марии.</p>
-  <div class="tablewrap">
-  <table id="gtable">
-    <thead><tr><th>Имя (Мф. 1)</th><th>Годы</th><th>Примечание</th><th>Источник</th></tr></thead>
-    <tbody></tbody>
-  </table>
-  </div>
+  
   <h3>Линия по Лк. 3:23–38 (через Нафана)</h3>
   <p id="luke-line" style="font-size:14px;color:var(--muted);max-width:none"></p>
 </section>
@@ -401,12 +329,7 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
       <p>Более древние памятники — гроты мезолита Шан-Коба, Фатьма-Коба, Мурзак-Коба, раскопанные Бонч-Осмоловским и Бибиковым, и палеолитические Киик-Коба, Староселье, Заскальная — в общепринятой шкале датируются десятками тысяч лет и выходят за левый край таймлайна. В логике этой схемы они принадлежат тем же потомкам Иафета, пришедшим в Крым после рассеяния, в послепотопный ледниковый период; по масоретской хронологии это примерно 2200–1900 годы до н.э., по Септуагинте — на тысячу лет раньше.</p>
     </div>
     <div>
-      <div class="tablewrap">
-      <table id="ctable">
-        <thead><tr><th>Памятник</th><th>Исследователи</th><th>Общепринятая дата</th><th>Прочтение в схеме</th></tr></thead>
-        <tbody></tbody>
-      </table>
-      </div>
+      
     </div>
   </div>
 </section>
@@ -414,22 +337,7 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
 <section>
   <h2>Родословные библейских лиц до Ноя</h2>
   <p class="note">Ветви, добавленные под их предками на таймлайне: родня Авраама (Нахор, Аран, Лот, Лаван, Ревекка, Иов), дети Хеттуры и Измаила, потомки Исава до Ирода, левиты и священники от Аарона до Ездры, Маккавеев и Иоанна Крестителя, судьи, Саул и Есфирь (Вениамин), Иисус Навин и Гедеон (Иосиф), родоначальники народов среди внуков Ноя, а также иноплеменники, чьи народы Писание возводит к сыновьям Ноя: Агарь и фараоны (Мицраим), Голиаф (Каслухим), Хирам и Иезавель (Сидон), Урия (Хет), Навуходоносор (халдеи), Кир (Елам), Дарий Мидянин (Мадай), Крёз (Луд), Александр и Антиох (Иаван), Пилат (Киттим). Где текст не даёт дат, положение оценочное и отрезок пунктирный.</p>
-  <div class="tablewrap">
-  <table id="xtable">
-    <thead><tr><th>Лицо или народ</th><th>Годы</th><th>Линия от Ноя</th></tr></thead>
-    <tbody></tbody>
-  </table>
-  </div>
-</section>
-
-<section>
-  <h2>Данные патриархов</h2>
-  <div class="tablewrap">
-  <table id="ptable">
-    <thead><tr><th>Патриарх</th><th>Родил сына в</th><th>Прожил</th><th>Родился, от С.М.</th><th>Умер, от С.М.</th><th>Родился</th><th>Умер</th><th>Источник</th></tr></thead>
-    <tbody></tbody>
-  </table>
-  </div>
+  
 </section>
 
 <section>
@@ -1515,6 +1423,46 @@ function select(id){
   el('dtitle').textContent=r.label.replace(/^[♛✝] /,'');
   el('dbody').innerHTML=(tips[r.tip]||'').replace(/^<b>[^<]*<\/b>/,'');
   el('dline').innerHTML=lin.length>1?`<span class="k">Линия:</span> ${lin.map((n,i)=>i===lin.length-1?`<b>${esc(n)}</b>`:esc(n)).join(' → ')}`:'';
+  fillSources(r);
+}
+/* ---------- Sources and image for the detail card ---------- */
+const BIBLE={'Быт':'Gen','Исх':'Ex','Лев':'Lev','Числ':'Num','Втор':'Deut','Нав':'Nav','Суд':'Judg','Руфь':'Ruth','1 Цар':'1Sam','2 Цар':'2Sam','3 Цар':'1King','4 Цар':'2King','1 Пар':'1Chron','2 Пар':'2Chron','Ездр':'Ezr','Неем':'Nehem','Есф':'Esth','Иов':'Job','Ис':'Is','Иер':'Jer','Иез':'Ezek','Дан':'Dan','Ос':'Hos','Ам':'Am','Ион':'Jona','Наум':'Nahum','Агг':'Hag','Зах':'Zah','1 Макк':'1Mac','Мф':'Mt','Мк':'Mk','Лк':'Lk','Ин':'Jn','Деян':'Act','Флп':'Phil','Гал':'Gal','Евр':'Hebr','Откр':'Rev'};
+const BRE=/(?:([1-4])\s)?(Быт|Исх|Лев|Числ|Втор|Нав|Суд|Руфь|Цар|Пар|Ездр|Неем|Есф|Иов|Ис|Иер|Иез|Дан|Ос|Ам|Ион|Наум|Агг|Зах|Макк|Мф|Мк|Лк|Ин|Деян|Флп|Гал|Евр|Откр)\.?\s*(\d+)(?::(\d+(?:[–-]\d+)?))?/g;
+function sourceLinks(ref){
+  if(!ref) return '';
+  const out=[]; let lastKey=null;
+  ref.split(';').forEach(seg=>{
+    BRE.lastIndex=0; const m=BRE.exec(seg); let key,ch,vs;
+    if(m){ key=(m[1]?m[1]+' ':'')+m[2]; ch=m[3]; vs=m[4]; }
+    else { const m2=seg.match(/^\s*(\d+)(?::(\d+(?:[–-]\d+)?))?\s*(?:LXX|\(A\))?\s*$/); if(!m2||!lastKey) return; key=lastKey; ch=m2[1]; vs=m2[2]; }
+    const code=BIBLE[key]; if(!code) return; lastKey=key;
+    const loc=code+'.'+ch+(vs?':'+vs.replace('–','-'):''); const txt=key+'. '+ch+(vs?':'+vs:'');
+    out.push(`<a href="https://azbyka.ru/biblia/?${loc}" target="_blank" rel="noopener">${esc(txt)}</a>`);
+  });
+  return out.join('');
+}
+function wikiTitle(r){ let s=r.label.replace(/^[♛✝] /,'').replace(/\s[·—].*$/,'').replace(/\s\(.*?\)$/,'').replace(/ → .*$/,'').trim(); return s; }
+const imgCache={};
+async function wikiImage(title, hint){
+  const key=title+'|'+hint; if(imgCache[key]!==undefined) return imgCache[key];
+  try{
+    const q=encodeURIComponent(hint?title+' '+hint:title);
+    const sr=await fetch(`https://ru.wikipedia.org/w/api.php?action=query&list=search&srlimit=1&format=json&origin=*&srsearch=${q}`); const sj=await sr.json();
+    const best=sj.query&&sj.query.search&&sj.query.search[0]; if(!best) return (imgCache[key]=null);
+    const r2=await fetch(`https://ru.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(best.title)}`); const j=await r2.json();
+    const res={src:j.thumbnail?j.thumbnail.source:null,url:j.content_urls?j.content_urls.desktop.page:`https://ru.wikipedia.org/wiki/${encodeURIComponent(best.title)}`,title:best.title,extract:j.extract||''};
+    return (imgCache[key]=res);
+  }catch(err){ return (imgCache[key]=null); }
+}
+function fillSources(r){
+  const tipHtml=tips[r.tip]||''; const mm=tipHtml.match(/<i>([^<]*)<\/i>\s*$/); const ref=mm?mm[1].replace(/&amp;/g,'&'):'';
+  const title=wikiTitle(r); const bib=['gen5','sons','gen11','tribes','royal','kings','postexile','periods'].includes(r.gid);
+  const search=`https://ru.wikipedia.org/w/index.php?search=${encodeURIComponent(bib?title+' Библия':title)}`;
+  const links=sourceLinks(ref);
+  el('dsrc').innerHTML=`<span class="k">Источники</span>${links}${ref&&!links?esc(ref)+' · ':''}<a id="dwiki" href="${search}" target="_blank" rel="noopener">Википедия</a>`;
+  const box=el('dimg'); box.innerHTML='';
+  wikiImage(title, bib?'Библия':'').then(res=>{ if(!res||selectedId!==r.id) return; const a=el('dwiki'); if(a&&res.url){ a.href=res.url; a.textContent='Википедия: '+res.title; }
+    if(res.src){ const im=new Image(); im.alt=res.title; im.referrerPolicy='no-referrer'; im.onload=()=>{ if(selectedId===r.id){ box.innerHTML=''; box.appendChild(im); } }; im.src=res.src; } });
 }
 el('dclose').addEventListener('click',()=>select(null));
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ select(null); hideTip(); } });
@@ -1600,17 +1548,17 @@ function fillText(){
   set('abr', r(M,M.abr.born,M.abr.died)); set('abr-lxx', r(L,L.abr.born,L.abr.died));
 
   const nt=document.querySelector('#ntable tbody');
-  nt.innerHTML=NATIONS.map(g=>g.list.map((n,i)=>`<tr>${i===0?`<td rowspan="${g.list.length}"><b>${g.parent}</b><br><span style="color:var(--muted);font-size:12px">${g.ref}</span></td>`:''}<td><b>${esc(n.name)}</b></td><td>${esc(n.sons)||'—'}</td><td>${esc(n.ident)}</td></tr>`).join('')).join('');
+  if(nt) nt.innerHTML=NATIONS.map(g=>g.list.map((n,i)=>`<tr>${i===0?`<td rowspan="${g.list.length}"><b>${g.parent}</b><br><span style="color:var(--muted);font-size:12px">${g.ref}</span></td>`:''}<td><b>${esc(n.name)}</b></td><td>${esc(n.sons)||'—'}</td><td>${esc(n.ident)}</td></tr>`).join('')).join('');
   const gt=document.querySelector('#gtable tbody');
-  gt.innerHTML=D.late.map(p=>{
+  if(gt) gt.innerHTML=D.late.map(p=>{
     const d=p.hollow?`≈ ${p.t0!=null?fmtBC(p.t0):bc(D,p.born)+' до н.э.'} (условно)`:(p.reign?`правление ${fmtBC(p.t0)} – ${fmtBC(p.t1)}`:`${p.approx?'≈ ':''}${p.t0!=null?fmtBC(p.t0):bc(D,p.born)+' до н.э.'} – ${p.t1!=null?fmtBC(p.t1):bc(D,p.died)+' до н.э.'}`);
     return `<tr><td><b>${esc(p.name)}</b></td><td class="m">${d}</td><td>${esc(p.note||'')}</td><td>${esc(p.ref)}</td></tr>`;
   }).join('');
-  document.getElementById('luke-line').textContent=LUKE_LINE;
+  { const ll=document.getElementById('luke-line'); if(ll) ll.textContent=LUKE_LINE; }
   const ct=document.querySelector('#ctable tbody');
-  ct.innerHTML=CRIMEA.map(c=>`<tr><td><b>${esc(c.label)}</b></td><td>${esc(c.who)}</td><td class="m">${c.off?esc(c.ky):(c.m!=null?'≈ '+fmtBC(-c.m):fmtBC(-c.a)+' – '+fmtBC(-c.b))}</td><td>${esc(c.bib)}</td></tr>`).join('');
+  if(ct) ct.innerHTML=CRIMEA.map(c=>`<tr><td><b>${esc(c.label)}</b></td><td>${esc(c.who)}</td><td class="m">${c.off?esc(c.ky):(c.m!=null?'≈ '+fmtBC(-c.m):fmtBC(-c.a)+' – '+fmtBC(-c.b))}</td><td>${esc(c.bib)}</td></tr>`).join('');
   const tb=document.querySelector('#ptable tbody'); const all=[...D.P,...D.sons,...D.G,...D.late,...D.others];
-  tb.innerHTML=all.map(p=>`<tr><td><b>${esc(p.name)}</b>${p.taken?' (взят)':''}</td><td class="m">${p.sonAge??'—'}</td><td class="m">${p.life??'—'}</td><td class="m">${p.approx?'≈ ':''}${p.born}</td><td class="m">${p.died??'—'}</td><td class="m">${p.approx?'≈ ':''}${p.t0!=null?fmtBC(p.t0):bc(D,p.born)+' до н.э.'}</td><td class="m">${p.died!=null?(p.t1!=null?fmtBC(p.t1):bc(D,p.died)+' до н.э.'):'—'}</td><td>${esc(p.ref)}</td></tr>`).join('');
+  if(tb) tb.innerHTML=all.map(p=>`<tr><td><b>${esc(p.name)}</b>${p.taken?' (взят)':''}</td><td class="m">${p.sonAge??'—'}</td><td class="m">${p.life??'—'}</td><td class="m">${p.approx?'≈ ':''}${p.born}</td><td class="m">${p.died??'—'}</td><td class="m">${p.approx?'≈ ':''}${p.t0!=null?fmtBC(p.t0):bc(D,p.born)+' до н.э.'}</td><td class="m">${p.died!=null?(p.t1!=null?fmtBC(p.t1):bc(D,p.died)+' до н.э.'):'—'}</td><td>${esc(p.ref)}</td></tr>`).join('');
 }
 
 
