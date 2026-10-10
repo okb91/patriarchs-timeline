@@ -151,7 +151,7 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
 <div class="wrap">
 <header>
   <h1>От Адама до Иисуса Христа: патриархи и древности Ближнего Востока</h1>
-  <p class="lead">Отрезки жизни патриархов от Адама, ветвь Каина, сыновья и внуки Ноя, двенадцать колен, родословие Христа и история Израиля по традиционной библейской хронологии. На той же оси — археологические эпохи, памятники Ближнего Востока и Крыма, климатические события и народы от Иафета до Руси в их общепринятых датах.</p>
+  <p class="lead">Отрезки жизни патриархов от Адама, ветвь Каина, сыновья и внуки Ноя, двенадцать колен, родословие Христа и история Израиля по традиционной библейской хронологии. Археологические эпохи, памятники Ближнего Востока и Крыма и климатические события размещены на той же оси в логике сотворения и потопа: люди не раньше сотворения, Шумер от Нимрода, стоянки Крыма после потопа и рассеяния; датировки исследователей приведены в подсказках к каждому отрезку и в разделе источников.</p>
 </header>
 
 <div class="toolbar" id="toolbar">
@@ -190,6 +190,7 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
   <span><i style="background:linear-gradient(90deg,var(--sons),transparent)"></i>выцветание — смерть не указана</span>
   <span><i style="background:repeating-linear-gradient(45deg,var(--model) 0 2px,transparent 2px 5px)"></i>штриховка — модель, не данные</span>
   <span><i style="width:9px;height:9px;transform:rotate(45deg);background:var(--flood)"></i>ромб — событие или находка</span>
+  <span>положение памятников и климата — по библейской хронологии; «датировка исследователей» — в подсказке</span>
   <span><i style="background:var(--mesop)"></i>Месопотамия</span><span><i style="background:var(--egypt)"></i>Египет</span><span><i style="background:var(--anat)"></i>Анатолия, Левант</span><span><i style="background:var(--other)"></i>другие регионы</span><span><i style="background:var(--crim)"></i>Крым</span>
 </div>
 
@@ -220,7 +221,7 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
     </div>
     <div>
       <h3>Как читать наложение</h3>
-      <p>Библейские отрезки отложены по годам от сотворения мира и переведены в годы до н.э. через выбранную эру. Археология и климат нанесены в общепринятых датах, которые для времени раньше ~3000 до н.э. опираются на калиброванный радиоуглерод, а для Шумера и Египта на царские списки и синхронизмы.</p>
+      <p>Библейские отрезки отложены по годам от сотворения мира и переведены в годы до н.э. через выбранную эру. Археология и климат размещены на схеме в логике сотворения и потопа: палеолит — первые поколения после потопа (послепотопный ледник), мезолит и неолит — после рассеяния от Вавилона, энеолит и ранняя бронза — время Авраама, Убейд и Урук — первые поселения после потопа и города Нимрода, Египет и пирамиды — до потопа по посылке автора. От 2000 до н.э. обе шкалы совпадают. Датировки исследователей (калиброванный радиоуглерод, царские списки, синхронизмы) показаны в подсказке к каждому отрезку.</p>
       <p>Исходная посылка этой схемы: библейская хронология достоверна, а радиоуглеродные даты для допотопного и раннего послепотопного времени завышены (другое содержание <sup>14</sup>C в атмосфере). В науке этот эффект считают учтённым через калибровку по годичным кольцам (IntCal20); здесь он принят как источник расхождения.</p>
       <p id="pyr-note"></p>
     </div>
@@ -941,6 +942,28 @@ const INK={'--egypt':'#1b1b1b','--sons':'#fff','--pre':'#fff','--post':'#fff','-
 let ROW_H=22, GROUP_H=28, BAND_H=30, BAR_H=13, FS_ADD=0;
 function sizeForZoom(){ const f=Math.min(1,Math.log(zoom)/Math.log(ZMAX)); ROW_H=Math.round(22+12*f); BAR_H=Math.round(13+9*f); GROUP_H=Math.round(28+6*f); BAND_H=Math.round(30+8*f); FS_ADD=2*f; }
 
+/* ---------- Researchers' dates → position in the creation-logic scheme ----------
+   bc: years BC (positive) or AD (negative). kind: 'mesop' | 'egypt' | 'general'.
+   From 2000 BC onward both scales coincide (identity). Earlier dates are compressed:
+   general (regions settled after Babel): Palaeolithic → first generations after the Flood (post-Flood ice age),
+   Mesolithic/Neolithic → after the dispersion at Babel, Chalcolithic/Early Bronze → the age of Abraham;
+   mesop: Ubaid → first settlement after the Flood, Uruk/Early Dynastic/Akkad → the cities of Nimrod;
+   egypt: by the author's premise the pyramids are antediluvian, so Egypt keeps its dates (clamped to the creation). */
+function mapConv(bc, kind){
+  if(bc==null) return null;
+  const E=D.epoch, F=D.flood, B=D.peleg.born, A=D.abr.born;
+  if(kind==='egypt') return -Math.min(bc, E-1);
+  let an;
+  if(kind==='mesop') an=[[6500,F+5],[4000,F+20],[3300,F+40],[2900,F+55],[2334,F+70],[2154,F+100],[2112,E-2112]];
+  else an=[[100000,F+1],[12000,B],[9700,B+20],[6500,B+(A-B)*0.4],[4500,B+(A-B)*0.7],[3300,B+(A-B)*0.85],[2000,E-2000]];
+  if(bc<=an[an.length-1][0]) return -bc;
+  if(bc>=an[0][0]) return Math.round(amT(an[0][1]));
+  for(let i=0;i<an.length-1;i++){ const [c0,a0]=an[i],[c1,a1]=an[i+1]; if(bc<=c0&&bc>=c1){ const f=(c0-bc)/(c0-c1); return Math.round(amT(a0+(a1-a0)*f)); } }
+  return -bc;
+}
+const convTxt=(a,b)=>b==null?`≈ ${fmtBC(-a)}`:`${fmtBC(-a)} – ${fmtBC(-b)}`;
+const kindOf=cls=>cls==='mesop'?'mesop':(cls==='egypt'?'egypt':'general');
+
 /* ---------- Rows model ---------- */
 function buildRows(){
   rows=[]; rowById={}; tips=[];
@@ -957,21 +980,30 @@ function buildRows(){
     else if(p.died==null){ kind='fade'; b=a+600; }
     else b=p.t1!=null?p.t1:amT(p.died);
     const id=gid+':'+p.name+(opts.suffix||'');
-    const sub=p.nolife?'4 до н.э. – 33 н.э.':(p.hollow?'≈ '+fmtBC(a).replace(' до н.э.','')+(a<=0?' до н.э.':''):(p.reign?'правл. '+(-p.t0)+'–'+(-p.t1):(p.life!=null?p.life+' лет':'† ?')));
+    const sub=p.nolife?'4 до н.э. – 33 н.э.':(p.hollow?'≈ '+fmtBC(a).replace(' до н.э.','')+(a<=0?' до н.э.':''):(p.reign?'правл. '+(-p.t0)+'–'+(-p.t1):(p.life!=null?p.life+' лет':(p.died!=null?fmtBC(a).replace(' до н.э.','')+'–'+fmtBC(b).replace(' до н.э.',''):'† ?'))));
     return add({kind,id,gid,label:(p.king?'♛ ':'')+(p.christ?'✝ ':'')+p.name,depth:depth||0,parentId,t0:a,t1:b,color,tip:personTip(p,a,p.died==null?null:b,opts.extra),sub,taken:p.taken,christ:p.christ,reign:p.reign,abel:p.abel,inbar:p.life!=null&&!p.hollow?String(p.life):''});
   };
 
   /* epochs */
-  group('epochs','Археологические эпохи','--fg','общепринятая периодизация Ближнего Востока');
+  group('epochs','Археологические эпохи в логике схемы','--fg','названия эпох по общепринятой периодизации; положение — по библейской хронологии');
   const EP_COL=['--muted','--cold','--other','--post','--sons','--flood','--mesop','--pre','--anat','--egypt','--muted'];
-  add({kind:'band',gid:'epochs',label:'эпохи',sub:'',blocks:EPOCHS.map((e,i)=>({t0:-e[1],t1:-e[2],label:e[0],color:EP_COL[i%EP_COL.length],tip:tip(`<b>${esc(e[0])}</b><span class="m">${fmtBC(-e[1])} – ${fmtBC(-e[2])}</span><br>Общепринятая периодизация Ближнего Востока.`)}))});
+  const epBlocks=[{t0:amT(0),t1:amT(D.flood),label:'Допотопный мир: города, скотоводство, медь и железо (Быт. 4)',color:'--pre',tip:tip(`<b>Допотопный мир</b><span class="m">${fmtAM(0)} – ${fmtAM(D.flood)} · ${fmtBC(amT(0))} – ${fmtBC(amT(D.flood))}</span><br>Единая допотопная цивилизация: город Енох, скотоводство, музыка, обработка меди и железа (Быт. 4:17–22). По посылке схемы сюда относятся и пирамиды Египта.`)}];
+  EPOCHS.forEach((e,i)=>{ const t0=mapConv(e[1],'general'), t1=mapConv(e[2],'general'); if(t1-t0<1) return;
+    epBlocks.push({t0,t1,label:e[0],color:EP_COL[i%EP_COL.length],tip:tip(`<b>${esc(e[0])}</b><span class="m">в схеме: ${fmtBC(t0)} – ${fmtBC(t1)}</span><br>Датировка исследователей: ${fmtBC(-e[1])} – ${fmtBC(-e[2])}. Положение на схеме — по библейской хронологии: палеолит — послепотопный ледник, неолит — после рассеяния, энеолит и ранняя бронза — время Авраама; от 2000 до н.э. шкалы совпадают.`)}); });
+  add({kind:'band',gid:'epochs',label:'эпохи',sub:'',blocks:epBlocks});
 
   /* climate */
-  group('climate','Климат: ледники, наводнения, засухи','--cold','общепринятые даты; штриховка — модель Орда');
-  CLIMATE.filter(c=>c.t==='r').forEach(c=>add({kind:'range',gid:'climate',label:c.label,sub:`${c.a.toLocaleString('ru-RU')}–${c.b.toLocaleString('ru-RU')}`,t0:-c.a,t1:-c.b,color:c.cls==='cold'?'--cold':'--flood',tip:tip(`<b>${esc(c.label)}</b><span class="m">${fmtBC(-c.a)} – ${fmtBC(-c.b)}</span><br>${esc(c.note)}`)}));
+  group('climate','Климат: потоп, ледник, наводнения, засухи','--cold','положение — в логике схемы; датировки исследователей — в подсказках');
+  const F=D.flood;
+  const CLIM_BIB={'Поздний дриас':[F+600,F+700],'Затопление впадины Персидского залива':[F+100,F+700],'Начало голоцена':[F+700],'Стурегга, Доггерленд; событие 8,2 тыс.':[F+600],'Событие 5,9 тыс. (аридизация)':null,'Слой наводнения в Уре (Вулли)':['mesop',3500],'Наводнения в Кише и Шуруппаке':['mesop',2900],'Событие 4,2 тыс. (засуха)':null,'Событие 3,2 тыс.: засуха, крах бронзового века':null};
+  const climT=(c,v)=>{ const bb=CLIM_BIB[c.label]; if(bb===null||bb===undefined) return mapConv(v,'general'); if(bb[0]==='mesop') return mapConv(bb[1],'mesop'); return amT(v===c.a?bb[0]:(bb[1]!=null?bb[1]:bb[0])); };
+  CLIMATE.filter(c=>c.t==='r').forEach(c=>{ const t0=climT(c,c.a), t1=climT(c,c.b);
+    add({kind:'range',gid:'climate',label:c.label,sub:`${fmtBC(t0).replace(' до н.э.','')}–${fmtBC(t1).replace(' до н.э.','')}`,t0,t1,color:c.cls==='cold'?'--cold':'--flood',tip:tip(`<b>${esc(c.label)}</b><span class="m">в схеме: ${fmtBC(t0)} – ${fmtBC(t1)}</span><br>Датировка исследователей: ${convTxt(c.a,c.b)}.<br>${esc(c.note)}<br>В схеме: следствие всемирного потопа и таяния послепотопного ледника.`)}); });
   add({kind:'hatch',gid:'climate',label:'Послепотопный ледник (модель Орда)',sub:'потоп + 700 лет',t0:amT(D.flood),t1:amT(D.flood+700),color:'--model',tip:tip(`<b>Послепотопный ледниковый период (модель Орда)</b><span class="m">${fmtAM(D.flood)} – ${fmtAM(D.flood+700)}</span><br>Креационистская модель: один ледниковый период, вызванный потопом; максимум через ~500 лет, таяние ~200 лет.`)});
-  CLIMATE.filter(c=>c.t==='m').forEach(c=>add({kind:'marker',gid:'climate',label:c.label,sub:'≈ '+c.a.toLocaleString('ru-RU'),t:-c.a,color:c.cls==='cold'?'--cold':'--flood',hollow:!!c.hollow,tip:tip(`<b>${esc(c.label)}</b><span class="m">≈ ${fmtBC(-c.a)}</span><br>${esc(c.note)}`)}));
-  add({kind:'marker',gid:'climate',label:'Черноморский потоп (в этой схеме)',sub:'потоп + 600',t:amT(D.flood+600),color:'--flood',tip:tip(`<b>Черноморский потоп (в этой схеме)</b><span class="m">≈ ${fmtAM(D.flood+600)} · ${fmtBC(amT(D.flood+600))}</span><br>Следствие всемирного потопа, произошедшее явно позже схода его вод: прорыв Босфора при подъёме Мирового океана во время таяния послепотопного ледника. Положение условное — конец таяния ледника по модели Орда.`)});
+  add({kind:'marker',gid:'climate',label:'Всемирный потоп',sub:fmtAM(F),t:amT(F),color:'--flood',tip:tip(`<b>Всемирный потоп</b><span class="m">${fmtAM(F)} · ${fmtBC(amT(F))}</span><br>600-й год Ноя (Быт. 7:6, 11). Все последующие наводнения, подъём моря и ледник в этой схеме — его следствия.`)});
+  CLIMATE.filter(c=>c.t==='m'&&!c.hollow).forEach(c=>{ const tt=climT(c,c.a);
+    add({kind:'marker',gid:'climate',label:c.label,sub:'≈ '+fmtBC(tt).replace(' до н.э.',''),t:tt,color:c.cls==='cold'?'--cold':'--flood',tip:tip(`<b>${esc(c.label)}</b><span class="m">в схеме: ≈ ${fmtBC(tt)}</span><br>Датировка исследователей: ≈ ${fmtBC(-c.a)}.<br>${esc(c.note)}`)}); });
+  add({kind:'marker',gid:'climate',label:'Черноморский потоп',sub:'потоп + 600',t:amT(F+600),color:'--flood',tip:tip(`<b>Черноморский потоп</b><span class="m">в схеме: ≈ ${fmtAM(F+600)} · ${fmtBC(amT(F+600))}</span><br>Датировка исследователей: ≈ 5600 до н.э. (Ryan et al. 1997; оспаривается).<br>Следствие всемирного потопа, произошедшее явно позже схода его вод: прорыв Босфора при подъёме Мирового океана во время таяния послепотопного ледника. Положение условное — конец таяния ледника по модели Орда.`)});
 
   /* Genesis 4–5 */
   group('gen5','Быт. 4–5: Адам → Ной, ветвь Каина','--pre',`сотворение ${D.epoch} до н.э.; потоп ${D.epoch-D.flood} до н.э.`);
@@ -1038,15 +1070,21 @@ function buildRows(){
 
   /* archaeology */
   const REG={mesop:'--mesop',egypt:'--egypt',anat:'--anat',other:'--other',crim:'--crim'};
+  let offSeq=0;
   const siteRow=(s,gid)=>{
-    const color=REG[s.cls]; const extra=`${s.who?'<br>Исследователи: '+esc(s.who)+'.':''}${s.bib?'<br>Прочтение в схеме: '+esc(s.bib)+'.':''}`;
-    if(s.off) return add({kind:'off',gid,label:s.label,sub:s.ky,color,tip:tip(`<b>${esc(s.label)}</b><span class="m">общепринято: ${esc(s.ky)} — раньше начала шкалы</span><br>${esc(s.note)}${extra}`)});
-    if(s.m!=null) return add({kind:'marker',gid,label:s.label,sub:'≈ '+fmtBC(-s.m),t:-s.m,color,tip:tip(`<b>${esc(s.label)}</b><span class="m">≈ ${fmtBC(-s.m)}</span><br>${esc(s.note)}${extra}`)});
-    return add({kind:'range',gid,label:s.label,sub:`${s.a<=0?-s.a+' н.э.':s.a} – ${s.b<=0?-s.b+' н.э.':s.b}`,t0:-s.a,t1:-s.b,color,tip:tip(`<b>${esc(s.label)}</b><span class="m">${fmtBC(-s.a)} – ${fmtBC(-s.b)}</span><br>${esc(s.note)}${extra}`)});
+    const color=REG[s.cls]; const kind=kindOf(s.cls);
+    const extra=`${s.who?'<br>Исследователи: '+esc(s.who)+'.':''}${s.bib?'<br>Прочтение в схеме: '+esc(s.bib)+'.':''}`;
+    const sh=t=>fmtBC(t).replace(' до н.э.','');
+    if(s.off){ const tt=amT(F+10+offSeq*15); offSeq++;
+      return add({kind:'marker',gid,label:s.label,sub:'≈ '+sh(tt),t:tt,color,tip:tip(`<b>${esc(s.label)}</b><span class="m">в схеме: ≈ ${fmtBC(tt)} — первые поколения после потопа, ледниковый период</span><br>Датировка исследователей: ${esc(s.ky)}.<br>${esc(s.note)}${extra}`)}); }
+    if(s.m!=null){ const tt=mapConv(s.m,kind);
+      return add({kind:'marker',gid,label:s.label,sub:'≈ '+sh(tt)+(tt>0?' н.э.':''),t:tt,color,tip:tip(`<b>${esc(s.label)}</b><span class="m">в схеме: ≈ ${fmtBC(tt)}</span><br>Датировка исследователей: ≈ ${fmtBC(-s.m)}.<br>${esc(s.note)}${extra}`)}); }
+    const t0=mapConv(s.a,kind), t1=mapConv(s.b,kind);
+    return add({kind:'range',gid,label:s.label,sub:`${sh(t0)}${t0>0?' н.э.':''} – ${sh(t1)}${t1>0?' н.э.':''}`,t0,t1:Math.max(t1,t0+3),color,tip:tip(`<b>${esc(s.label)}</b><span class="m">в схеме: ${fmtBC(t0)} – ${fmtBC(t1)}</span><br>Датировка исследователей: ${fmtBC(-s.a)} – ${fmtBC(-s.b)}.<br>${esc(s.note)}${extra}`)});
   };
-  group('sites','Памятники и цивилизации Ближнего Востока','--mesop','общепринятые даты · цвет = регион');
+  group('sites','Памятники и цивилизации Ближнего Востока','--mesop','положение — в логике схемы; датировки исследователей — в подсказках · цвет = регион');
   SITES.forEach(s=>siteRow(s,'sites'));
-  group('crimea','Крым: раскопки Бибикова, Бонч-Осмоловского и других','--crim','общепринятые даты; в схеме — памятники потомков Иафета');
+  group('crimea','Крым: раскопки Бибикова, Бонч-Осмоловского и других','--crim','потомки Ноя после потопа и рассеяния; датировки исследователей — в подсказках');
   CRIMEA.forEach(s=>siteRow(s,'crimea'));
   insertExtras(tip);
   rows.forEach(r=>{r.children=[];});
