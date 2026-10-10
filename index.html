@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Таймлайн допотопных патриархов, сыновей Ноя и линии Сима до Авраама с наложением археологических эпох, памятников и климатических событий.">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Патриархи и древности</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:wght@500;700&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one wide chart strip (pan + zoom) over a reading column; stone-grey ground, inked rules, data colours only on the marks. */
+:root{
+  --bg:#e8ebea; --surface:#f5f6f5; --surface-2:#dfe3e2; --fg:#16201f; --muted:#5c6866; --line:#c3cbc9; --line-soft:#d8dedc;
+  --accent:#1f5f8b;
+  --pre:#2a78d6; --sons:#eb6834; --post:#1baf7a;
+  --mesop:#4a3aa7; --egypt:#eda100; --anat:#e87ba4; --other:#008300;
+  --cold:#5d7d99; --flood:#e34948; --model:#8a6d3b;
+  --band-a:#d4d9d8; --band-b:#c6cdcb;
+  --display:"Literata",Georgia,"Times New Roman",serif;
+  --body:"Golos Text","Segoe UI",Arial,sans-serif;
+  --mono:"JetBrains Mono",Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15191a; --surface:#1d2324; --surface-2:#262d2e; --fg:#eef1ef; --muted:#a4aeab; --line:#3b4546; --line-soft:#2d3637;
+    --accent:#6fb0dc;
+    --pre:#3987e5; --sons:#d95926; --post:#199e70;
+    --mesop:#9085e9; --egypt:#c98500; --anat:#d55181; --other:#2e9a2e;
+    --cold:#7f9fbb; --flood:#e66767; --model:#b8955a;
+    --band-a:#2a3233; --band-b:#333c3d;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15191a; --surface:#1d2324; --surface-2:#262d2e; --fg:#eef1ef; --muted:#a4aeab; --line:#3b4546; --line-soft:#2d3637;
+  --accent:#6fb0dc;
+  --pre:#3987e5; --sons:#d95926; --post:#199e70;
+  --mesop:#9085e9; --egypt:#c98500; --anat:#d55181; --other:#2e9a2e;
+  --cold:#7f9fbb; --flood:#e66767; --model:#b8955a;
+  --band-a:#2a3233; --band-b:#333c3d;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{padding-inline:16px;padding-block:24px 48px;max-width:1400px;margin:0 auto}
+header h1{font-family:var(--display);font-weight:700;font-size:clamp(26px,3.4vw,40px);line-height:1.1;margin:0 0 8px;text-wrap:balance}
+header p.lead{max-width:68ch;margin:0;color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin:20px 0 10px}
+.ctl-group{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ctl-group .lbl{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+button.chip{font:inherit;font-size:13px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+button.chip:hover{border-color:var(--accent)}
+button.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+button.chip:focus-visible,button.icon:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.icon{font:inherit;width:30px;height:30px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;color:var(--muted);margin:6px 0 10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{display:inline-block;width:14px;height:9px;border-radius:2px}
+.legend i.dot{width:9px;height:9px;border-radius:50%}
+.chart{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.chart svg{display:block;width:100%;touch-action:none;cursor:grab;user-select:none}
+.chart svg.dragging{cursor:grabbing}
+.hint{font-size:12px;color:var(--muted);margin:6px 2px 0}
+.tip{position:absolute;z-index:5;pointer-events:none;max-width:300px;background:var(--fg);color:var(--bg);padding:8px 10px;border-radius:6px;font-size:12.5px;line-height:1.4;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+.tip b{display:block;font-size:13.5px;margin-bottom:2px}
+.tip .m{font-family:var(--mono);font-size:12px}
+.tip[hidden]{display:none}
+svg text{font-family:var(--body);fill:var(--fg)}
+svg text.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+svg text.muted{fill:var(--muted)}
+svg text.cap{font-size:10px;letter-spacing:.08em;text-transform:uppercase;fill:var(--muted)}
+svg .grid{stroke:var(--line-soft);stroke-width:1}
+svg .axis{stroke:var(--line);stroke-width:1}
+svg .evline{stroke:var(--fg);stroke-width:1;stroke-dasharray:3 3;opacity:.55}
+svg .evline.flood{stroke:var(--flood);stroke-width:2;stroke-dasharray:none;opacity:.9}
+svg .bar{rx:2;ry:2}
+svg .bar.pre{fill:var(--pre)} svg .bar.sons{fill:var(--sons)} svg .bar.post{fill:var(--post)}
+svg .bar.mesop{fill:var(--mesop)} svg .bar.egypt{fill:var(--egypt)} svg .bar.anat{fill:var(--anat)} svg .bar.other{fill:var(--other)}
+svg .mk.mesop{fill:var(--mesop)} svg .mk.egypt{fill:var(--egypt)} svg .mk.anat{fill:var(--anat)} svg .mk.other{fill:var(--other)}
+svg .mk.cold,svg .rng.cold{fill:var(--cold)} svg .mk.flood,svg .rng.flood{fill:var(--flood)} svg .rng.model{fill:var(--model)}
+svg .conn{stroke:var(--muted);stroke-width:1;fill:none;opacity:.7}
+svg .hit{fill:transparent}
+section{margin-top:40px}
+h2{font-family:var(--display);font-weight:600;font-size:clamp(20px,2.4vw,27px);margin:0 0 10px;text-wrap:balance}
+h3{font-family:var(--display);font-weight:600;font-size:17px;margin:22px 0 6px}
+p,li{max-width:72ch}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px 32px}
+.cols>div{min-width:0}
+.note{border-left:3px solid var(--accent);padding:4px 14px;color:var(--muted);font-size:14px;max-width:72ch}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:860px;font-size:14px}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-top:1px solid var(--line-soft)}
+th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--surface-2);border-top:0}
+td.m{font-family:var(--mono);font-size:13px;white-space:nowrap}
+td b{font-weight:600}
+ul.src{font-size:13.5px;color:var(--muted);padding-left:18px}
+ul.src li{margin-bottom:4px;max-width:90ch}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:14px;align-items:baseline}
+.kv .k{font-family:var(--mono);font-size:13px;color:var(--muted);white-space:nowrap}
+footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){ .tip{transition:opacity .08s} }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Патриархи от Адама до Ноя и древности Ближнего Востока</h1>
+  <p class="lead">Отрезки жизни допотопных патриархов, сыновей Ноя и линии Сима до Авраама по традиционной библейской хронологии. На той же оси — археологические эпохи, памятники и климатические события в их общепринятых датах, чтобы было видно, где две системы счёта расходятся и где сходятся.</p>
+</header>
+
+<div class="controls">
+  <div class="ctl-group" role="group" aria-label="Хронология">
+    <span class="lbl">Хронология</span>
+    <button class="chip" id="ch-mt" aria-pressed="true">Масоретский текст · Ашшер, 4004 до н.э.</button>
+    <button class="chip" id="ch-lxx" aria-pressed="false">Септуагинта · византийская эра, 5509 до н.э.</button>
+  </div>
+  <div class="ctl-group" role="group" aria-label="Диапазон">
+    <span class="lbl">Диапазон</span>
+    <button class="chip" data-view="10000,1500">Обзор 10 000–1500</button>
+    <button class="chip" data-view="12000,500">Весь 12 000–500</button>
+    <button class="chip" data-view="pre">Допотопный мир</button>
+    <button class="chip" data-view="post">От потопа до Авраама</button>
+    <button class="chip" data-view="4500,1500">Шумер, Египет, Авраам</button>
+    <button class="icon" id="zin" title="Приблизить">+</button>
+    <button class="icon" id="zout" title="Отдалить">−</button>
+  </div>
+</div>
+
+<div class="legend">
+  <span><i style="background:var(--pre)"></i>Быт. 5: Адам → Ной</span>
+  <span><i style="background:var(--sons)"></i>Сыновья Ноя</span>
+  <span><i style="background:var(--post)"></i>Быт. 11: Сим → Авраам</span>
+  <span><i style="background:var(--mesop)"></i>Месопотамия</span>
+  <span><i style="background:var(--egypt)"></i>Египет</span>
+  <span><i style="background:var(--anat)"></i>Анатолия и Левант</span>
+  <span><i style="background:var(--other)"></i>Другие регионы</span>
+  <span><i class="dot" style="background:var(--cold)"></i>холод, ледник</span>
+  <span><i class="dot" style="background:var(--flood)"></i>наводнение, подъём моря</span>
+  <span><i style="background:var(--model);opacity:.6"></i>креационистская модель ледника</span>
+</div>
+
+<div class="chart" id="chart">
+  <svg id="tl" role="img" aria-label="Таймлайн патриархов и археологии"></svg>
+  <div class="tip" id="tip" hidden></div>
+</div>
+<div class="hint">Колесо мыши над схемой — масштаб, перетаскивание — сдвиг, наведение — подробности. Внизу шкала лет от сотворения мира, вверху — до н.э.</div>
+
+<section>
+  <h2>Что видно на таймлайне</h2>
+  <div class="cols">
+    <div>
+      <h3>Опорные даты выбранной хронологии</h3>
+      <div class="kv" id="keydates"></div>
+    </div>
+    <div>
+      <h3>Как читать наложение</h3>
+      <p>Библейские отрезки отложены по годам от сотворения мира и переведены в годы до н.э. через выбранную эру. Археология и климат нанесены в общепринятых датах, которые для времени раньше ~3000 до н.э. опираются на калиброванный радиоуглерод, а для Шумера и Египта на царские списки и синхронизмы.</p>
+      <p>Исходная посылка этой схемы: библейская хронология достоверна, а радиоуглеродные даты для допотопного и раннего послепотопного времени завышены (другое содержание <sup>14</sup>C в атмосфере). В науке этот эффект считают учтённым через калибровку по годичным кольцам (IntCal20); здесь он принят как источник расхождения.</p>
+      <p id="pyr-note"></p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Сопоставление: какой «археологической эпохе» отвечает библейская история</h2>
+  <p class="note">Логика сопоставления: от Авраама и позже обе системы датировок почти совпадают, поэтому расхождение накапливается только в глубину. Чем раньше событие, тем сильнее общепринятая дата «растянута» относительно библейской. Отсюда и порядок: память о допотопном мире и первых послепотопных поколениях попадает в то, что археология называет палеолитом и неолитом.</p>
+  <div class="tablewrap">
+  <table id="maptable">
+    <thead><tr>
+      <th>Библейская история</th><th>Масоретский текст</th><th>Септуагинта</th><th>Что говорит Библия</th><th>Общепринятая эпоха и памятники, которые сюда ложатся</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><b>Допотопный мир</b><br>Адам → Ной, линия Каина</td>
+        <td class="m" data-k="pre"></td><td class="m" data-k="pre-lxx"></td>
+        <td>Город Енох (Быт. 4:17), скотоводство, музыка, обработка меди и железа у Тувалкаина (Быт. 4:20–22). То есть металлургия «бронзового и железного века» существовала до потопа. Долгожительство, одна речь.</td>
+        <td>По посылке схемы сюда относится всё, что археология помещает в палеолит, мезолит и начало неолита: пещерное искусство, натуфийские поселения, а также, по условию автора, пирамиды Гизы и Древнее царство Египта. По Ашшеру пирамиды Гизы в общепринятой дате (2600–2500) и так стоят за 150–250 лет до потопа 2348 г.</td>
+      </tr>
+      <tr>
+        <td><b>Потоп и первые поколения</b><br>Ной, Сим, Хам, Иафет</td>
+        <td class="m" data-k="flood"></td><td class="m" data-k="flood-lxx"></td>
+        <td>Год потопа — 600-й год Ноя (Быт. 7:6, 11). Выход из ковчега, завет, расселение с гор Араратских (Быт. 8–9).</td>
+        <td>Креационистские модели (М. Орд) помещают сюда единственный ледниковый период длиной 500–700 лет. В общепринятой шкале ему отвечают конец плейстоцена, поздний дриас и начало голоцена (~10 900–9 700 до н.э.), а по культуре — эпипалеолит и мезолит.</td>
+      </tr>
+      <tr>
+        <td><b>Вавилонская башня и рассеяние</b><br>«во дни Фалека»</td>
+        <td class="m" data-k="babel"></td><td class="m" data-k="babel-lxx"></td>
+        <td>Одно поселение в земле Сеннаар, кирпич и смола, разделение языков (Быт. 11:1–9; 10:25).</td>
+        <td>Первые монументальные постройки неолита: Гёбекли-Тепе и Карахан-Тепе (общепринято 9500–8000), башня и стена Иерихона (9400–7500), Чатал-Хююк (7500–5700). По этой логике докерамический неолит — первые поколения после рассеяния.</td>
+      </tr>
+      <tr>
+        <td><b>Нимрод и первые царства</b><br>Вавилон, Эрех, Аккад, Халне; Ниневия, Калах</td>
+        <td class="m" data-k="nimrod"></td><td class="m" data-k="nimrod-lxx"></td>
+        <td>Нимрод, внук Хама, «начал быть силён на земле» и основал города Сеннаара и Ассирии (Быт. 10:8–12). Эрех отождествляют с Уруком, Аккад и Вавилон известны по раскопкам.</td>
+        <td>Период Урук (4000–3100), раннединастический Шумер (2900–2334), Аккадская держава (2334–2154). В общепринятой периодизации это энеолит и ранняя бронза; сюда же ложатся первая клинопись (~3300) и царские гробницы Ура (~2600).</td>
+      </tr>
+      <tr>
+        <td><b>Авраам</b><br>Ур, Харран, Ханаан, Египет</td>
+        <td class="m" data-k="abr"></td><td class="m" data-k="abr-lxx"></td>
+        <td>Родился в Уре Халдейском, в 75 лет вышел из Харрана (Быт. 11:31; 12:4), жил 175 лет (Быт. 25:7).</td>
+        <td>III династия Ура (2112–2004), Исин и Ларса, старовавилонский период, Среднее царство Египта. Это средняя бронза I–IIA. Здесь библейская и общепринятая шкалы уже практически совпадают.</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>Сколько ледниковых периодов и потопов видит наука</h2>
+  <div class="cols">
+    <div>
+      <h3>Ледниковые периоды</h3>
+      <p>За историю Земли выделяют пять крупных ледниковых эр. Внутри последней, четвертичной (начало 2,6 млн лет назад), насчитывают несколько десятков ледниково-межледниковых циклов с шагом около 100 тысяч лет. Последний ледниковый максимум относят к 26–19 тысячам лет назад, его завершение и начало голоцена — к 11 700 лет назад, то есть около 9700 до н.э. Это единственная ледниковая граница, попадающая на ось таймлайна.</p>
+      <p>Креационистская модель (М. Орд, 1990) предполагает один ледниковый период, вызванный потопом: тёплые океаны и вулканическая пыль дают сильные снегопады, максимум льда наступает через ~500 лет после потопа, таяние занимает ещё ~200 лет. На таймлайне этот интервал показан штриховой полосой от года потопа.</p>
+    </div>
+    <div>
+      <h3>Потопы и наводнения</h3>
+      <p>Глобального потопа геология не признаёт, но описывает ряд крупных затоплений, связанных с подъёмом моря на ~120 м после таяния ледников: затопление впадины Персидского залива (10 000–6000 до н.э.), Доггерленда и цунами от оползня Стурегга (~6200), а также спорный «черноморский потоп» Райана и Питмана (~5600). В самой Месопотамии раскопками зафиксированы речные наводнения: слой ила в Уре у Вулли (~3500) и слои в Кише и Шуруппаке (~2900), который часто сопоставляют с потопом Шумерского царского списка.</p>
+      <p>Кроме того, выделяют резкие климатические события 8,2, 5,9 и 4,2 тысячи лет назад; последнее связывают с падением Аккада и Древнего царства Египта.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Данные патриархов</h2>
+  <div class="tablewrap">
+  <table id="ptable">
+    <thead><tr><th>Патриарх</th><th>Родил сына в</th><th>Прожил</th><th>Родился, от С.М.</th><th>Умер, от С.М.</th><th>Родился, до н.э.</th><th>Умер, до н.э.</th><th>Источник</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>Источники</h2>
+  <ul class="src">
+    <li>Бытие 5:3–32; 7:6, 11; 9:24, 28–29; 10:8–12, 21, 25; 11:10–32; 12:4; 25:7. Синодальный перевод, масоретский текст; Септуагинта по Александрийскому кодексу (Мафусал 187, Нахор 79, с Каинаном в Быт. 11:12–13).</li>
+    <li>J. Ussher, Annales Veteris Testamenti (1650): сотворение 4004, потоп 2348, рождение Авраама 1996 до н.э. (Фарре 130 лет по Быт. 11:32, 12:4 и Деян. 7:4).</li>
+    <li>Византийская эра от сотворения мира 5509 до н.э.: Георгий Синкелл, «Хронография»; русская летописная традиция (5508).</li>
+    <li>K. Schmidt, Sie bauten die ersten Tempel (2006); O. Dietrich et al., Antiquity 87 (2013) — Гёбекли-Тепе. N. Karul, Türk Arkeoloji ve Etnografya Dergisi (2021) — Карахан-Тепе.</li>
+    <li>K. Kenyon, Digging up Jericho (1957); B. Wood, Biblical Archaeology Review 16/2 (1990) — Иерихон. I. Hodder, Çatalhöyük: The Leopard's Tale (2006).</li>
+    <li>C. L. Woolley, Ur Excavations IV (1955); J. N. Postgate, Early Mesopotamia (1992); Шумерский царский список (ETCSL 2.1.1); M. Van De Mieroop, A History of the Ancient Near East (2016) — средняя хронология.</li>
+    <li>I. Shaw (ed.), The Oxford History of Ancient Egypt (2000); M. Lehner, The Complete Pyramids (1997) — даты династий и пирамид.</li>
+    <li>Периодизация Ближнего Востока: Maison de l'Orient, ASPRO; J. Mellaart; Encyclopaedia Britannica — палеолит, неолит, энеолит, бронза, железо.</li>
+    <li>S. O. Rasmussen et al., Quaternary Science Reviews 106 (2014) — начало голоцена; R. B. Alley et al., Geology 25 (1997) — событие 8,2 тыс.; W. Ryan, W. Pitman, Noah's Flood (1998); S. Bondevik et al., Eos 84 (2003) — Стурегга; H. Weiss et al., Science 261 (1993) — событие 4,2 тыс.; K. Lambeck, Earth and Planetary Science Letters 142 (1996) — Персидский залив.</li>
+    <li>P. J. Reimer et al., Radiocarbon 62 (2020) — калибровочная кривая IntCal20. M. J. Oard, An Ice Age Caused by the Genesis Flood (1990) — креационистская модель ледника.</li>
+  </ul>
+</section>
+
+<footer>Собрано 10 октября 2026 г. Библейские даты вычислены из текста по выбранной хронологии; археологические и климатические даты даны округлённо по указанным источникам.</footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+/* ---------- Chronologies: [name, age at son's birth, lifespan, ref] ---------- */
+const CHRONO = {
+  mt: {
+    label:'Масоретский текст (Ашшер)', epoch:4004,
+    gen5:[
+      ['Адам',130,930,'Быт. 5:3–5'],['Сиф',105,912,'Быт. 5:6–8'],['Енос',90,905,'Быт. 5:9–11'],['Каинан',70,910,'Быт. 5:12–14'],
+      ['Малелеил',65,895,'Быт. 5:15–17'],['Иаред',162,962,'Быт. 5:18–20'],['Енох',65,365,'Быт. 5:21–24'],['Мафусал',187,969,'Быт. 5:25–27'],
+      ['Ламех',182,777,'Быт. 5:28–31'],['Ной',502,950,'Быт. 5:32; 9:29']
+    ],
+    gen11:[
+      ['Арфаксад',35,438,'Быт. 11:12–13'],['Сала',30,433,'Быт. 11:14–15'],['Евер',34,464,'Быт. 11:16–17'],['Фалек',30,239,'Быт. 11:18–19'],
+      ['Рагав',32,239,'Быт. 11:20–21'],['Серух',30,230,'Быт. 11:22–23'],['Нахор',29,148,'Быт. 11:24–25'],['Фарра',130,205,'Быт. 11:26, 32; Деян. 7:4'],
+      ['Авраам',null,175,'Быт. 25:7']
+    ]
+  },
+  lxx: {
+    label:'Септуагинта (византийская эра)', epoch:5509,
+    gen5:[
+      ['Адам',230,930,'Быт. 5:3–5 LXX'],['Сиф',205,912,'Быт. 5:6–8 LXX'],['Енос',190,905,'Быт. 5:9–11 LXX'],['Каинан',170,910,'Быт. 5:12–14 LXX'],
+      ['Малелеил',165,895,'Быт. 5:15–17 LXX'],['Иаред',162,962,'Быт. 5:18–20 LXX'],['Енох',165,365,'Быт. 5:21–24 LXX'],['Мафусал',187,969,'Быт. 5:25–27 LXX (A)'],
+      ['Ламех',188,753,'Быт. 5:28–31 LXX'],['Ной',502,950,'Быт. 5:32; 9:29']
+    ],
+    gen11:[
+      ['Арфаксад',135,565,'Быт. 11:12–13 LXX'],['Каинан (II)',130,460,'Быт. 11:13 LXX; Лк. 3:36'],['Сала',130,460,'Быт. 11:14–15 LXX'],['Евер',134,504,'Быт. 11:16–17 LXX'],
+      ['Фалек',130,339,'Быт. 11:18–19 LXX'],['Рагав',132,339,'Быт. 11:20–21 LXX'],['Серух',130,330,'Быт. 11:22–23 LXX'],['Нахор',79,208,'Быт. 11:24–25 LXX'],
+      ['Фарра',130,205,'Быт. 11:26, 32; Деян. 7:4'],['Авраам',null,175,'Быт. 25:7']
+    ]
+  }
+};
+
+function build(ch){
+  const P=[]; let b=0;
+  ch.gen5.forEach(r=>{ P.push({name:r[0],group:'pre',born:b,died:b+r[2],life:r[2],sonAge:r[1],ref:r[3]}); b+=r[1]; });
+  const noah=P[P.length-1];
+  const flood=noah.born+600;
+  const enoch=P.find(p=>p.name==='Енох'); enoch.taken=true;
+  const shemBorn=noah.born+502;
+  const sons=[
+    {name:'Иафет',group:'sons',born:noah.born+500,died:null,life:null,ref:'Быт. 5:32; 10:21 («Иафет старший»)',approx:true},
+    {name:'Сим',group:'sons',born:shemBorn,died:shemBorn+600,life:600,sonAge:100,ref:'Быт. 11:10–11'},
+    {name:'Хам',group:'sons',born:noah.born+500,died:null,life:null,ref:'Быт. 5:32; 9:24 («меньший сын»)',approx:true}
+  ];
+  const G=[]; b=shemBorn+100;
+  ch.gen11.forEach(r=>{ G.push({name:r[0],group:'post',born:b,died:b+r[2],life:r[2],sonAge:r[1],ref:r[3]}); if(r[1]) b+=r[1]; });
+  const abr=G[G.length-1]; const peleg=G.find(p=>p.name==='Фалек');
+  return {epoch:ch.epoch,label:ch.label,P,sons,G,noah,flood,shemBorn,abr,peleg,enoch,
+    events:[
+      {am:0,label:'Сотворение',ref:'Быт. 1'},
+      {am:enoch.born+365,label:'Енох взят',short:'Енох',ref:'Быт. 5:24'},
+      {am:flood,label:'Потоп',ref:'Быт. 7:6, 11',cls:'flood'},
+      {am:peleg.born,label:'Вавилон, рассеяние (дни Фалека)',short:'Вавилон',ref:'Быт. 10:25; 11:1–9'},
+      {am:abr.born+75,label:'Призвание Авраама',short:'Авраам',ref:'Быт. 12:4'}
+    ]};
+}
+
+/* ---------- Conventional archaeology (years BC, rounded) ---------- */
+const EPOCHS=[
+  ['Верхний палеолит',40000,12500],['Эпипалеолит, мезолит (натуфий)',12500,9700],['Докерамический неолит',9700,6500],
+  ['Керамический неолит',6500,4500],['Энеолит',4500,3300],['Ранняя бронза',3300,2000],['Средняя бронза',2000,1550],['Поздняя бронза',1550,1200],['Железный век',1200,550]
+];
+const CLIMATE=[
+  {t:'r',cls:'cold',a:10900,b:9700,label:'Поздний дриас',note:'Последний холодный эпизод ледникового периода; окончание — начало голоцена 11 700 лет назад (Rasmussen et al. 2014).'},
+  {t:'r',cls:'flood',a:10000,b:6000,label:'Затопление впадины Персидского залива',note:'Подъём уровня моря на ~120 м после таяния ледников заполняет впадину залива (Lambeck 1996).'},
+  {t:'m',cls:'cold',a:9700,label:'Начало голоцена',note:'Общепринятая граница конца последнего ледникового периода: 11 700 лет назад.'},
+  {t:'m',cls:'flood',a:6200,label:'Стурегга, Доггерленд; событие 8,2 тыс.',note:'Оползень Стурегга и цунами, окончательное затопление Доггерленда; одновременно резкое похолодание (Alley et al. 1997; Bondevik et al. 2003).'},
+  {t:'m',cls:'flood',a:5600,label:'Черноморский потоп (гипотеза)',note:'Прорыв Босфора и заполнение Чёрного моря по Райану и Питману (1998); дата и масштаб оспариваются.'},
+  {t:'m',cls:'cold',a:3900,label:'Событие 5,9 тыс. (аридизация)',note:'Конец влажного периода Сахары, усиление засух на Ближнем Востоке.'},
+  {t:'m',cls:'flood',a:3500,label:'Слой наводнения в Уре (Вулли)',note:'Слой ила толщиной до 3,5 м в раскопе Вулли; локальное речное наводнение убейдского времени.'},
+  {t:'m',cls:'flood',a:2900,label:'Наводнения в Кише и Шуруппаке',note:'Слои ила в Кише и Шуруппаке; часто сопоставляются с потопом Шумерского царского списка (Зиусудра).'},
+  {t:'m',cls:'cold',a:2200,label:'Событие 4,2 тыс. (засуха)',note:'Многовековая засуха; связывается с падением Аккада и Древнего царства Египта (Weiss et al. 1993).'}
+];
+const SITES=[
+  {cls:'anat',a:9500,b:8000,label:'Гёбекли-Тепе, Карахан-Тепе',note:'Монументальные круглые постройки с Т-образными столпами (докерамический неолит А–В). Schmidt 2006; Dietrich et al. 2013.'},
+  {cls:'anat',a:9400,b:7500,label:'Иерихон: башня и стена (PPNA–PPNB)',note:'Каменная башня 8,5 м и стена поселения; древнейшие укрепления (Kenyon 1957).'},
+  {cls:'anat',a:7500,b:5700,label:'Чатал-Хююк',note:'Крупное поселение керамического неолита, настенные росписи (Hodder 2006).'},
+  {cls:'mesop',a:6500,b:3800,label:'Убейдская культура, Эреду',note:'Первые храмы Эреду, ирригация в Южной Месопотамии.'},
+  {cls:'mesop',a:4000,b:3100,label:'Период Урук (библ. Эрех)',note:'Первый город, монументальные храмы Эанны, первая клинопись ~3300.'},
+  {cls:'mesop',m:3300,label:'Первая клинопись (Урук IV)',note:'Пиктографические таблички Урука IV; протоклинопись.'},
+  {cls:'mesop',a:2900,b:2334,label:'Раннединастический Шумер: Киш, Ур, Лагаш',note:'Города-государства; Царские гробницы Ура ~2600 (Woolley).'},
+  {cls:'mesop',m:2600,label:'Царские гробницы Ура',note:'Гробница Пуаби, «Штандарт Ура» (Woolley 1934).'},
+  {cls:'mesop',a:2334,b:2154,label:'Аккадская держава (Саргон)',note:'Первая империя Месопотамии; Аккад (Агаде) — один из городов Нимрода (Быт. 10:10).'},
+  {cls:'mesop',a:2112,b:2004,label:'III династия Ура, зиккурат Ур-Намму',note:'Ур Халдейский времён, близких к Аврааму по библейской хронологии.'},
+  {cls:'mesop',a:2025,b:1400,label:'Ассирия: Ашшур (староассирийский период)',note:'Ниневия и Калах известны с более раннего времени как поселения; Быт. 10:11.'},
+  {cls:'mesop',a:1894,b:1595,label:'Вавилон: старовавилонский период, Хаммурапи',note:'Хаммурапи 1792–1750 (средняя хронология). Город упоминается с аккадского времени (~2300).'},
+  {cls:'egypt',a:4000,b:3100,label:'Накада (додинастический Египет)',note:'Иероглифы ~3250; объединение Египта при Нармере ~3100.'},
+  {cls:'egypt',m:3100,label:'Объединение Египта (Нармер)',note:'Начало I династии.'},
+  {cls:'egypt',a:2686,b:2181,label:'Древнее царство',note:'III–VI династии; эпоха пирамид.'},
+  {cls:'egypt',m:2670,label:'Ступенчатая пирамида Джосера',note:'Первая каменная пирамида, Саккара (Lehner 1997).'},
+  {cls:'egypt',a:2600,b:2500,label:'Пирамиды Гизы: Хуфу, Хафра, Менкаура',note:'Общепринято ~2600–2500 (Shaw 2000). По посылке автора — допотопные.'},
+  {cls:'egypt',a:2055,b:1650,label:'Среднее царство',note:'XI–XIII династии.'},
+  {cls:'other',a:3000,b:1600,label:'Стоунхендж',note:'От рва и вала до каменных кругов.'},
+  {cls:'other',a:3000,b:1180,label:'Троя I–VII',note:'Гиссарлык; Троя VIIa разрушена ~1180.'},
+  {cls:'other',a:2600,b:1900,label:'Хараппская цивилизация (зрелая)',note:'Мохенджо-Даро, Хараппа.'},
+  {cls:'anat',m:1550,label:'Разрушение Иерихона бронзового века',note:'Город IV: ~1550 по Кеньон, ~1400 по Б. Вуду.'}
+];
+
+/* ---------- State ---------- */
+const FULL={t0:-12000,t1:-500};
+let view={t0:-10000,t1:-1500};
+let chKey='mt', D=build(CHRONO.mt);
+const svg=document.getElementById('tl'), tipEl=document.getElementById('tip'), chart=document.getElementById('chart');
+let tips=[];
+const amT=am=>am-D.epoch;
+const fmtBC=t=>t<0?(-t).toLocaleString('ru-RU')+' до н.э.':(t).toLocaleString('ru-RU')+' н.э.';
+const fmtAM=am=>am.toLocaleString('ru-RU')+' от С.М.';
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+
+function tickStep(span){ if(span>6000)return 1000; if(span>2500)return 500; if(span>1200)return 250; if(span>500)return 100; return 50; }
+
+function render(){
+  const W=Math.max(320,chart.clientWidth-2);
+  const padL=6,padR=6,innerW=W-padL-padR;
+  const span=view.t1-view.t0;
+  const x=t=>padL+(t-view.t0)/span*innerW;
+  const small=W<640; const fs=small?10.5:11.5; const row=small?15:17;
+  const out=[]; tips=[];
+  const tip=html=>{tips.push(html);return tips.length-1;};
+
+  // layout
+  const axisH=36, epY=42, epH=24, clY=epY+epH+10, clH=80;
+  const evY=clY+clH+8, evH=46;
+  let y=evY+evH+6;
+  const preRows=D.P.length, sonsRows=D.sons.length, postRows=D.G.length;
+  const patY=y; y+=(preRows+sonsRows+postRows)*row+2*10+6;
+  const arcHeadY=y; y+=22;
+  const arcY=y; y+=SITES.length*(row-1)+6;
+  const botAxisY=y; const H=botAxisY+axisH+4;
+
+  out.push(`<defs><clipPath id="clip"><rect x="${padL}" y="0" width="${innerW}" height="${H}"/></clipPath>
+  <linearGradient id="fadeS" x1="0" x2="1"><stop offset="0" stop-color="var(--sons)"/><stop offset="1" stop-color="var(--sons)" stop-opacity="0"/></linearGradient>
+  <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="none"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--model)" stroke-width="2"/></pattern></defs>`);
+
+  // grid + top axis (BC)
+  const step=tickStep(span);
+  const first=Math.ceil(view.t0/step)*step;
+  for(let t=first;t<=view.t1;t+=step){
+    const X=x(t); const major=(t%(step*2)===0);
+    out.push(`<line class="grid" x1="${X}" y1="${axisH}" x2="${X}" y2="${botAxisY}" ${major?'':'opacity=".5"'}/>`);
+    out.push(`<text class="num" x="${X}" y="14" text-anchor="middle" font-size="${fs}">${(-t).toLocaleString('ru-RU')}</text>`);
+  }
+  out.push(`<text class="cap" x="${padL+2}" y="${axisH-6}">годы до н.э.</text>`);
+  out.push(`<line class="axis" x1="${padL}" y1="${axisH}" x2="${W-padR}" y2="${axisH}"/>`);
+  // bottom axis (AM)
+  out.push(`<line class="axis" x1="${padL}" y1="${botAxisY}" x2="${W-padR}" y2="${botAxisY}"/>`);
+  const amFirst=Math.max(0,Math.ceil((view.t0+D.epoch)/step)*step);
+  for(let am=amFirst;am<=view.t1+D.epoch;am+=step){
+    const X=x(amT(am));
+    out.push(`<line class="axis" x1="${X}" y1="${botAxisY}" x2="${X}" y2="${botAxisY+5}"/>`);
+    out.push(`<text class="num" x="${X}" y="${botAxisY+18}" text-anchor="middle" font-size="${fs}">${am.toLocaleString('ru-RU')}</text>`);
+  }
+  out.push(`<text class="cap" x="${padL+2}" y="${botAxisY+30}">годы от сотворения мира (${esc(D.label)})</text>`);
+
+  out.push(`<g clip-path="url(#clip)">`);
+
+  // epochs band
+  EPOCHS.forEach((e,i)=>{
+    const a=Math.max(-e[1],view.t0), b=Math.min(-e[2],view.t1); if(b<=a)return;
+    const X=x(a), Wd=x(b)-X;
+    const k=tip(`<b>${esc(e[0])}</b><span class="m">${e[1].toLocaleString('ru-RU')} – ${e[2].toLocaleString('ru-RU')} до н.э.</span><br>Общепринятая периодизация Ближнего Востока.`);
+    out.push(`<rect data-i="${k}" x="${X}" y="${epY}" width="${Wd}" height="${epH}" fill="var(${i%2?'--band-b':'--band-a'})"/>`);
+    if(Wd>40) out.push(`<text x="${X+6}" y="${epY+epH/2+4}" font-size="${fs}" pointer-events="none">${fitText(e[0],Wd-10,fs)}</text>`);
+  });
+  out.push(`<text class="cap" x="${padL+2}" y="${epY-3}">археологические эпохи (общепринятая шкала)</text>`);
+
+  // climate lane
+  out.push(`<text class="cap" x="${padL+2}" y="${clY+8}">климат: ледники, наводнения, засухи</text>`);
+  // creationist post-flood ice age band
+  {
+    const a=amT(D.flood), b=amT(D.flood+700);
+    const k=tip(`<b>Послепотопный ледниковый период (модель Орда)</b><span class="m">${fmtAM(D.flood)} – ${fmtAM(D.flood+700)}</span><br>Креационистская модель: один ледниковый период, вызванный потопом, максимум через ~500 лет, таяние ~200 лет. Не часть общепринятой науки.`);
+    out.push(`<rect data-i="${k}" x="${x(a)}" y="${clY+14}" width="${Math.max(2,x(b)-x(a))}" height="10" fill="url(#hatch)" opacity=".85"/>`);
+    if(x(b)-x(a)>90) out.push(`<text class="muted" x="${x(a)+3}" y="${clY+36}" font-size="${fs-1.5}" pointer-events="none">ледник по модели Орда</text>`);
+  }
+  CLIMATE.forEach(c=>{
+    if(c.t==='r'){
+      const a=-c.a,b=-c.b; const X=x(a),Wd=Math.max(2,x(b)-X);
+      const k=tip(`<b>${esc(c.label)}</b><span class="m">${c.a.toLocaleString('ru-RU')} – ${c.b.toLocaleString('ru-RU')} до н.э.</span><br>${esc(c.note)}`);
+      const yy=c.cls==='cold'?clY+14:clY+28;
+      out.push(`<rect data-i="${k}" class="rng ${c.cls}" x="${X}" y="${yy}" width="${Wd}" height="11" rx="2" opacity=".85"/>`);
+      const lw=est(c.label,fs-1.5)+8;
+      if(Wd>lw) out.push(`<text x="${X+4}" y="${yy+9}" font-size="${fs-1.5}" fill="#fff" pointer-events="none">${esc(c.label)}</text>`);
+      else if(X+Wd+lw<W) out.push(`<text class="muted" x="${X+Wd+4}" y="${yy+9}" font-size="${fs-1.5}" pointer-events="none">${esc(c.label)}</text>`);
+    }
+  });
+  let mi=0;
+  CLIMATE.filter(c=>c.t==='m').forEach(c=>{
+    const X=x(-c.a); if(X<padL-20||X>W)return;
+    const k=tip(`<b>${esc(c.label)}</b><span class="m">≈ ${c.a.toLocaleString('ru-RU')} до н.э.</span><br>${esc(c.note)}`);
+    const yy=clY+50; const ly=clY+[62,72,82][mi%3];
+    out.push(`<circle data-i="${k}" class="mk ${c.cls}" cx="${X}" cy="${yy}" r="4.5"/>`);
+    out.push(`<text class="muted" x="${X+6}" y="${ly}" font-size="${fs-1.5}" pointer-events="none">${esc(shortLabel(c.label,span))}</text>`);
+    mi++;
+  });
+
+  // biblical events: vertical lines
+  D.events.forEach((e,i)=>{
+    const X=x(amT(e.am)); if(X<padL-2||X>W)return;
+    const k=tip(`<b>${esc(e.label)}</b><span class="m">${fmtAM(e.am)} · ${fmtBC(amT(e.am))}</span><br>${esc(e.ref)}`);
+    out.push(`<line data-i="${k}" class="evline ${e.cls||''}" x1="${X}" y1="${evY}" x2="${X}" y2="${botAxisY}"/>`);
+    out.push(`<rect data-i="${k}" class="hit" x="${X-5}" y="${evY}" width="10" height="${botAxisY-evY}"/>`);
+    const ly=evY+[12,26,40][i%3];
+    out.push(`<text x="${X+4}" y="${ly}" font-size="${fs}" font-weight="${e.cls?'600':'500'}" ${e.cls?'fill="var(--flood)"':''} pointer-events="none">${esc(span>3000&&e.short?e.short:e.label)}</text>`);
+  });
+
+  // Cain's line band (undated, pre-Flood)
+  {
+    const a=amT(D.P[0].born+130), b=amT(D.flood);
+    const k=tip(`<b>Линия Каина (Быт. 4:17–22)</b><span class="m">между Адамом и потопом, без дат</span><br>Каин строит город Енох; Иавал — скотоводство в шатрах; Иувал — музыка; Тувалкаин — обработка меди и железа; Ноема.`);
+    out.push(`<rect data-i="${k}" x="${x(a)}" y="${patY-4}" width="${Math.max(2,x(b)-x(a))}" height="${preRows*row+2}" fill="var(--pre)" opacity=".07"/>`);
+    if(x(b)-x(a)>260) out.push(`<text class="muted" x="${Math.max(x(a),padL)+6}" y="${patY+preRows*row-6}" font-size="${fs-1}" pointer-events="none">линия Каина: город Енох, скотоводство, музыка, медь и железо (Быт. 4)</text>`);
+  }
+
+  // Nimrod band (post-Flood, before/around Babel)
+  {
+    const a=amT(D.flood+60), b=amT(D.peleg.born+100);
+    const k=tip(`<b>Нимрод строит города (Быт. 10:8–12)</b><span class="m">внук Хама; примерно 2–4 поколения после потопа</span><br>Вавилон, Эрех (Урук), Аккад, Халне в Сеннааре; Ниневия, Реховоф-ир, Калах, Ресен в Ассирии.`);
+    out.push(`<rect data-i="${k}" x="${x(a)}" y="${patY+(preRows+sonsRows)*row+16}" width="${Math.max(2,x(b)-x(a))}" height="${postRows*row}" fill="var(--post)" opacity=".08"/>`);
+  }
+
+  // patriarch bars
+  function bar(p,yy,prev){
+    const a=amT(p.born); const X=x(a);
+    const cls=p.group;
+    let Wd;
+    if(p.died==null){ Wd=x(amT(p.born+600))-X; }
+    else Wd=x(amT(p.died))-X;
+    Wd=Math.max(1.5,Wd);
+    const lifeTxt=p.life==null?'продолжительность жизни в тексте не указана':`прожил ${p.life} лет`;
+    const sonTxt=p.sonAge?`сын родился, когда ему было ${p.sonAge}`:'';
+    const k=tip(`<b>${esc(p.name)}</b><span class="m">${p.approx?'≈ ':''}${fmtAM(p.born)} → ${p.died==null?'?':fmtAM(p.died)}</span><br><span class="m">${fmtBC(a)} → ${p.died==null?'?':fmtBC(amT(p.died))}</span><br>${lifeTxt}${sonTxt?'; '+sonTxt:''}${p.taken?'; взят Богом, не умер (Быт. 5:24)':''}<br>${esc(p.ref)}`);
+    if(p.died==null) out.push(`<rect data-i="${k}" x="${X}" y="${yy}" width="${Wd}" height="${row-6}" fill="url(#fadeS)" rx="2"/>`);
+    else out.push(`<rect data-i="${k}" class="bar ${cls}" x="${X}" y="${yy}" width="${Wd}" height="${row-6}"/>`);
+    out.push(`<rect data-i="${k}" class="hit" x="${X}" y="${yy-2}" width="${Wd}" height="${row-2}"/>`);
+    if(p.taken) out.push(`<text x="${X+Wd+2}" y="${yy+row-7}" font-size="${fs}" fill="var(--pre)" pointer-events="none">↑</text>`);
+    // connector from parent at birth
+    if(prev){ const py=prev.y+ (row-6)/2; out.push(`<path class="conn" d="M${X},${py} L${X},${yy}"/>`); }
+    // label
+    const lifeLbl=p.life!=null?` <tspan class="num muted" font-size="${fs-1}">${p.life}</tspan>`:` <tspan class="muted" font-size="${fs-1}">† ?</tspan>`;
+    const lx=Math.max(X,padL)+ (p.taken?14:0);
+    const labelW=est(p.name,fs)+28;
+    let tx;
+    if(X+Wd+labelW<W-padR) tx=X+Wd+(p.taken?14:5); else if(Wd>labelW+8) tx=Math.max(X,padL)+5; else tx=Math.min(lx+Wd+5,W-padR-labelW);
+    const inside=(tx<X+Wd && tx>=X);
+    out.push(`<text x="${tx}" y="${yy+row-7}" font-size="${fs}" font-weight="500" ${inside?'fill="#fff"':''} pointer-events="none">${esc(p.name)}${inside?'':lifeLbl}</text>`);
+    p.y=yy;
+  }
+  let yy=patY; let prev=null;
+  D.P.forEach(p=>{ bar(p,yy,prev); prev=p; yy+=row; });
+  yy+=10;
+  D.sons.forEach(p=>{ bar(p,yy,D.noah); yy+=row; });
+  yy+=10;
+  prev=D.sons[1];
+  D.G.forEach(p=>{ bar(p,yy,prev); prev=p; yy+=row; });
+
+  // archaeology lane
+  out.push(`<text class="cap" x="${padL+2}" y="${arcHeadY+14}">памятники и цивилизации (общепринятые даты)</text>`);
+  let ay=arcY; const arow=row-1;
+  SITES.forEach(s=>{
+    if(s.m!=null){
+      const X=x(-s.m);
+      const k=tip(`<b>${esc(s.label)}</b><span class="m">≈ ${s.m.toLocaleString('ru-RU')} до н.э.</span><br>${esc(s.note)}`);
+      out.push(`<path data-i="${k}" class="mk ${s.cls}" d="M${X},${ay+1} l5,${(arow-6)/2} l-5,${(arow-6)/2} l-5,-${(arow-6)/2} z"/>`);
+      out.push(`<text x="${X+8}" y="${ay+arow-7}" font-size="${fs-0.5}" pointer-events="none">${esc(s.label)}</text>`);
+    } else {
+      const X=x(-s.a), Wd=Math.max(1.5,x(-s.b)-X);
+      const k=tip(`<b>${esc(s.label)}</b><span class="m">${s.a.toLocaleString('ru-RU')} – ${s.b.toLocaleString('ru-RU')} до н.э.</span><br>${esc(s.note)}`);
+      out.push(`<rect data-i="${k}" class="bar ${s.cls}" x="${X}" y="${ay}" width="${Wd}" height="${arow-6}"/>`);
+      out.push(`<rect data-i="${k}" class="hit" x="${X}" y="${ay-2}" width="${Wd}" height="${arow-2}"/>`);
+      const labelW=est(s.label,fs-0.5)+8;
+      let tx=X+Wd+5; let inside=false;
+      if(tx+labelW>W-padR){ if(Wd>labelW){tx=Math.max(X,padL)+5;inside=true;} else tx=Math.max(padL,W-padR-labelW); }
+      if(tx<padL) tx=padL+2;
+      out.push(`<text x="${tx}" y="${ay+arow-7}" font-size="${fs-0.5}" ${inside?'fill="#fff"':''} pointer-events="none">${esc(s.label)}</text>`);
+    }
+    ay+=arow;
+  });
+
+  out.push(`</g>`);
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`); svg.setAttribute('width',W); svg.setAttribute('height',H);
+  svg.style.height=H+'px';
+  svg.innerHTML=out.join('');
+}
+function est(s,fs){ return s.length*fs*0.58; }
+function fitText(s,w,fs){ const n=Math.floor(w/(fs*0.58)); if(s.length<=n) return esc(s); if(n<4) return ''; return esc(s.slice(0,n-1).trim()+'…'); }
+function shortLabel(s,span){ if(span>5000){ const i=s.indexOf(' ('); const j=s.indexOf(';'); let c=s; if(j>0)c=c.slice(0,j); if(i>0&&i<c.length)c=c.slice(0,i); return c; } return s; }
+
+/* ---------- Interaction ---------- */
+function clampView(){
+  let span=view.t1-view.t0; const full=FULL.t1-FULL.t0;
+  if(span>full){view.t0=FULL.t0;view.t1=FULL.t1;return;}
+  if(span<150){const c=(view.t0+view.t1)/2;view.t0=c-75;view.t1=c+75;}
+  if(view.t0<FULL.t0){view.t1+=FULL.t0-view.t0;view.t0=FULL.t0;}
+  if(view.t1>FULL.t1){view.t0-=view.t1-FULL.t1;view.t1=FULL.t1;}
+}
+function setView(a,b){ view={t0:-a,t1:-b}; clampView(); render(); markPreset(); }
+function zoomAt(factor,fx){ const span=view.t1-view.t0; const tc=view.t0+fx*span; view.t0=tc-(tc-view.t0)*factor; view.t1=tc+(view.t1-tc)*factor; clampView(); render(); markPreset(); }
+function markPreset(){ document.querySelectorAll('[data-view]').forEach(b=>{ const r=resolveView(b.dataset.view); b.setAttribute('aria-pressed', r && Math.abs(-r[0]-view.t0)<1 && Math.abs(-r[1]-view.t1)<1 ? 'true':'false'); }); };
+function resolveView(v){
+  if(v==='pre') return [D.epoch+60, D.epoch-D.flood-120];
+  if(v==='post') return [D.epoch-D.flood+80, D.epoch-(D.abr.born+175)-40];
+  const p=v.split(',').map(Number); return p;
+}
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{const r=resolveView(b.dataset.view); setView(r[0],r[1]);}));
+document.getElementById('zin').addEventListener('click',()=>zoomAt(0.7,0.5));
+document.getElementById('zout').addEventListener('click',()=>zoomAt(1/0.7,0.5));
+
+svg.addEventListener('wheel',e=>{ e.preventDefault(); const r=svg.getBoundingClientRect(); const fx=(e.clientX-r.left)/r.width; zoomAt(Math.exp(e.deltaY*0.0012),fx); hideTip(); },{passive:false});
+let drag=null;
+svg.addEventListener('pointerdown',e=>{ drag={x:e.clientX,t0:view.t0,t1:view.t1,moved:false}; svg.setPointerCapture(e.pointerId); });
+svg.addEventListener('pointermove',e=>{
+  if(drag){ const r=svg.getBoundingClientRect(); const dx=e.clientX-drag.x; if(Math.abs(dx)>3){drag.moved=true;svg.classList.add('dragging');hideTip();}
+    const span=drag.t1-drag.t0; const dt=-dx/r.width*span; view.t0=drag.t0+dt; view.t1=drag.t1+dt; clampView(); render(); markPreset(); return; }
+  const el=e.target.closest&&e.target.closest('[data-i]');
+  if(el){ showTip(tips[+el.dataset.i],e); } else hideTip();
+});
+svg.addEventListener('pointerup',()=>{ drag=null; svg.classList.remove('dragging'); });
+svg.addEventListener('pointercancel',()=>{ drag=null; svg.classList.remove('dragging'); });
+svg.addEventListener('pointerleave',()=>{ if(!drag) hideTip(); });
+function showTip(html,e){ if(!html){hideTip();return;} tipEl.innerHTML=html; tipEl.hidden=false; const r=chart.getBoundingClientRect(); let lx=e.clientX-r.left+14, ly=e.clientY-r.top+14; const tw=tipEl.offsetWidth, th=tipEl.offsetHeight; if(lx+tw>r.width-8) lx=e.clientX-r.left-tw-14; if(ly+th>r.height-8) ly=e.clientY-r.top-th-14; tipEl.style.left=Math.max(4,lx)+'px'; tipEl.style.top=Math.max(4,ly)+'px'; }
+function hideTip(){ tipEl.hidden=true; }
+
+/* ---------- Chronology switch ---------- */
+function setChrono(k){
+  chKey=k; D=build(CHRONO[k]);
+  document.getElementById('ch-mt').setAttribute('aria-pressed',k==='mt');
+  document.getElementById('ch-lxx').setAttribute('aria-pressed',k==='lxx');
+  render(); fillText(); markPreset();
+}
+document.getElementById('ch-mt').addEventListener('click',()=>setChrono('mt'));
+document.getElementById('ch-lxx').addEventListener('click',()=>setChrono('lxx'));
+
+/* ---------- Text blocks ---------- */
+function bc(Dx,am){ return (Dx.epoch-am).toLocaleString('ru-RU'); }
+function fillText(){
+  const M=build(CHRONO.mt), L=build(CHRONO.lxx);
+  const kd=document.getElementById('keydates');
+  const rows=[
+    ['Сотворение', `${D.epoch.toLocaleString('ru-RU')} до н.э.`],
+    ['Енох взят', `${fmtAM(D.enoch.born+365)} · ${bc(D,D.enoch.born+365)} до н.э.`],
+    ['Рождение Ноя', `${fmtAM(D.noah.born)} · ${bc(D,D.noah.born)} до н.э.`],
+    ['Смерть Мафусала', `${fmtAM(D.P[7].died)} · ${bc(D,D.P[7].died)} до н.э.${D.P[7].died===D.flood?' (год потопа)':''}`],
+    ['Потоп', `${fmtAM(D.flood)} · ${bc(D,D.flood)} до н.э.`],
+    ['Рождение Фалека (Вавилон)', `${fmtAM(D.peleg.born)} · ${bc(D,D.peleg.born)} до н.э.`],
+    ['Смерть Ноя', `${fmtAM(D.noah.died)} · ${bc(D,D.noah.died)} до н.э.`],
+    ['Смерть Сима', `${fmtAM(D.sons[1].died)} · ${bc(D,D.sons[1].died)} до н.э.`],
+    ['Рождение Авраама', `${fmtAM(D.abr.born)} · ${bc(D,D.abr.born)} до н.э.`],
+    ['Призвание Авраама', `${fmtAM(D.abr.born+75)} · ${bc(D,D.abr.born+75)} до н.э.`],
+    ['Смерть Авраама', `${fmtAM(D.abr.died)} · ${bc(D,D.abr.died)} до н.э.`]
+  ];
+  kd.innerHTML=rows.map(r=>`<span class="k">${r[1]}</span><span>${r[0]}</span>`).join('');
+
+  const giza=2600, floodBC=D.epoch-D.flood, diff=giza-floodBC;
+  document.getElementById('pyr-note').innerHTML = diff>0
+    ? `По выбранной хронологии потоп приходится на ${floodBC.toLocaleString('ru-RU')} до н.э., и общепринятая дата пирамид Гизы (2600–2500) оказывается на ${diff}–${diff-100} лет <b>раньше потопа</b>. Посылка «пирамиды допотопные» здесь согласуется с общепринятой датой без всякого сдвига, тогда как Урук, Шумер и Аккад тоже попадают в допотопное время, хотя по Быт. 10 их основал послепотопный Нимрод. Поэтому для Месопотамии нужна та сжатая шкала, что показана в таблице ниже.`
+    : `По выбранной хронологии потоп приходится на ${floodBC.toLocaleString('ru-RU')} до н.э., а общепринятая дата пирамид Гизы (2600–2500) на ${-diff} лет <b>позже потопа</b>. Чтобы считать пирамиды допотопными, египетскую шкалу пришлось бы удревнить не меньше чем на ${-diff+100} лет; зато Урук и ранний Шумер при этой эре ложатся после потопа, в согласии с Быт. 10.`;
+
+  const set=(k,v)=>{document.querySelectorAll(`[data-k="${k}"]`).forEach(td=>td.textContent=v);};
+  const r=(Dx,a,b)=>`${bc(Dx,a)} – ${bc(Dx,b)} до н.э.`;
+  set('pre', r(M,0,M.flood)); set('pre-lxx', r(L,0,L.flood));
+  set('flood', `${bc(M,M.flood)} до н.э.; Ной † ${bc(M,M.noah.died)}, Сим † ${bc(M,M.sons[1].died)}`); set('flood-lxx', `${bc(L,L.flood)} до н.э.; Ной † ${bc(L,L.noah.died)}, Сим † ${bc(L,L.sons[1].died)}`);
+  set('babel', `≈ ${bc(M,M.peleg.born)} до н.э. (рождение Фалека)`); set('babel-lxx', `≈ ${bc(L,L.peleg.born)} до н.э. (рождение Фалека)`);
+  set('nimrod', `≈ ${bc(M,M.flood+60)} – ${bc(M,M.peleg.born+100)} до н.э.`); set('nimrod-lxx', `≈ ${bc(L,L.flood+60)} – ${bc(L,L.peleg.born+100)} до н.э.`);
+  set('abr', r(M,M.abr.born,M.abr.died)); set('abr-lxx', r(L,L.abr.born,L.abr.died));
+
+  const tb=document.querySelector('#ptable tbody'); const all=[...D.P,...D.sons,...D.G];
+  tb.innerHTML=all.map(p=>`<tr><td><b>${esc(p.name)}</b>${p.taken?' (взят)':''}</td><td class="m">${p.sonAge??'—'}</td><td class="m">${p.life??'—'}</td><td class="m">${p.approx?'≈ ':''}${p.born}</td><td class="m">${p.died??'—'}</td><td class="m">${p.approx?'≈ ':''}${bc(D,p.born)}</td><td class="m">${p.died!=null?bc(D,p.died):'—'}</td><td>${esc(p.ref)}</td></tr>`).join('');
+}
+
+let rt, lastW=0;
+function onSize(){ const w=chart.clientWidth; if(w===lastW) return; lastW=w; clearTimeout(rt); rt=setTimeout(render,60); }
+window.addEventListener('resize',onSize);
+if(window.ResizeObserver) new ResizeObserver(onSize).observe(chart);
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>render());
+render(); fillText(); markPreset();
+})();
+</script>
+
+</body>
+</html>
