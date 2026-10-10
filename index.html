@@ -947,6 +947,8 @@ const fmtAM=am=>am.toLocaleString('ru-RU')+' от С.М.';
 const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 const INK={'--egypt':'#1b1b1b','--sons':'#fff','--pre':'#fff','--post':'#fff','--mesop':'#fff','--anat':'#1b1b1b','--other':'#fff','--crim':'#fff','--cold':'#fff','--flood':'#fff','--model':'#fff','--fg':'var(--bg)'};
 let ROW_H=22, GROUP_H=28, BAND_H=30, BAR_H=13, FS_ADD=0;
+const PADR=180; // right padding in px so labels after the last line are not clipped
+const pxPerYear=Wv=>(Wv*zoom-PADR)/(FULL.t1-FULL.t0);
 function sizeForZoom(){ const f=Math.min(1,Math.log(zoom)/Math.log(ZMAX)); ROW_H=Math.round(22+12*f); BAR_H=Math.round(13+9*f); GROUP_H=Math.round(28+6*f); BAND_H=Math.round(30+8*f); FS_ADD=2*f; }
 
 /* ---------- Researchers' dates → position in the creation-logic scheme ----------
@@ -1140,7 +1142,7 @@ function layoutRows(){
 
 function render(){
   const Wv=Math.max(200,scroller.clientWidth); const W=Math.round(Wv*zoom);
-  const span=FULL.t1-FULL.t0; const pxY=W/span; const x=t=>(t-FULL.t0)*pxY;
+  const span=FULL.t1-FULL.t0; const pxY=pxPerYear(Wv); const x=t=>(t-FULL.t0)*pxY;
   const H=layoutRows();
   sizeForZoom();
   const small=window.innerWidth<640; const fs=(small?10.5:11.5)+FS_ADD;
@@ -1164,7 +1166,8 @@ function render(){
   for(let k=0;D.flood+k*step<=FULL.t1+D.epoch;k+=1){ const am=D.flood+k*step; const X=x(amT(am)); ax.push(`<text class="num" x="${X+3}" y="45" font-size="${fs-1}" fill="var(--flood)">${k===0?'потоп':'+'+(k*step).toLocaleString('ru-RU')}</text>`); }
   ax.push(`<line x1="0" y1="17" x2="${W}" y2="17" class="axl"/><line x1="0" y1="33" x2="${W}" y2="33" class="axl"/><line x1="0" y1="49" x2="${W}" y2="49" class="axl"/>`);
   D.events.forEach((e,i)=>{ const X=x(amT(e.am)); const k=tips.push(`<b>${esc(e.label)}</b><span class="m">${fmtAM(e.am)} · ${fmtBC(amT(e.am))}</span><br>${esc(e.ref)}`)-1;
-    ax.push(`<g data-i="${k}"><line x1="${X}" y1="50" x2="${X}" y2="${AXH}" class="evl ${e.cls||''}"/><text x="${X+4}" y="${i%2?77:64}" font-size="${fs}" font-weight="600" class="evt ${e.cls||''}">${esc(e.label)}</text></g>`); });
+    const left=e.cls==='now';
+    ax.push(`<g data-i="${k}"><line x1="${X}" y1="50" x2="${X}" y2="${AXH}" class="evl ${e.cls||''}"/><text x="${left?X-4:X+4}" y="${i%2?77:64}" font-size="${fs}" font-weight="600" text-anchor="${left?'end':'start'}" class="evt ${e.cls||''}">${esc(e.label)}</text></g>`); });
   axisSvg.setAttribute('viewBox',`0 0 ${W} ${AXH}`); axisSvg.setAttribute('width',W); axisSvg.setAttribute('height',AXH); axisSvg.innerHTML=ax.join('');
 
   /* body */
@@ -1243,17 +1246,17 @@ const clampZ=z=>Math.min(ZMAX,Math.max(ZMIN,z));
 function syncAxis(){ axisWrap.scrollLeft=scroller.scrollLeft; }
 function setZoom(z,anchorFrac){
   anchorFrac=anchorFrac==null?0.5:anchorFrac;
-  const Wv=scroller.clientWidth; const oldW=Wv*zoom; const span=FULL.t1-FULL.t0;
-  const tA=FULL.t0+(scroller.scrollLeft+anchorFrac*Wv)/oldW*span;
+  const Wv=scroller.clientWidth; const oldPx=pxPerYear(Wv);
+  const tA=FULL.t0+(scroller.scrollLeft+anchorFrac*Wv)/oldPx;
   zoom=clampZ(z); render();
-  scroller.scrollLeft=(tA-FULL.t0)/span*Wv*zoom-anchorFrac*Wv; syncAxis(); updateZoomUI(); markPreset();
+  scroller.scrollLeft=(tA-FULL.t0)*pxPerYear(Wv)-anchorFrac*Wv; syncAxis(); updateZoomUI(); markPreset();
 }
 function showRange(a,b){ // years BC (positive) or negative for AD
   const t0=-a,t1=-b; const Wv=scroller.clientWidth; const span=FULL.t1-FULL.t0;
-  zoom=clampZ(span/(t1-t0)); render();
-  scroller.scrollLeft=(t0-FULL.t0)/span*Wv*zoom; syncAxis(); updateZoomUI(); markPreset();
+  zoom=clampZ((Wv*span/(t1-t0)+PADR)/Wv); render();
+  scroller.scrollLeft=(t0-FULL.t0)*pxPerYear(Wv); syncAxis(); updateZoomUI(); markPreset();
 }
-function visibleRange(){ const Wv=scroller.clientWidth; const span=FULL.t1-FULL.t0; const W=Wv*zoom; const t0=FULL.t0+scroller.scrollLeft/W*span; return [t0,t0+Wv/W*span]; }
+function visibleRange(){ const Wv=scroller.clientWidth; const px=pxPerYear(Wv); const t0=FULL.t0+scroller.scrollLeft/px; return [t0,t0+Wv/px]; }
 function updateZoomUI(){ const v=Math.round((Math.log(zoom)-Math.log(ZMIN))/(Math.log(ZMAX)-Math.log(ZMIN))*100); const sl=el('zslider'); if(sl&&+sl.value!==v) sl.value=v; const [a,b]=visibleRange(); el('zinfo').textContent=`${fmtBC(Math.round(a))} — ${fmtBC(Math.round(b))} · ×${zoom<10?zoom.toFixed(1):Math.round(zoom)}`; }
 function resolveView(v){
   if(v==='pre') return [D.epoch+60, D.epoch-D.flood-120];
@@ -1312,7 +1315,7 @@ function gotoRow(q){
   if(!r) return;
   collapsed.delete(r.gid); { let p=r.parentId,n=0; while(p&&n<200){ closedNodes.delete(p); const pr=rowById[p]; p=pr?pr.parentId:null; n++; } } selectedId=r.id; render();
   const rr=rowById[r.id]; const t=rr.t0!=null?rr.t0:(rr.t!=null?rr.t:null);
-  if(t!=null){ const Wv=scroller.clientWidth; const span=FULL.t1-FULL.t0; if(zoom<6) zoom=6; render(); scroller.scrollLeft=(t-FULL.t0)/span*Wv*zoom-Wv*0.25; syncAxis(); }
+  if(t!=null){ const Wv=scroller.clientWidth; if(zoom<6) zoom=6; render(); scroller.scrollLeft=(t-FULL.t0)*pxPerYear(Wv)-Wv*0.25; syncAxis(); }
   const top=tlEl.getBoundingClientRect().top+window.scrollY+rr.y+axisSvg.getBoundingClientRect().height; const off=el('toolbar').offsetHeight+axisWrap.offsetHeight+40;
   window.scrollTo({top:top-off,behavior:'smooth'});
   select(r.id); selectedId=r.id; render();
