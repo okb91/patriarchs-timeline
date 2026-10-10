@@ -18,7 +18,7 @@
   --display:"Literata",Georgia,"Times New Roman",serif;
   --body:"Golos Text","Segoe UI",Arial,sans-serif;
   --mono:"JetBrains Mono",Consolas,monospace;
-  --namesW:250px; --toolbarH:0px;
+  --namesW:250px; --toolbarH:0px; --hl:#d500f9;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -26,7 +26,7 @@
     --accent:#6fb0dc;
     --pre:#3987e5; --sons:#d95926; --post:#199e70;
     --mesop:#9085e9; --egypt:#c98500; --anat:#d55181; --other:#2e9a2e;
-    --cold:#7f9fbb; --flood:#e66767; --model:#b8955a; --crim:#4fb5c9;
+    --cold:#7f9fbb; --flood:#e66767; --model:#b8955a; --crim:#4fb5c9; --hl:#ff4fd8;
     color-scheme:dark;
   }
 }
@@ -35,7 +35,7 @@
   --accent:#6fb0dc;
   --pre:#3987e5; --sons:#d95926; --post:#199e70;
   --mesop:#9085e9; --egypt:#c98500; --anat:#d55181; --other:#2e9a2e;
-  --cold:#7f9fbb; --flood:#e66767; --model:#b8955a; --crim:#4fb5c9;
+  --cold:#7f9fbb; --flood:#e66767; --model:#b8955a; --crim:#4fb5c9; --hl:#ff4fd8;
   color-scheme:dark;
 }
 @media (max-width:700px){ :root{--namesW:150px} }
@@ -86,7 +86,8 @@ input.search{font:inherit;font-size:13px;padding:5px 10px;border-radius:6px;bord
 .nm .lb.christ{font-weight:700}
 .nm .sb{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--muted);padding-left:6px;flex:none}
 .nm:hover,.nm.hov{background:color-mix(in srgb,var(--c) 16%,transparent)}
-.nm.sel{background:color-mix(in srgb,var(--c) 28%,transparent);font-weight:600}
+.nm.inchain{background:color-mix(in srgb,var(--hl) 22%,transparent);box-shadow:inset 3px 0 0 var(--hl);font-weight:600}
+.nm.sel{background:color-mix(in srgb,var(--hl) 40%,transparent);font-weight:700}
 .nm.grp{background:color-mix(in srgb,var(--c) 18%,transparent);border-left:4px solid var(--c);font-weight:600;font-size:12.5px;padding-left:6px;border-bottom:1px solid var(--line)}
 .nm.grp .tri{width:12px;flex:none;color:var(--muted)} .nm.grp .tri::before{content:'▾'} .nm.grp.col .tri::before{content:'▸'}
 .nm.grp .gl{overflow:hidden;text-overflow:ellipsis}
@@ -104,8 +105,13 @@ svg .evl.flood{stroke:var(--flood);stroke-width:2;stroke-dasharray:none;opacity:
 svg .evl.christ{stroke:var(--fg);stroke-width:2;stroke-dasharray:none;opacity:.9}
 svg .evt.flood{fill:var(--flood)}
 svg .conn{stroke:var(--fg);stroke-width:1;fill:none;opacity:.35}
-svg .conn.hl{stroke:var(--accent);stroke-width:2;opacity:1}
+svg g.rowg.dim{opacity:.3}
+svg g.rowg.hl rect[data-row]{stroke:var(--hl);stroke-width:3;filter:drop-shadow(0 0 3px var(--hl))}
+svg g.rowg.hl .conn{stroke:var(--hl);stroke-width:3;opacity:1}
+svg g.rowg.hl text{font-weight:700}
+svg .conn.hl{stroke:var(--hl);stroke-width:3;opacity:1}
 svg .conn.far{stroke-dasharray:3 3;opacity:.5}
+svg .evl.now{stroke:var(--accent);stroke-width:2;stroke-dasharray:none;opacity:.9} svg .evt.now{fill:var(--accent)}
 svg .stub{stroke:var(--fg);stroke-width:1.5;opacity:.6;fill:none}
 svg .bar.hl{stroke:var(--accent);stroke-width:2}
 svg .bar.sel{stroke:var(--fg);stroke-width:2}
@@ -162,7 +168,7 @@ footer{margin-top:40px;font-size:12.5px;color:var(--muted)}
   </div>
   <div class="ctl" role="group" aria-label="Диапазон">
     <span class="lbl">Диапазон</span>
-    <button class="chip" data-view="12000,-1000">Весь</button>
+    <button class="chip" data-view="all">Весь</button>
     <button class="chip" data-view="pre">Допотопный мир</button>
     <button class="chip" data-view="post">Потоп → Авраам</button>
     <button class="chip" data-view="4500,1500">Шумер, Египет</button>
@@ -925,7 +931,8 @@ const EXTRA=[
 ];
 
 /* ---------- State ---------- */
-const FULL={t0:-12000,t1:1000};
+const FULL={t0:-4200,t1:2030};
+function setFull(){ FULL.t0=-(D.epoch+120); FULL.t1=2030; }
 const ZMIN=1, ZMAX=120;
 let chKey='mt', D=build(CHRONO.mt);
 let zoom=1;
@@ -966,6 +973,8 @@ const kindOf=cls=>cls==='mesop'?'mesop':(cls==='egypt'?'egypt':'general');
 
 /* ---------- Rows model ---------- */
 function buildRows(){
+  setFull();
+  if(!D.events.some(e=>e.cls==='now')) D.events.push({am:D.epoch+2026,label:'Наше время: 2026 г.',short:'2026',ref:'Линия для масштаба: от сотворения до наших дней.',cls:'now'});
   rows=[]; rowById={}; tips=[];
   const tip=h=>{tips.push(h);return tips.length-1;};
   const add=r=>{ if(!r.id) r.id='r'+rows.length; rows.push(r); rowById[r.id]=r; return r; };
@@ -990,6 +999,7 @@ function buildRows(){
   const epBlocks=[{t0:amT(0),t1:amT(D.flood),label:'Допотопный мир: города, скотоводство, медь и железо (Быт. 4)',color:'--pre',tip:tip(`<b>Допотопный мир</b><span class="m">${fmtAM(0)} – ${fmtAM(D.flood)} · ${fmtBC(amT(0))} – ${fmtBC(amT(D.flood))}</span><br>Единая допотопная цивилизация: город Енох, скотоводство, музыка, обработка меди и железа (Быт. 4:17–22). По посылке схемы сюда относятся и пирамиды Египта.`)}];
   EPOCHS.forEach((e,i)=>{ const t0=mapConv(e[1],'general'), t1=mapConv(e[2],'general'); if(t1-t0<1) return;
     epBlocks.push({t0,t1,label:e[0],color:EP_COL[i%EP_COL.length],tip:tip(`<b>${esc(e[0])}</b><span class="m">в схеме: ${fmtBC(t0)} – ${fmtBC(t1)}</span><br>Датировка исследователей: ${fmtBC(-e[1])} – ${fmtBC(-e[2])}. Положение на схеме — по библейской хронологии: палеолит — послепотопный ледник, неолит — после рассеяния, энеолит и ранняя бронза — время Авраама; от 2000 до н.э. шкалы совпадают.`)}); });
+  epBlocks.push({t0:1000,t1:2026,label:'Средние века и Новое время',color:'--muted',tip:tip(`<b>Средние века и Новое время</b><span class="m">1000 – 2026 н.э.</span><br>Показано для масштаба.`)});
   add({kind:'band',gid:'epochs',label:'эпохи',sub:'',blocks:epBlocks});
 
   /* climate */
@@ -1136,11 +1146,12 @@ function render(){
 
   /* names column */
   const counts={}; rows.forEach(r=>{ if(r.kind!=='group') counts[r.gid]=(counts[r.gid]||0)+1; });
+  const chainSet=selectedId?ancestry(selectedId):new Set();
   namesCol.innerHTML=rows.filter(r=>!r.hidden).map(r=>{
     if(r.kind==='group') return `<div class="nm grp${collapsed.has(r.gid)?' col':''}" data-row="${r.id}" style="--c:var(${r.color});height:${r.h}px" role="button" tabindex="0" aria-expanded="${!collapsed.has(r.gid)}"><span class="tri"></span><span class="gl">${esc(r.label)}</span><span class="cnt">${counts[r.gid]||0}</span></div>`;
     const has=r.children&&r.children.length>0; const closed=closedNodes.has(r.id);
     const sub=closed?`+${descendants(r.id)} скрыто`:(r.sub||'');
-    return `<div class="nm${r.id===selectedId?' sel':''}" data-row="${r.id}" style="height:${r.h}px;--c:var(${r.color})"><span class="ind" style="width:${(r.depth||0)*14}px"></span><span class="tg${has?'':' none'}" data-tg="${r.id}" role="button" aria-label="${closed?'Развернуть':'Свернуть'} потомков" title="${closed?'Развернуть':'Свернуть'} потомков">${closed?'+':'−'}</span><span class="sw${r.kind==='hollow'||r.kind==='cut'?' hol':''}"></span><span class="lb${r.christ?' christ':''}">${esc(r.label)}</span><span class="sb">${esc(sub)}</span></div>`;
+    return `<div class="nm${r.id===selectedId?' sel':''}${chainSet.has(r.id)?' inchain':''}" data-row="${r.id}" style="height:${r.h}px;--c:var(${r.color})"><span class="ind" style="width:${(r.depth||0)*14}px"></span><span class="tg${has?'':' none'}" data-tg="${r.id}" role="button" aria-label="${closed?'Развернуть':'Свернуть'} потомков" title="${closed?'Развернуть':'Свернуть'} потомков">${closed?'+':'−'}</span><span class="sw${r.kind==='hollow'||r.kind==='cut'?' hol':''}"></span><span class="lb${r.christ?' christ':''}">${esc(r.label)}</span><span class="sb">${esc(sub)}</span></div>`;
   }).join('');
 
   /* axis */
@@ -1171,20 +1182,21 @@ function render(){
   const chain=selectedId?ancestry(selectedId):new Set();
   rows.forEach(r=>{ if(r.hidden||r.kind==='group') return;
     const cy=r.y+r.h/2, by=cy-BAR_H/2; const ink=INK[r.color]||'#fff';
-    const hl=chain.has(r.id); const hit=(x0,w)=>`<rect data-i="${r.tip}" data-row="${r.id}" class="hit" x="${x0}" y="${r.y}" width="${Math.max(w,24)}" height="${r.h}"/>`;
+    const hl=chain.has(r.id); const rowCls=hl?'hl':(selectedId?'dim':''); const hit=(x0,w)=>`<rect data-i="${r.tip}" data-row="${r.id}" class="hit" x="${x0}" y="${r.y}" width="${Math.max(w,24)}" height="${r.h}"/>`;
+    if(r.kind!=='band') out.push(`<g class="rowg ${rowCls}">`);
     if(r.kind==='band'){
       r.blocks.forEach(b=>{ const X=x(b.t0), Wd=x(b.t1)-X; out.push(`<rect data-i="${b.tip}" x="${X}" y="${r.y+3}" width="${Wd}" height="${r.h-6}" rx="3" fill="var(${b.color})" opacity=".55"/>`); if(Wd>est(b.label,fs)+10) out.push(`<text x="${X+6}" y="${cy+4}" font-size="${fs}" font-weight="500" pointer-events="none">${esc(b.label)}</text>`); });
       return;
     }
     if(r.kind==='off'){
       out.push(`<path data-i="${r.tip}" data-row="${r.id}" d="M2,${cy} l10,-6 l0,12 z" fill="var(${r.color})"/><text x="16" y="${cy+4}" font-size="${fs-1}" class="muted" pointer-events="none">раньше начала шкалы: ${esc(r.sub)}</text>`);
-      out.push(hit(0,220)); return;
+      out.push(hit(0,220)); out.push('</g>'); return;
     }
     if(r.kind==='marker'){
       const X=x(r.t);
       out.push(`<path data-i="${r.tip}" data-row="${r.id}" d="M${X},${cy-6} l6,6 l-6,6 l-6,-6 z" fill="${r.hollow?'var(--surface)':`var(${r.color})`}" stroke="var(${r.color})" stroke-width="1.5"/>`);
       out.push(`<text x="${X+10}" y="${cy+4}" font-size="${fs-0.5}" font-weight="500" pointer-events="none">${esc(r.label)} · ${r.t<=0?-r.t:r.t+' н.э.'}</text>`);
-      out.push(hit(X-12,24)); return;
+      out.push(hit(X-12,24)); out.push('</g>'); return;
     }
     const X=x(r.t0), Wd=Math.max(2,x(r.t1)-X);
     // connector to parent
@@ -1209,7 +1221,7 @@ function render(){
     const solid=(r.kind==='bar'||r.kind==='range');
     if(Wd>=tw) out.push(`<text x="${X+5}" y="${cy+4}" font-size="${fs-0.5}" fill="${solid?ink:'var(--fg)'}" font-weight="500" pointer-events="none">${esc(txt)}</text>`);
     else out.push(`<text x="${X+Wd+5}" y="${cy+4}" font-size="${fs-0.5}" font-weight="500" pointer-events="none">${esc(txt)}</text>`);
-    out.push(hit(X,Wd));
+    out.push(hit(X,Wd)); out.push('</g>');
   });
   // stubs: where collapsed (hidden) children branch off a visible parent
   rows.forEach(r=>{ if(r.hidden||r.kind==='group'||!r.children||!r.children.length) return;
@@ -1244,6 +1256,7 @@ function updateZoomUI(){ const v=Math.round((Math.log(zoom)-Math.log(ZMIN))/(Mat
 function resolveView(v){
   if(v==='pre') return [D.epoch+60, D.epoch-D.flood-120];
   if(v==='post') return [D.epoch-D.flood+80, D.epoch-(D.abr.born+175)-40];
+  if(v==='all') return [D.epoch+120, -2030];
   return v.split(',').map(Number);
 }
 function markPreset(){ const [a,b]=visibleRange(); document.querySelectorAll('[data-view]').forEach(bt=>{ const r=resolveView(bt.dataset.view); bt.setAttribute('aria-pressed', Math.abs(-r[0]-a)<(b-a)*0.03 && Math.abs(-r[1]-b)<(b-a)*0.03 ? 'true':'false'); }); }
@@ -1384,7 +1397,7 @@ function fillText(){
 
 
 /* ---------- Init ---------- */
-buildRows(); fillSearch(); fillExtraTable(); setOffsets(); showRange(10000,1500); fillText();
+buildRows(); fillSearch(); fillExtraTable(); setOffsets(); showRange(D.epoch+120,-2030); fillText();
 })();
 </script>
 
