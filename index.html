@@ -443,7 +443,7 @@ function build(ch){
 const CAIN=[
   {name:'Каин',frac:0.001,ref:'Быт. 4:1, 17',note:'Первенец Адама и Евы, земледелец; убил Авеля, ушёл в землю Нод и построил город Енох.',parent:'Адам'},
   {name:'Авель',frac:0.002,abel:true,ref:'Быт. 4:2–8',note:'Пастырь овец; убит Каином до рождения Сифа (Сиф дан «вместо Авеля», Быт. 4:25).',parent:'Адам'},
-  {name:'Енох (сын Каина)',frac:0.06,ref:'Быт. 4:17',note:'По его имени назван первый город.',parent:'Каин'},
+  {name:'Енох (сын Каина)',frac:0.06,endAt:'enoch',ref:'Быт. 4:17; 5:18',note:'По его имени назван первый город. Умер за 40 дней до рождения праведного Еноха, сына Иареда*: два Еноха не могли жить на земле одновременно, поскольку имена патриархам давались от Бога.',parent:'Каин'},
   {name:'Ирад',frac:0.13,ref:'Быт. 4:18',parent:'Енох (сын Каина)'},
   {name:'Мехиаель',frac:0.20,ref:'Быт. 4:18',parent:'Ирад'},
   {name:'Мафусал (сын Мехиаеля)',frac:0.28,ref:'Быт. 4:18',parent:'Мехиаель'},
@@ -1273,10 +1273,11 @@ function buildRows(){
     if(i===0){
       const cainLen=Math.round(D.flood*0.3); const cmap={};
       CAIN.filter(c=>!c.abel).concat(CAIN.filter(c=>c.abel)).forEach(c=>{
-        const bAM=Math.round(D.flood*c.frac); const eAM=c.abel?D.P[1].born-5:bAM+cainLen;
+        const bAM=Math.round(D.flood*c.frac); const eAM=c.abel?D.P[1].born-5:(c.endAt==='enoch'?D.enoch.born:bAM+cainLen);
         const par=c.parent==='Адам'?r.id:cmap[c.parent];
         const depth=c.parent==='Адам'?1:(c.parent==='Каин'?2:(['Иавал','Иувал','Тувалкаин','Ноема'].includes(c.name)?3:2));
-        const rr=add({kind:c.abel?'cut':'hollow',id:'cain:'+c.name,gid:'gen5',label:c.name,depth,parentId:par,t0:amT(bAM),t1:amT(eAM),color:'--pre',sub:c.abel?'† убит':'≈ '+fmtAM(bAM).replace(' от С.М.',''),tip:tip(`<b>${esc(c.name)}</b><span class="m">≈ ${fmtAM(bAM)} · ${fmtBC(amT(bAM))}${c.abel?' → убит до '+fmtAM(eAM):''}</span><br>${c.note?esc(c.note)+'<br>':''}Дат в тексте нет; положение отрезка условное${c.abel?'':', длина '+cainLen+' лет'}.<br><i>${esc(c.ref)}</i>`)});
+        const fixedEnd=c.endAt==='enoch';
+        const rr=add({kind:c.abel?'cut':'hollow',id:'cain:'+c.name,gid:'gen5',label:c.name,depth,parentId:par,t0:amT(bAM),t1:amT(eAM),color:'--pre',hasEnd:fixedEnd,sub:c.abel?'† убит':(fixedEnd?'† '+eAM+' от С.М.*':'≈ '+fmtAM(bAM).replace(' от С.М.','')),tip:tip(`<b>${esc(c.name)}</b><span class="m">≈ ${fmtAM(bAM)} · ${fmtBC(amT(bAM))}${c.abel?' → убит до '+fmtAM(eAM):(fixedEnd?' → † '+fmtAM(eAM)+' (за 40 дней до рождения праведного Еноха)*':'')}</span><br>${c.note?esc(c.note)+'<br>':''}${fixedEnd?'Год рождения в тексте не указан, положение начала отрезка условное; конец — авторское положение*.':'Дат в тексте нет; положение отрезка условное'+(c.abel?'':', длина '+cainLen+' лет')+'.'}<br><i>${esc(c.ref)}</i>`)});
         cmap[c.name]=rr.id;
       });
     }
